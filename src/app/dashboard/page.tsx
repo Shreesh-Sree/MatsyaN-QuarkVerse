@@ -54,41 +54,43 @@ export default function Dashboard() {
         <main className="container mx-auto px-4 py-8 space-y-8 animate-fade-in">
           
           {/* Welcome Header */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12 animate-fade-in-up">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-3">
                 Welcome, {user?.email?.split('@')[0] || 'Fisher'}!
               </h1>
-              <p className="text-muted-foreground mt-2">
+              <p className="text-enhanced text-lg">
                 Here&apos;s your dashboard for a successful day on the water.
               </p>
             </div>
-            <div className="flex items-center gap-3">
-                <Badge variant={networkStatus.online ? "default" : "destructive"} className="gap-2">
+            <div className="flex items-center gap-4">
+                <Badge variant={networkStatus.online ? "default" : "destructive"} className="gap-2 px-4 py-2 rounded-full shadow-md">
                     <div className={`w-2 h-2 rounded-full ${networkStatus.online ? 'bg-green-400' : 'bg-red-400'}`}></div>
                     {networkStatus.online ? "Online" : "Offline"}
                 </Badge>
-                <Badge variant="outline" className="gap-2">
+                <Badge variant="outline" className="gap-2 px-4 py-2 rounded-full glass-card-sm">
                     {syncStatus === 'syncing' ? "🔄 Syncing..." : isOnline ? "☁️ Synced" : "💾 Saved Locally"}
                 </Badge>
             </div>
           </div>
 
           {/* Main Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
             
             {/* Left Column */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-10">
               {/* Voice Assistant */}
-              <Card className="modern-card">
+              <Card className="modern-card animate-fade-in-up hover-lift" style={{animationDelay: '0.1s'}}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-xl">
-                    <Bot className="w-6 h-6 text-primary" />
+                  <CardTitle className="flex items-center gap-3 text-xl text-gradient">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-primary animate-pulse" />
+                    </div>
                     Voice Assistant
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-4">
+                  <p className="text-enhanced mb-6">
                     Use voice commands to navigate. Try &quot;show weather&quot; or &quot;open journal&quot;.
                   </p>
                   <ErrorBoundary fallback={<p className="text-destructive">Voice assistant is currently unavailable.</p>}>
@@ -98,7 +100,7 @@ export default function Dashboard() {
               </Card>
 
               {/* Fishing Journal */}
-              <div data-section="journal">
+              <div data-section="journal" className="animate-fade-in-up" style={{animationDelay: '0.2s'}}>
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Fishing Journal.</p></CardContent></Card>}>
                   <FishingJournal />
                 </ErrorBoundary>
@@ -106,32 +108,34 @@ export default function Dashboard() {
             </div>
 
             {/* Right Column */}
-            <div className="space-y-8">
+            <div className="space-y-10">
               {/* Weather Card */}
-              <div data-section="weather">
+              <div data-section="weather" className="animate-fade-in-up" style={{animationDelay: '0.3s'}}>
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Weather Card.</p></CardContent></Card>}>
                   <WeatherCard />
                 </ErrorBoundary>
               </div>
 
               {/* Analytics Card */}
-              <div data-section="analytics">
+              <div data-section="analytics" className="animate-fade-in-up" style={{animationDelay: '0.4s'}}>
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Fishing Analytics.</p></CardContent></Card>}>
                   <FishingAnalyticsCard />
                 </ErrorBoundary>
               </div>
 
               {/* Quick Actions */}
-              <Card className="modern-card">
+              <Card className="modern-card animate-fade-in-up hover-lift" style={{animationDelay: '0.5s'}}>
                 <CardHeader>
-                  <CardTitle className="text-xl">Quick Actions</CardTitle>
+                  <CardTitle className="text-xl text-gradient">Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4">
                   {quickActions.map((action) => (
                     <Link href={action.href} key={action.title}>
-                      <Button variant="outline" className="w-full h-24 flex flex-col items-center justify-center gap-2 text-center p-2 hover:bg-muted/50 transition-colors duration-200">
-                        <action.icon className={`w-7 h-7 ${action.color}`} />
-                        <span className="text-xs font-medium">{action.title}</span>
+                      <Button variant="outline" className="w-full h-28 flex flex-col items-center justify-center gap-3 text-center p-4 glass-button hover:scale-105 transition-all duration-300 rounded-xl">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                          <action.icon className={`w-5 h-5 ${action.color}`} />
+                        </div>
+                        <span className="text-xs font-medium leading-tight">{action.title}</span>
                       </Button>
                     </Link>
                   ))}

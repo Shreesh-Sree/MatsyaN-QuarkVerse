@@ -175,45 +175,51 @@ export function WeatherCard() {
   );
 
   return (
-    <Card className="modern-card-tall">
+    <Card className="modern-card-tall hover-lift">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <IconComponent className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <CardTitle className="flex items-center gap-3 text-lg text-gradient">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center shadow-lg">
+                <IconComponent className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-float" />
+              </div>
               Current Weather
             </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">{location}</p>
+            <p className="text-sm text-enhanced mt-2">{location}</p>
           </div>
-          <Badge className={`${fishingCondition.color} text-white`}>
+          <Badge className={`${fishingCondition.color} text-white px-3 py-1 rounded-full shadow-md`}>
             {fishingCondition.label} Fishing
           </Badge>
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-8">
         {/* Main Temperature Display */}
-        <div className="text-center py-4">
-          <div className="text-4xl font-bold text-foreground mb-2">
+        <div className="text-center py-6 glass-card-sm rounded-2xl">
+          <div className="text-5xl font-bold text-gradient mb-3">
             {Math.round(weather.current.temperature_2m)}°C
           </div>
-          <p className="text-muted-foreground">{currentWeather.label}</p>
-          <p className="text-sm text-muted-foreground mt-1">{currentWeather.description}</p>
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="text-foreground font-medium">{currentWeather.label}</p>
+          <p className="text-sm text-enhanced mt-2">{currentWeather.description}</p>
+          <p className="text-xs text-enhanced mt-3">
             Feels like {Math.round(weather.current.apparent_temperature)}°C
           </p>
         </div>
 
         {/* Weather Metrics Grid */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <div className="weather-metric">
-            <Droplets className="w-5 h-5 text-blue-500 mx-auto mb-2" />
+            <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
+              <Droplets className="w-4 h-4 text-blue-500" />
+            </div>
             <div className="weather-metric-value">{weather.current.relative_humidity_2m}%</div>
             <div className="weather-metric-label">Humidity</div>
           </div>
           
           <div className="weather-metric">
-            <Wind className="w-5 h-5 text-gray-500 mx-auto mb-2" />
+            <div className="w-8 h-8 rounded-lg bg-gray-500/20 flex items-center justify-center mx-auto mb-3">
+              <Wind className="w-4 h-4 text-gray-500" />
+            </div>
             <div className="weather-metric-value">
               {Math.round(weather.current.wind_speed_10m)} km/h
             </div>
@@ -223,7 +229,9 @@ export function WeatherCard() {
           </div>
           
           <div className="weather-metric">
-            <Gauge className="w-5 h-5 text-purple-500 mx-auto mb-2" />
+            <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center mx-auto mb-3">
+              <Gauge className="w-4 h-4 text-purple-500" />
+            </div>
             <div className="weather-metric-value">
               {Math.round(weather.current.pressure_msl)} hPa
             </div>
@@ -231,7 +239,9 @@ export function WeatherCard() {
           </div>
           
           <div className="weather-metric">
-            <Eye className="w-5 h-5 text-green-500 mx-auto mb-2" />
+            <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center mx-auto mb-3">
+              <Eye className="w-4 h-4 text-green-500" />
+            </div>
             <div className="weather-metric-value">
               {weather.current.visibility ? `${(weather.current.visibility / 1000).toFixed(1)} km` : 'N/A'}
             </div>
@@ -241,19 +251,19 @@ export function WeatherCard() {
 
         {/* Today's Forecast */}
         <div>
-          <h4 className="font-semibold text-foreground mb-3">Today's Range</h4>
-          <div className="flex items-center justify-between glass-card-sm p-3">
+          <h4 className="font-semibold text-foreground mb-4">Today's Range</h4>
+          <div className="flex items-center justify-between glass-card-sm p-4 rounded-xl">
             <div className="text-center">
-              <div className="text-sm text-muted-foreground">Low</div>
+              <div className="text-sm text-enhanced">Low</div>
               <div className="font-semibold text-foreground">
                 {Math.round(weather.daily.temperature_2m_min[0])}°
               </div>
             </div>
-            <div className="flex-1 mx-4">
-              <div className="h-2 bg-gradient-to-r from-blue-400 to-red-400 rounded-full"></div>
+            <div className="flex-1 mx-6">
+              <div className="h-3 bg-gradient-to-r from-blue-400 via-yellow-400 to-red-400 rounded-full shadow-md"></div>
             </div>
             <div className="text-center">
-              <div className="text-sm text-muted-foreground">High</div>
+              <div className="text-sm text-enhanced">High</div>
               <div className="font-semibold text-foreground">
                 {Math.round(weather.daily.temperature_2m_max[0])}°
               </div>
@@ -262,17 +272,17 @@ export function WeatherCard() {
         </div>
 
         {/* Additional Info */}
-        <div className="space-y-2 text-xs">
+        <div className="space-y-3 text-sm glass-card-sm p-4 rounded-xl">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Cloud Cover:</span>
+            <span className="text-enhanced">Cloud Cover:</span>
             <span className="font-medium">{weather.current.cloud_cover}%</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">UV Index:</span>
+            <span className="text-enhanced">UV Index:</span>
             <span className="font-medium">{weather.daily.uv_index_max[0] || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Rain Chance:</span>
+            <span className="text-enhanced">Rain Chance:</span>
             <span className="font-medium">{weather.daily.precipitation_probability_max[0] || 0}%</span>
           </div>
         </div>

@@ -613,13 +613,16 @@ const FishingAnalyticsCard = () => {
   };
 
   return (
-    <Card className="modern-card animate-fade-in hover-lift">
-      <CardHeader className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 dark:from-green-700 dark:via-emerald-700 dark:to-teal-700 text-white p-4 rounded-t-xl">
+    <Card className="modern-card animate-fade-in hover-lift overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 dark:from-green-700 dark:via-emerald-700 dark:to-teal-700 text-white p-6 rounded-t-2xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
         <div className="flex items-center gap-3">
-          <Activity className="w-6 h-6 text-white animate-float" />
+          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
+            <Activity className="w-6 h-6 text-white animate-float" />
+          </div>
           <div>
-            <h3 className="text-lg font-bold animate-shimmer">{t("fishing_analytics_title")}</h3>
-            <p className="text-green-100 text-sm">Your AI-powered fishing forecast</p>
+            <h3 className="text-xl font-bold">{t("fishing_analytics_title")}</h3>
+            <p className="text-green-100 text-sm mt-1">Your AI-powered fishing forecast</p>
           </div>
         </div>
       </CardHeader>
