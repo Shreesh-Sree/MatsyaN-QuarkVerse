@@ -62,16 +62,18 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-2">
           {navItems.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} legacyBehavior passHref>
-              <a className={cn(
+            <Link 
+              key={href} 
+              href={href}
+              className={cn(
                 "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors",
                 pathname === href 
                   ? "bg-primary/10 text-primary" 
                   : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              )}>
-                <Icon className="h-4 w-4" />
-                <span>{label}</span>
-              </a>
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              <span>{label}</span>
             </Link>
           ))}
         </nav>
@@ -133,11 +135,11 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link href="/login" legacyBehavior passHref>
-                <Button>
-                    <LogIn className="h-5 w-5 mr-2" />
-                    {t("login")}
-                </Button>
+            <Link href="/login">
+              <Button>
+                <LogIn className="h-5 w-5 mr-2" />
+                {t("login")}
+              </Button>
             </Link>
           )}
           
@@ -168,16 +170,19 @@ export function Header() {
               </SheetHeader>
               <div className="mt-8 flex flex-col space-y-2">
                 {navItems.map(({ href, label, icon: Icon }) => (
-                  <Link key={href} href={href} legacyBehavior passHref>
-                    <a onClick={handleMobileNavClick} className={cn(
+                  <Link 
+                    key={href} 
+                    href={href}
+                    onClick={handleMobileNavClick}
+                    className={cn(
                       "flex items-center gap-4 px-4 py-3 rounded-lg text-base font-medium",
                       pathname === href 
                         ? "bg-primary/10 text-primary" 
                         : "text-foreground hover:bg-muted"
-                    )}>
-                      <Icon className="h-5 w-5" />
-                      <span>{label}</span>
-                    </a>
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span>{label}</span>
                   </Link>
                 ))}
               </div>
@@ -185,27 +190,36 @@ export function Header() {
                 {user ? (
                     <div className="space-y-2">
                         <div className="px-4 py-2 text-muted-foreground">{user.email}</div>
-                        <Link href="#" onClick={handleMobileNavClick} className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-muted">
-                            <Settings className="h-5 w-5" />
-                            <span>{t('settings')}</span>
+                        <Link 
+                          href="#" 
+                          onClick={handleMobileNavClick} 
+                          className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-muted"
+                        >
+                          <Settings className="h-5 w-5" />
+                          <span>{t('settings')}</span>
                         </Link>
-                        <Link href="#" onClick={handleMobileNavClick} className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-muted">
-                            <HelpCircle className="h-5 w-5" />
-                            <span>{t('help')}</span>
+                        <Link 
+                          href="#" 
+                          onClick={handleMobileNavClick} 
+                          className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-muted"
+                        >
+                          <HelpCircle className="h-5 w-5" />
+                          <span>{t('help')}</span>
                         </Link>
-                        <a onClick={() => { logout(); handleMobileNavClick(); }} className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-muted cursor-pointer">
-                            <LogOut className="h-5 w-5" />
-                            <span>{t('logout')}</span>
-                        </a>
+                        <button 
+                          onClick={() => { logout(); handleMobileNavClick(); }} 
+                          className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-muted cursor-pointer w-full text-left"
+                        >
+                          <LogOut className="h-5 w-5" />
+                          <span>{t('logout')}</span>
+                        </button>
                     </div>
                 ) : (
-                    <Link href="/login" legacyBehavior passHref>
-                        <a onClick={handleMobileNavClick}>
-                            <Button className="w-full">
-                                <LogIn className="h-5 w-5 mr-2" />
-                                {t("login")}
-                            </Button>
-                        </a>
+                    <Link href="/login" onClick={handleMobileNavClick}>
+                      <Button className="w-full">
+                        <LogIn className="h-5 w-5 mr-2" />
+                        {t("login")}
+                      </Button>
                     </Link>
                 )}
               </div>
