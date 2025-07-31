@@ -132,17 +132,16 @@ export function WeatherCard() {
 
   if (loading) {
     return (
-      <Card className="modern-card-tall">
+      <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <div className="spinner w-5 h-5"></div>
+          <CardTitle className="text-lg font-medium text-foreground dark:text-custom-white font-['Inter']">
             Loading Weather...
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-4 bg-muted rounded animate-pulse"></div>
+              <div key={i} className="h-4 bg-custom-light dark:bg-gray-700 rounded animate-pulse"></div>
             ))}
           </div>
         </CardContent>
@@ -152,15 +151,14 @@ export function WeatherCard() {
 
   if (!weather) {
     return (
-      <Card className="modern-card-tall">
+      <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
-            <CloudSun className="w-5 h-5" />
+          <CardTitle className="text-lg font-medium text-custom-primary dark:text-custom-primary font-['Inter']">
             Weather Unavailable
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Unable to fetch weather data. Please check your connection.</p>
+          <p className="text-muted-foreground dark:text-custom-secondary font-['Inter']">Unable to fetch weather data. Please check your connection.</p>
         </CardContent>
       </Card>
     );
@@ -175,96 +173,73 @@ export function WeatherCard() {
   );
 
   return (
-    <Card className="modern-card-tall hover-lift">
+    <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
       <CardHeader className="pb-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-3 text-lg text-gradient">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center shadow-lg">
-                <IconComponent className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-float" />
-              </div>
-              Current Weather
-            </CardTitle>
-            <p className="text-sm text-enhanced mt-2">{location}</p>
-          </div>
-          <Badge className={`${fishingCondition.color} text-white px-3 py-1 rounded-full shadow-md`}>
-            {fishingCondition.label} Fishing
-          </Badge>
-        </div>
+        <CardTitle className="text-lg font-medium text-foreground dark:text-custom-white font-['Inter']">
+          Current Weather
+        </CardTitle>
+        <p className="text-sm text-muted-foreground dark:text-custom-secondary font-['Inter']">{location}</p>
       </CardHeader>
       
-      <CardContent className="space-y-8">
+      <CardContent className="space-y-4">
         {/* Main Temperature Display */}
-        <div className="text-center py-6 glass-card-sm rounded-2xl">
-          <div className="text-5xl font-bold text-gradient mb-3">
+        <div className="text-center py-4 bg-custom-light dark:bg-gray-800 rounded-lg border border-custom-secondary/10">
+          <div className="text-3xl font-semibold text-foreground dark:text-custom-white mb-2 font-['Inter']">
             {Math.round(weather.current.temperature_2m)}°C
           </div>
-          <p className="text-foreground font-medium">{currentWeather.label}</p>
-          <p className="text-sm text-enhanced mt-2">{currentWeather.description}</p>
-          <p className="text-xs text-enhanced mt-3">
+          <p className="text-foreground dark:text-custom-white font-medium font-['Inter']">{currentWeather.label}</p>
+          <p className="text-sm text-muted-foreground dark:text-custom-secondary mt-1 font-['Inter']">{currentWeather.description}</p>
+          <p className="text-xs text-muted-foreground dark:text-custom-secondary mt-2 font-['Inter']">
             Feels like {Math.round(weather.current.apparent_temperature)}°C
           </p>
         </div>
 
+        {/* Fishing Condition Badge */}
+        <div className="text-center">
+          <Badge className={`${fishingCondition.color} text-custom-white px-3 py-1 rounded-lg font-['Inter']`}>
+            {fishingCondition.label} Fishing
+          </Badge>
+        </div>
+
         {/* Weather Metrics Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="weather-metric">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center mx-auto mb-3">
-              <Droplets className="w-4 h-4 text-blue-500" />
-            </div>
-            <div className="weather-metric-value">{weather.current.relative_humidity_2m}%</div>
-            <div className="weather-metric-label">Humidity</div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="text-center p-3 bg-custom-light dark:bg-gray-800 rounded-lg border border-custom-secondary/10">
+            <div className="text-lg font-medium text-foreground dark:text-custom-white font-['Inter']">{weather.current.relative_humidity_2m}%</div>
+            <div className="text-xs text-muted-foreground dark:text-custom-secondary font-['Inter']">Humidity</div>
           </div>
           
-          <div className="weather-metric">
-            <div className="w-8 h-8 rounded-lg bg-gray-500/20 flex items-center justify-center mx-auto mb-3">
-              <Wind className="w-4 h-4 text-gray-500" />
-            </div>
-            <div className="weather-metric-value">
-              {Math.round(weather.current.wind_speed_10m)} km/h
-            </div>
-            <div className="weather-metric-label">
-              Wind {getWindDirection(weather.current.wind_direction_10m)}
-            </div>
+          <div className="text-center p-3 bg-custom-light dark:bg-gray-800 rounded-lg border border-custom-secondary/10">
+            <div className="text-lg font-medium text-foreground dark:text-custom-white font-['Inter']">{Math.round(weather.current.wind_speed_10m)} km/h</div>
+            <div className="text-xs text-muted-foreground dark:text-custom-secondary font-['Inter']">Wind Speed</div>
           </div>
           
-          <div className="weather-metric">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center mx-auto mb-3">
-              <Gauge className="w-4 h-4 text-purple-500" />
-            </div>
-            <div className="weather-metric-value">
-              {Math.round(weather.current.pressure_msl)} hPa
-            </div>
-            <div className="weather-metric-label">Pressure</div>
+          <div className="text-center p-3 bg-custom-light dark:bg-gray-800 rounded-lg border border-custom-secondary/10">
+            <div className="text-lg font-medium text-foreground dark:text-custom-white font-['Inter']">{getWindDirection(weather.current.wind_direction_10m)}</div>
+            <div className="text-xs text-muted-foreground dark:text-custom-secondary font-['Inter']">Wind Direction</div>
           </div>
           
-          <div className="weather-metric">
-            <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center mx-auto mb-3">
-              <Eye className="w-4 h-4 text-green-500" />
-            </div>
-            <div className="weather-metric-value">
-              {weather.current.visibility ? `${(weather.current.visibility / 1000).toFixed(1)} km` : 'N/A'}
-            </div>
-            <div className="weather-metric-label">Visibility</div>
+          <div className="text-center p-3 bg-custom-light dark:bg-gray-800 rounded-lg border border-custom-secondary/10">
+            <div className="text-lg font-medium text-foreground dark:text-custom-white font-['Inter']">{weather.current.cloud_cover}%</div>
+            <div className="text-xs text-muted-foreground dark:text-custom-secondary font-['Inter']">Cloud Cover</div>
           </div>
         </div>
 
         {/* Today's Forecast */}
         <div>
-          <h4 className="font-semibold text-foreground mb-4">Today's Range</h4>
-          <div className="flex items-center justify-between glass-card-sm p-4 rounded-xl">
+          <h4 className="font-semibold text-foreground dark:text-custom-white mb-3 font-['Inter']">Today's Range</h4>
+          <div className="flex items-center justify-between bg-custom-light dark:bg-gray-800 p-4 rounded-lg border border-custom-secondary/10">
             <div className="text-center">
-              <div className="text-sm text-enhanced">Low</div>
-              <div className="font-semibold text-foreground">
+              <div className="text-sm text-muted-foreground dark:text-custom-secondary font-['Inter']">Low</div>
+              <div className="font-semibold text-foreground dark:text-custom-white font-['Inter']">
                 {Math.round(weather.daily.temperature_2m_min[0])}°
               </div>
             </div>
-            <div className="flex-1 mx-6">
-              <div className="h-3 bg-gradient-to-r from-blue-400 via-yellow-400 to-red-400 rounded-full shadow-md"></div>
+            <div className="flex-1 mx-4">
+              <div className="h-2 bg-gradient-to-r from-custom-secondary via-custom-primary to-custom-primary rounded-full"></div>
             </div>
             <div className="text-center">
-              <div className="text-sm text-enhanced">High</div>
-              <div className="font-semibold text-foreground">
+              <div className="text-sm text-muted-foreground dark:text-custom-secondary font-['Inter']">High</div>
+              <div className="font-semibold text-foreground dark:text-custom-white font-['Inter']">
                 {Math.round(weather.daily.temperature_2m_max[0])}°
               </div>
             </div>
@@ -272,18 +247,18 @@ export function WeatherCard() {
         </div>
 
         {/* Additional Info */}
-        <div className="space-y-3 text-sm glass-card-sm p-4 rounded-xl">
+        <div className="space-y-2 text-sm bg-custom-light dark:bg-gray-800 p-4 rounded-lg border border-custom-secondary/10">
           <div className="flex justify-between">
-            <span className="text-enhanced">Cloud Cover:</span>
-            <span className="font-medium">{weather.current.cloud_cover}%</span>
+            <span className="text-muted-foreground dark:text-custom-secondary font-['Inter']">UV Index:</span>
+            <span className="font-medium text-foreground dark:text-custom-white font-['Inter']">{weather.daily.uv_index_max[0] || 'N/A'}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-enhanced">UV Index:</span>
-            <span className="font-medium">{weather.daily.uv_index_max[0] || 'N/A'}</span>
+            <span className="text-muted-foreground dark:text-custom-secondary font-['Inter']">Rain Chance:</span>
+            <span className="font-medium text-foreground dark:text-custom-white font-['Inter']">{weather.daily.precipitation_probability_max[0] || 0}%</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-enhanced">Rain Chance:</span>
-            <span className="font-medium">{weather.daily.precipitation_probability_max[0] || 0}%</span>
+            <span className="text-muted-foreground dark:text-custom-secondary font-['Inter']">Pressure:</span>
+            <span className="font-medium text-foreground dark:text-custom-white font-['Inter']">{Math.round(weather.current.pressure_msl)} hPa</span>
           </div>
         </div>
       </CardContent>

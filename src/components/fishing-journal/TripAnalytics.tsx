@@ -28,65 +28,60 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
     <div className="space-y-6">
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="glass-effect">
+        <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Trips</p>
-                <p className="text-2xl font-bold">{analytics.totalTrips}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-claude">Total Trips</p>
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 font-claude">{analytics.totalTrips}</p>
               </div>
-              <Calendar className="w-8 h-8 text-blue-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="glass-effect">
+        <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Catches</p>
-                <p className="text-2xl font-bold">{analytics.totalCatches}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-claude">Total Catches</p>
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 font-claude">{analytics.totalCatches}</p>
               </div>
-              <Fish className="w-8 h-8 text-green-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="glass-effect">
+        <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Species Caught</p>
-                <p className="text-2xl font-bold">{analytics.totalSpecies}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-claude">Species Caught</p>
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 font-claude">{analytics.totalSpecies}</p>
               </div>
-              <Trophy className="w-8 h-8 text-yellow-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="glass-effect">
+        <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Average Success</p>
-                <p className={`text-2xl font-bold ${getSuccessColor(analytics.averageSuccessScore)}`}>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-claude">Average Success</p>
+                <p className={`text-2xl font-bold font-claude ${getSuccessColor(analytics.averageSuccessScore)}`}>
                   {analytics.averageSuccessScore.toFixed(1)}/10
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-claude">
                   {getSuccessLevel(analytics.averageSuccessScore)}
                 </p>
               </div>
-              <Target className="w-8 h-8 text-purple-500" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Favorite Locations */}
-      <Card className="glass-effect">
+      <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
+          <CardTitle className="font-claude text-gray-800 dark:text-gray-200">
             Top Fishing Spots
           </CardTitle>
         </CardHeader>
@@ -94,26 +89,26 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
           {analytics.favoriteLocations.length > 0 ? (
             <div className="space-y-4">
               {analytics.favoriteLocations.map((location, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3 bg-custom-light/50 dark:bg-gray-800 rounded-lg">
                   <div className="flex-1">
-                    <h4 className="font-semibold">{location.name}</h4>
+                    <h4 className="font-semibold font-claude text-gray-800 dark:text-gray-200">{location.name}</h4>
                     <div className="flex items-center gap-4 mt-1">
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
                         {location.visitCount} visit{location.visitCount !== 1 ? 's' : ''}
                       </Badge>
                       <Badge variant="outline">
                         {location.totalCatches} catches
                       </Badge>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400 font-claude">
                         Best: {location.bestSeason}
                       </span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`font-semibold ${getSuccessColor(location.averageSuccess)}`}>
+                    <div className={`font-semibold font-claude ${getSuccessColor(location.averageSuccess)}`}>
                       {location.averageSuccess.toFixed(1)}/10
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 font-claude">
                       {getSuccessLevel(location.averageSuccess)}
                     </div>
                   </div>
@@ -121,7 +116,7 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-8">
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8 font-claude">
               No location data available yet. Log more trips to see your favorite spots!
             </p>
           )}
@@ -129,10 +124,9 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
       </Card>
 
       {/* Monthly Performance */}
-      <Card className="glass-effect">
+      <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
+          <CardTitle className="font-claude text-gray-800 dark:text-gray-200">
             Monthly Performance
           </CardTitle>
         </CardHeader>
@@ -142,17 +136,17 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
               {analytics.monthlyStats.slice(0, 6).map((month, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium">
+                    <span className="font-medium font-claude text-gray-800 dark:text-gray-200">
                       {month.month} {month.year}
                     </span>
                     <div className="flex items-center gap-4">
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
                         {month.trips} trips
                       </Badge>
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
                         {month.catches} catches
                       </Badge>
-                      <span className={`font-semibold ${getSuccessColor(month.successScore)}`}>
+                      <span className={`font-semibold font-claude ${getSuccessColor(month.successScore)}`}>
                         {month.successScore.toFixed(1)}/10
                       </span>
                     </div>
@@ -164,7 +158,7 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
                   {month.topSpecies.length > 0 && (
                     <div className="flex gap-1">
                       {month.topSpecies.map((species, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">
+                        <Badge key={i} variant="secondary" className="text-xs font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
                           {species}
                         </Badge>
                       ))}
@@ -174,7 +168,7 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-8">
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8 font-claude">
               Not enough data for monthly analysis. Keep logging your trips!
             </p>
           )}
@@ -183,19 +177,18 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
 
       {/* Improvement Suggestions */}
       {analytics.improvements.length > 0 && (
-        <Card className="glass-effect">
+        <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
+            <CardTitle className="font-claude text-gray-800 dark:text-gray-200">
               Improvement Suggestions
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {analytics.improvements.map((improvement, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
-                  <p className="text-sm">{improvement}</p>
+                <div key={index} className="flex items-start gap-3 p-3 bg-custom-light/50 dark:bg-gray-800 rounded-lg">
+                  <div className="w-2 h-2 bg-custom-primary rounded-full mt-2 flex-shrink-0" />
+                  <p className="text-sm font-claude text-gray-800 dark:text-gray-200">{improvement}</p>
                 </div>
               ))}
             </div>
@@ -204,33 +197,32 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
       )}
 
       {/* Catch Rate Trends */}
-      <Card className="glass-effect">
+      <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Fish className="w-5 h-5" />
+          <CardTitle className="font-claude text-gray-800 dark:text-gray-200">
             Fishing Insights
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-semibold mb-3">Success Metrics</h4>
+              <h4 className="font-semibold mb-3 font-claude text-gray-800 dark:text-gray-200">Success Metrics</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span>Catches per trip:</span>
-                  <Badge variant="outline">
+                  <span className="font-claude text-gray-600 dark:text-gray-400">Catches per trip:</span>
+                  <Badge variant="outline" className="font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
                     {(analytics.totalCatches / analytics.totalTrips).toFixed(1)}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span>Species diversity:</span>
-                  <Badge variant="outline">
+                  <span className="font-claude text-gray-600 dark:text-gray-400">Species diversity:</span>
+                  <Badge variant="outline" className="font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
                     {((analytics.totalSpecies / analytics.totalCatches) * 100).toFixed(0)}%
                   </Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span>Location exploration:</span>
-                  <Badge variant="outline">
+                  <span className="font-claude text-gray-600 dark:text-gray-400">Location exploration:</span>
+                  <Badge variant="outline" className="font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
                     {analytics.favoriteLocations.length} spots
                   </Badge>
                 </div>
@@ -238,19 +230,19 @@ export function TripAnalytics({ analytics }: TripAnalyticsProps) {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-3">Recommendations</h4>
+              <h4 className="font-semibold mb-3 font-claude text-gray-800 dark:text-gray-200">Recommendations</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2" />
-                  <span>Try early morning or late evening for better results</span>
+                  <div className="w-1.5 h-1.5 bg-custom-primary rounded-full mt-2" />
+                  <span className="font-claude text-gray-600 dark:text-gray-400">Try early morning or late evening for better results</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2" />
-                  <span>Experiment with different baits and techniques</span>
+                  <div className="w-1.5 h-1.5 bg-custom-primary rounded-full mt-2" />
+                  <span className="font-claude text-gray-600 dark:text-gray-400">Experiment with different baits and techniques</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full mt-2" />
-                  <span>Keep detailed notes about successful patterns</span>
+                  <div className="w-1.5 h-1.5 bg-custom-primary rounded-full mt-2" />
+                  <span className="font-claude text-gray-600 dark:text-gray-400">Keep detailed notes about successful patterns</span>
                 </div>
               </div>
             </div>

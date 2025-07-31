@@ -465,11 +465,11 @@ const FishingAnalyticsCard = () => {
   const renderContent = () => {
     if (loading) {
       return (
-        <div className="flex items-center justify-center h-full">
+        <div className="flex items-center justify-center py-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-            <p className="text-lg font-semibold text-gray-700">Analyzing fishing conditions...</p>
-            <p className="text-sm text-gray-500">Please wait while we crunch the numbers.</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-custom-primary mx-auto mb-3"></div>
+            <p className="text-sm font-medium text-foreground dark:text-custom-white font-['Inter']">Analyzing fishing conditions...</p>
+            <p className="text-xs text-muted-foreground dark:text-custom-secondary font-['Inter']">Please wait while we crunch the numbers.</p>
           </div>
         </div>
       );
@@ -477,134 +477,76 @@ const FishingAnalyticsCard = () => {
 
     if (error || !analytics) {
       return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center p-4 bg-red-50 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-700">
-            <Activity className="w-12 h-12 mb-4 mx-auto text-red-500" />
-            <p className="font-bold text-red-700">Analytics Error</p>
-            <p className="text-sm text-red-600">{error || 'Could not load analytics.'}</p>
+        <div className="flex items-center justify-center py-8">
+          <div className="text-center p-4 bg-custom-light dark:bg-gray-800 rounded-lg border border-custom-secondary/20">
+            <p className="font-medium text-custom-primary font-['Inter']">Analytics Error</p>
+            <p className="text-sm text-muted-foreground dark:text-custom-secondary font-['Inter']">{error || 'Could not load analytics.'}</p>
           </div>
         </div>
       );
     }
 
     const { fishingScore, recommendations, solarData, tideData, moonPhase, bestFishingTimes, fishingConditions, targetSpecies } = analytics;
-    const scoreColor = fishingScore.overall >= 80 ? 'text-green-500' : fishingScore.overall >= 60 ? 'text-yellow-500' : 'text-red-500';
+    const scoreColor = fishingScore.overall >= 80 ? 'text-custom-primary' : fishingScore.overall >= 60 ? 'text-custom-secondary' : 'text-custom-primary';
 
     return (
-      <div className="p-4 space-y-4">
+      <div className="space-y-4">
         {/* Overall Score */}
-        <div className="text-center">
-          <div className={`relative w-32 h-32 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 shadow-inner`}>
-            <div className="absolute inset-0 rounded-full border-4 border-gray-200"></div>
-            <div 
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: `conic-gradient(${scoreColor.replace('text-', '').replace('-500', '')} ${fishingScore.overall * 3.6}deg, #e5e7eb 0deg)`
-              }}
-            ></div>
-            <div className="relative z-10 bg-white dark:bg-gray-800 w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-md">
-              <p className={`text-4xl font-bold ${scoreColor}`}>{fishingScore.overall}</p>
-              <p className="text-xs text-gray-500">{t("fishing_score")}</p>
+        <div className="text-center p-4 bg-custom-light dark:bg-gray-800 rounded-lg border border-custom-secondary/10">
+          <div className="text-3xl font-semibold text-foreground dark:text-custom-white mb-1 font-['Inter']">{fishingScore.overall}</div>
+          <p className="text-sm text-muted-foreground dark:text-custom-secondary font-['Inter']">Fishing Score</p>
+          <p className={`text-xs ${scoreColor} font-medium mt-1 font-['Inter']`}>
+            {fishingScore.overall >= 80 ? 'Excellent' : fishingScore.overall >= 60 ? 'Good' : 'Fair'}
+          </p>
+        </div>
+
+        {/* Best Fishing Times */}
+        <div className="bg-custom-light dark:bg-gray-800 p-3 rounded-lg border border-custom-secondary/10">
+          <h4 className="text-sm font-medium text-foreground dark:text-custom-white mb-2 font-['Inter']">
+            Best Fishing Times
+          </h4>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <p className="font-medium text-foreground dark:text-custom-white font-['Inter']">Morning</p>
+              <p className="text-muted-foreground dark:text-custom-secondary font-['Inter']">{bestFishingTimes.morning.start} - {bestFishingTimes.morning.end}</p>
+            </div>
+            <div>
+              <p className="font-medium text-foreground dark:text-custom-white font-['Inter']">Evening</p>
+              <p className="text-muted-foreground dark:text-custom-secondary font-['Inter']">{bestFishingTimes.evening.start} - {bestFishingTimes.evening.end}</p>
             </div>
           </div>
         </div>
 
-        {/* Best Fishing Times */}
-        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-700">
-          <h4 className="text-sm font-bold text-blue-800 mb-2 flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            {t("best_fishing_times")}
-          </h4>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <p className="font-medium text-blue-700">{t("morning")}</p>
-              <p className="text-blue-600">{bestFishingTimes.morning.start} - {bestFishingTimes.morning.end}</p>
-              <Badge variant="outline" className="text-xs">{t(bestFishingTimes.morning.quality)}</Badge>
-            </div>
-            <div>
-              <p className="font-medium text-blue-700">{t("evening")}</p>
-              <p className="text-blue-600">{bestFishingTimes.evening.start} - {bestFishingTimes.evening.end}</p>
-              <Badge variant="outline" className="text-xs">{t(bestFishingTimes.evening.quality)}</Badge>
-            </div>
+        {/* Moon Phase */}
+        <div className="bg-custom-light dark:bg-gray-800 p-3 rounded-lg border border-custom-secondary/10">
+          <h4 className="text-sm font-medium text-foreground dark:text-custom-white mb-2 font-['Inter']">Moon Phase</h4>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground dark:text-custom-secondary font-['Inter']">{moonPhase.phase}</span>
+            <span className="text-xs font-medium text-foreground dark:text-custom-white font-['Inter']">{Math.round(moonPhase.illumination)}%</span>
           </div>
         </div>
 
         {/* Target Species */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-3 rounded-lg border border-green-100 dark:border-green-700">
-          <h4 className="text-sm font-bold text-green-800 mb-2 flex items-center gap-2">
-            <Fish className="w-4 h-4" />
-            {t("target_species")}
-          </h4>
-          <div className="space-y-2">
-            {targetSpecies.map((species, index) => (
-              <div key={index} className="flex justify-between items-center text-xs">
-                <div>
-                  <p className="font-medium text-green-700">{species.name}</p>
-                  <p className="text-green-600">{species.bestTime} • {species.suggestedBait.join(', ')}</p>
+        {targetSpecies.length > 0 && (
+          <div className="bg-custom-light dark:bg-gray-800 p-3 rounded-lg border border-custom-secondary/10">
+            <h4 className="text-sm font-medium text-foreground dark:text-custom-white mb-2 font-['Inter']">Target Species</h4>
+            <div className="space-y-1">
+              {targetSpecies.slice(0, 3).map((species, i) => (
+                <div key={i} className="flex justify-between items-center text-xs">
+                  <span className="text-foreground dark:text-custom-white font-['Inter']">{species.name}</span>
+                  <span className="text-custom-primary font-medium font-['Inter']">{species.probability}%</span>
                 </div>
-                <Badge variant="secondary" className="text-xs">{species.probability}%</Badge>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Fishing Conditions */}
-        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 p-3 rounded-lg border border-purple-100 dark:border-purple-700">
-          <h4 className="text-sm font-bold text-purple-800 mb-2 flex items-center gap-2">
-            <Gauge className="w-4 h-4" />
-            Conditions
-          </h4>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="flex items-center gap-2">
-              <Thermometer className="w-3 h-3 text-purple-600" />
-              <span className="text-purple-700">{fishingConditions.waterTemperature}°C</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Eye className="w-3 h-3 text-purple-600" />
-              <span className="text-purple-700">{fishingConditions.visibility}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Wind className="w-3 h-3 text-purple-600" />
-              <span className="text-purple-700">{t(fishingConditions.windCondition)}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Gauge className="w-3 h-3 text-purple-600" />
-              <span className="text-purple-700">{fishingConditions.barometricPressure} hPa</span>
+              ))}
             </div>
           </div>
-        </div>
-
-        {/* Key Metrics Grid */}
-        <div className="grid grid-cols-3 gap-3 text-center">
-          {/* Solar */}
-          <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-2 rounded-lg border border-yellow-100 dark:border-yellow-700">
-            <Sun className="w-5 h-5 mx-auto text-yellow-600 mb-1" />
-            <p className="text-xs font-medium text-yellow-800">{t("sunrise")}</p>
-            <p className="text-sm font-bold text-yellow-900">{solarData.sunrise}</p>
-          </div>
-          {/* Tides */}
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-2 rounded-lg border border-blue-100 dark:border-blue-700">
-            <Waves className="w-5 h-5 mx-auto text-blue-600 mb-1" />
-            <p className="text-xs font-medium text-blue-800">{t("high_tide")}</p>
-            <p className="text-sm font-bold text-blue-900">{tideData.highTide}</p>
-          </div>
-          {/* Moon */}
-          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-2 rounded-lg border border-indigo-100 dark:border-indigo-700">
-            <Moon className="w-5 h-5 mx-auto text-indigo-600 mb-1" />
-            <p className="text-xs font-medium text-indigo-800">{t("moon_phase")}</p>
-            <p className="text-sm font-bold text-indigo-900">{moonPhase.phase}</p>
-          </div>
-        </div>
+        )}
 
         {/* Recommendations */}
-        <div className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-3 rounded-lg border border-orange-100 dark:border-orange-700">
-          <h4 className="text-sm font-bold text-orange-800 mb-2">Recommendations</h4>
-          <ul className="space-y-1 text-xs text-orange-700">
+        <div className="bg-custom-light dark:bg-gray-800 p-3 rounded-lg border border-custom-secondary/10">
+          <h4 className="text-sm font-medium text-foreground dark:text-custom-white mb-2 font-['Inter']">Recommendations</h4>
+          <ul className="space-y-1 text-xs text-muted-foreground dark:text-custom-secondary">
             {recommendations.slice(0, 3).map((rec, i) => (
-              <li key={i} className="flex items-center gap-2">
-                <Compass className="w-3 h-3 flex-shrink-0" />
-                <span>{rec}</span>
-              </li>
+              <li key={i} className="font-['Inter']">• {rec}</li>
             ))}
           </ul>
         </div>
@@ -613,20 +555,14 @@ const FishingAnalyticsCard = () => {
   };
 
   return (
-    <Card className="modern-card animate-fade-in hover-lift overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 dark:from-green-700 dark:via-emerald-700 dark:to-teal-700 text-white p-6 rounded-t-2xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
-            <Activity className="w-6 h-6 text-white animate-float" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold">{t("fishing_analytics_title")}</h3>
-            <p className="text-green-100 text-sm mt-1">Your AI-powered fishing forecast</p>
-          </div>
-        </div>
+    <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-medium text-foreground dark:text-custom-white font-['Inter']">
+          Fishing Analytics
+        </CardTitle>
+        <p className="text-sm text-muted-foreground dark:text-custom-secondary font-['Inter']">Your AI-powered fishing forecast</p>
       </CardHeader>
-      <CardContent className="p-0 h-full">
+      <CardContent className="p-4">
         {renderContent()}
       </CardContent>
     </Card>

@@ -193,10 +193,10 @@ export function FishingJournal() {
 
   if (isLoading) {
     return (
-      <Card className="glass-effect">
+      <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
         <CardContent className="p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>Loading your fishing journal...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-custom-primary mx-auto mb-4"></div>
+          <p className="font-claude text-gray-800 dark:text-gray-200">Loading your fishing journal...</p>
         </CardContent>
       </Card>
     );
@@ -205,15 +205,13 @@ export function FishingJournal() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="glass-effect border-blue-200 dark:border-blue-700">
+      <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Fish className="w-6 h-6 text-blue-600" />
+            <CardTitle className="font-claude text-2xl font-semibold text-gray-800 dark:text-gray-200">
               Fishing Journal
             </CardTitle>
-            <Button onClick={() => setShowTripForm(true)} className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-4 h-4 mr-2" />
+            <Button onClick={() => setShowTripForm(true)} className="bg-custom-primary hover:bg-red-700 text-white font-claude">
               New Trip
             </Button>
           </div>
@@ -225,28 +223,24 @@ export function FishingJournal() {
       </Card>
 
       <Tabs defaultValue="trips" className="space-y-6">
-        <TabsList className="glass-effect">
-          <TabsTrigger value="trips" className="flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
+        <TabsList className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
+          <TabsTrigger value="trips" className="font-claude text-gray-800 dark:text-gray-200">
             My Trips ({trips.length})
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" />
+          <TabsTrigger value="analytics" className="font-claude text-gray-800 dark:text-gray-200">
             Analytics
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="trips" className="space-y-4">
           {trips.length === 0 ? (
-            <Card className="glass-effect">
+            <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
               <CardContent className="p-8 text-center">
-                <Fish className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-xl font-semibold mb-2">No trips logged yet</h3>
-                <p className="text-gray-600 mb-4">
+                <h3 className="text-xl font-semibold mb-2 font-claude text-gray-800 dark:text-gray-200">No trips logged yet</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4 font-claude">
                   Start building your fishing journal by logging your first trip!
                 </p>
-                <Button onClick={() => setShowTripForm(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button onClick={() => setShowTripForm(true)} className="bg-custom-primary hover:bg-red-700 text-white font-claude">
                   Log Your First Trip
                 </Button>
               </CardContent>
@@ -254,40 +248,36 @@ export function FishingJournal() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {trips.map((trip) => (
-                <Card key={trip.id} className="glass-effect hover:shadow-lg transition-shadow cursor-pointer"
+                <Card key={trip.id} className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900 hover:shadow-lg transition-shadow cursor-pointer"
                       onClick={() => setSelectedTrip(trip)}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
                         {new Date(trip.date).toLocaleDateString()}
                       </Badge>
-                      <Badge variant={trip.successScore >= 7 ? "default" : trip.successScore >= 4 ? "secondary" : "destructive"}>
+                      <Badge variant={trip.successScore >= 7 ? "default" : trip.successScore >= 4 ? "secondary" : "destructive"} className="font-claude">
                         {trip.successScore}/10
                       </Badge>
                     </div>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
+                    <CardTitle className="text-lg font-claude text-gray-800 dark:text-gray-200">
                       {trip.location.name}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Fish className="w-4 h-4" />
+                      <div className="text-sm font-claude text-gray-600 dark:text-gray-400">
                         <span>{trip.catches.reduce((sum, c) => sum + c.quantity, 0)} catches</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="w-4 h-4" />
+                      <div className="text-sm font-claude text-gray-600 dark:text-gray-400">
                         <span>{Math.round(trip.duration / 60)} hours</span>
                       </div>
                       {trip.photos.length > 0 && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Camera className="w-4 h-4" />
+                        <div className="text-sm font-claude text-gray-600 dark:text-gray-400">
                           <span>{trip.photos.length} photos</span>
                         </div>
                       )}
                       {trip.notes && (
-                        <p className="text-sm text-gray-600 truncate">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 truncate font-claude">
                           {trip.notes}
                         </p>
                       )}
@@ -303,11 +293,10 @@ export function FishingJournal() {
           {analytics ? (
             <TripAnalytics analytics={analytics} />
           ) : (
-            <Card className="glass-effect">
+            <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
               <CardContent className="p-8 text-center">
-                <TrendingUp className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-xl font-semibold mb-2">No data yet</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold mb-2 font-claude text-gray-800 dark:text-gray-200">No data yet</h3>
+                <p className="text-gray-600 dark:text-gray-400 font-claude">
                   Log a few trips to see your fishing analytics and insights.
                 </p>
               </CardContent>
@@ -327,13 +316,13 @@ export function FishingJournal() {
       {/* Trip Detail Modal */}
       {selectedTrip && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <Card className="glass-effect max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <CardHeader>
-              <CardTitle>Trip Details</CardTitle>
+              <CardTitle className="font-claude text-gray-800 dark:text-gray-200">Trip Details</CardTitle>
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="absolute top-4 right-4"
+                className="absolute top-4 right-4 font-claude text-gray-800 dark:text-gray-200"
                 onClick={() => setSelectedTrip(null)}
               >
                 ×
@@ -341,7 +330,7 @@ export function FishingJournal() {
             </CardHeader>
             <CardContent>
               {/* Trip details would go here */}
-              <p>Detailed trip view coming soon...</p>
+              <p className="font-claude text-gray-600 dark:text-gray-400">Detailed trip view coming soon...</p>
             </CardContent>
           </Card>
         </div>

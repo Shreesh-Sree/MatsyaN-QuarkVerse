@@ -206,54 +206,56 @@ export function TripForm({ onSave, onClose }: TripFormProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <Card className="glass-effect max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Log Fishing Trip</CardTitle>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <CardTitle className="font-claude text-gray-800 dark:text-gray-200">Log Fishing Trip</CardTitle>
+            <Button variant="ghost" size="sm" onClick={onClose} className="font-claude text-gray-800 dark:text-gray-200">
               <X className="w-4 h-4" />
             </Button>
           </div>
           {/* Voice Controls for quick data entry */}
           <VoiceControls onTranscript={handleVoiceInput} />
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="date">Date</Label>
+              <Label htmlFor="date" className="font-claude text-gray-800 dark:text-gray-200">Date</Label>
               <Input
                 id="date"
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                className="font-claude"
               />
             </div>
             <div>
-              <Label htmlFor="startTime">Start Time</Label>
+              <Label htmlFor="startTime" className="font-claude text-gray-800 dark:text-gray-200">Start Time</Label>
               <Input
                 id="startTime"
                 type="time"
                 value={formData.startTime}
                 onChange={(e) => setFormData(prev => ({ ...prev, startTime: e.target.value }))}
+                className="font-claude"
               />
             </div>
             <div>
-              <Label htmlFor="endTime">End Time</Label>
+              <Label htmlFor="endTime" className="font-claude text-gray-800 dark:text-gray-200">End Time</Label>
               <Input
                 id="endTime"
                 type="time"
                 value={formData.endTime}
                 onChange={(e) => setFormData(prev => ({ ...prev, endTime: e.target.value }))}
+                className="font-claude"
               />
             </div>
           </div>
 
           {/* Location */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <MapPin className="w-5 h-5" />
+            <h3 className="text-lg font-semibold font-claude text-gray-800 dark:text-gray-200">
               Location
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
