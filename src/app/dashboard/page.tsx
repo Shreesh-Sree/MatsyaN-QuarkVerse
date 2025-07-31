@@ -1,6 +1,6 @@
 'use client';
 
-import { Fish, Map, Shield, Scale, Bot, Sun, Wind, Droplets, BarChart3, TrendingUp, Calendar, Clock, Target, Zap, Users, Activity, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useNetworkStatus } from '@/hooks/use-offline';
 import { useFishingLogs } from '@/hooks/use-fishing-logs';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -43,18 +44,18 @@ export default function Dashboard() {
   };
 
   const quickActions = [
-    { title: "Find Fishing Spots", href: "/map", icon: Map, color: "text-blue-500", bgColor: "bg-blue-500/10" },
-    { title: "Safety Guidelines", href: "/safety", icon: Shield, color: "text-green-500", bgColor: "bg-green-500/10" },
-    { title: "Fishing Regulations", href: "/laws", icon: Scale, color: "text-purple-500", bgColor: "bg-purple-500/10" },
-    { title: "AI Assistant", href: "/chat", icon: Bot, color: "text-indigo-500", bgColor: "bg-indigo-500/10" },
+    { title: "Find Fishing Spots", href: "/map", color: "text-blue-600", bgColor: "bg-blue-50" },
+    { title: "Safety Guidelines", href: "/safety", color: "text-green-600", bgColor: "bg-green-50" },
+    { title: "Fishing Regulations", href: "/laws", color: "text-purple-600", bgColor: "bg-purple-50" },
+    { title: "AI Assistant", href: "/chat", color: "text-indigo-600", bgColor: "bg-indigo-50" },
   ];
 
   // Mock data for statistics
   const statsData = [
-    { label: "Total Catches", value: "127", icon: Fish, color: "text-blue-500", bgColor: "bg-blue-500/10", trend: "+12%" },
-    { label: "Fishing Hours", value: "89", icon: Clock, color: "text-green-500", bgColor: "bg-green-500/10", trend: "+8%" },
-    { label: "Success Rate", value: "78%", icon: Target, color: "text-purple-500", bgColor: "bg-purple-500/10", trend: "+5%" },
-    { label: "Active Streak", value: "15", icon: Zap, color: "text-orange-500", bgColor: "bg-orange-500/10", trend: "+3" },
+    { label: "Total Catches", value: "127", color: "text-blue-600", bgColor: "bg-blue-50", trend: "+12%" },
+    { label: "Fishing Hours", value: "89", color: "text-green-600", bgColor: "bg-green-50", trend: "+8%" },
+    { label: "Success Rate", value: "78%", color: "text-purple-600", bgColor: "bg-purple-50", trend: "+5%" },
+    { label: "Active Streak", value: "15", color: "text-orange-600", bgColor: "bg-orange-50", trend: "+3" },
   ];
 
   const recentActivity = [
@@ -65,48 +66,43 @@ export default function Dashboard() {
   ];
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'success': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'warning': return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-      case 'error': return <XCircle className="w-4 h-4 text-red-500" />;
-      default: return <Activity className="w-4 h-4 text-blue-500" />;
-    }
+    return <Image src="/favicon.ico" alt="Status" width={16} height={16} className="w-4 h-4" />;
   };
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen w-full bg-background gradient-bg text-foreground">
-        <main className="container mx-auto px-4 py-8 space-y-8 animate-fade-in">
+      <div className="min-h-screen w-full bg-background text-foreground">
+        <main className="container mx-auto px-4 py-8 space-y-8">
           
           {/* Welcome Header */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 animate-fade-in-up">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-3">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
                 Welcome back, {user?.email?.split('@')[0] || 'Fisher'}!
               </h1>
-              <p className="text-enhanced text-lg">
+              <p className="text-muted-foreground text-lg">
                 Ready for another great day on the water? Here's your personalized dashboard.
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <Badge variant={networkStatus.online ? "default" : "destructive"} className="gap-2 px-4 py-2 rounded-full shadow-md">
+              <Badge variant={networkStatus.online ? "default" : "destructive"} className="gap-2 px-4 py-2 rounded-full">
                 <div className={`w-2 h-2 rounded-full ${networkStatus.online ? 'bg-green-400' : 'bg-red-400'}`}></div>
                 {networkStatus.online ? "Online" : "Offline"}
               </Badge>
-              <Badge variant="outline" className="gap-2 px-4 py-2 rounded-full glass-card-sm">
+              <Badge variant="outline" className="gap-2 px-4 py-2 rounded-full">
                 {syncStatus === 'syncing' ? "🔄 Syncing..." : isOnline ? "☁️ Synced" : "💾 Saved Locally"}
               </Badge>
             </div>
           </div>
 
           {/* Statistics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {statsData.map((stat, index) => (
               <Card key={stat.label} className="dashboard-card hover-lift">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className={`w-12 h-12 rounded-xl ${stat.bgColor} flex items-center justify-center`}>
-                      <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                      <Image src="/favicon.ico" alt="Icon" width={24} height={24} />
                     </div>
                     <div className="text-right">
                       <p className="text-xs text-muted-foreground font-medium">{stat.trend}</p>
@@ -128,17 +124,17 @@ export default function Dashboard() {
             <div className="lg:col-span-2 space-y-8">
               
               {/* Voice Assistant */}
-              <Card className="modern-card animate-fade-in-up hover-lift" style={{animationDelay: '0.2s'}}>
+              <Card className="modern-card hover-lift">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-xl text-gradient">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center">
-                      <Bot className="w-5 h-5 text-primary animate-pulse" />
+                  <CardTitle className="flex items-center gap-3 text-xl text-foreground">
+                    <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                      <Image src="/favicon.ico" alt="Voice Assistant" width={20} height={20} />
                     </div>
                     Voice Assistant
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-enhanced mb-6">
+                  <p className="text-muted-foreground mb-6">
                     Use voice commands to navigate. Try &quot;show weather&quot; or &quot;open journal&quot;.
                   </p>
                   <ErrorBoundary fallback={<p className="text-destructive">Voice assistant is currently unavailable.</p>}>
@@ -148,18 +144,18 @@ export default function Dashboard() {
               </Card>
 
               {/* Fishing Journal */}
-              <div data-section="journal" className="animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+              <div data-section="journal">
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Fishing Journal.</p></CardContent></Card>}>
                   <FishingJournal />
                 </ErrorBoundary>
               </div>
 
               {/* Recent Activity */}
-              <Card className="modern-card animate-fade-in-up hover-lift" style={{animationDelay: '0.4s'}}>
+              <Card className="modern-card hover-lift">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-xl text-gradient">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
-                      <Activity className="w-5 h-5 text-green-500" />
+                  <CardTitle className="flex items-center gap-3 text-xl text-foreground">
+                    <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+                      <Image src="/favicon.ico" alt="Activity" width={20} height={20} />
                     </div>
                     Recent Activity
                   </CardTitle>
@@ -167,7 +163,7 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     {recentActivity.map((activity, index) => (
-                      <div key={index} className="flex items-center gap-4 p-4 glass-card-sm rounded-xl">
+                      <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                         {getStatusIcon(activity.status)}
                         <div className="flex-1">
                           <p className="text-sm font-medium text-foreground">{activity.message}</p>
@@ -184,30 +180,30 @@ export default function Dashboard() {
             <div className="space-y-8">
               
               {/* Weather Card */}
-              <div data-section="weather" className="animate-fade-in-up" style={{animationDelay: '0.5s'}}>
+              <div data-section="weather">
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Weather Card.</p></CardContent></Card>}>
                   <WeatherCard />
                 </ErrorBoundary>
               </div>
 
               {/* Analytics Card */}
-              <div data-section="analytics" className="animate-fade-in-up" style={{animationDelay: '0.6s'}}>
+              <div data-section="analytics">
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Fishing Analytics.</p></CardContent></Card>}>
                   <FishingAnalyticsCard />
                 </ErrorBoundary>
               </div>
 
               {/* Quick Actions */}
-              <Card className="modern-card animate-fade-in-up hover-lift" style={{animationDelay: '0.7s'}}>
+              <Card className="modern-card hover-lift">
                 <CardHeader>
-                  <CardTitle className="text-xl text-gradient">Quick Actions</CardTitle>
+                  <CardTitle className="text-xl text-foreground">Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4">
                   {quickActions.map((action) => (
                     <Link href={action.href} key={action.title}>
                       <Button variant="outline" className="quick-action-btn">
                         <div className={`w-10 h-10 rounded-xl ${action.bgColor} flex items-center justify-center`}>
-                          <action.icon className={`w-5 h-5 ${action.color}`} />
+                          <Image src="/favicon.ico" alt="Action" width={20} height={20} />
                         </div>
                         <span className="text-xs font-medium leading-tight">{action.title}</span>
                       </Button>
@@ -217,9 +213,9 @@ export default function Dashboard() {
               </Card>
 
               {/* Progress Overview */}
-              <Card className="modern-card animate-fade-in-up hover-lift" style={{animationDelay: '0.8s'}}>
+              <Card className="modern-card hover-lift">
                 <CardHeader>
-                  <CardTitle className="text-xl text-gradient">Weekly Progress</CardTitle>
+                  <CardTitle className="text-xl text-foreground">Weekly Progress</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div>

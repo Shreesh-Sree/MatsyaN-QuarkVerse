@@ -2,25 +2,45 @@
 
 import GoogleMapCard from "@/components/GoogleMapCard";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { MapPin } from "lucide-react";
+import Image from "next/image";
 
 export default function MapPage() {
+  const features = [
+    { text: "Real-time Location", color: "text-blue-600" },
+    { text: "Fishing Spots", color: "text-green-600" },
+    { text: "Weather Data", color: "text-purple-600" },
+  ];
+
   return (
     <ProtectedRoute>
-      <div className="flex flex-col min-h-screen bg-background gradient-bg">
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
         <main className="flex-1 flex flex-col container mx-auto py-8 px-4">
-            <div className="text-center mb-8 animate-fade-in">
-                <div className="inline-block bg-primary/10 p-4 rounded-2xl mb-4">
-                    <MapPin className="w-10 h-10 text-primary" />
+            <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium mb-6">
+                  <Image src="/favicon.ico" alt="Map" width={16} height={16} />
+                  Interactive Mapping
                 </div>
-                <h1 className="text-4xl lg:text-5xl font-bold text-gradient mb-4 tracking-tight">
+                <div className="inline-block bg-blue-50 p-4 rounded-2xl mb-6 border border-blue-200">
+                    <Image src="/favicon.ico" alt="Map Icon" width={48} height={48} />
+                </div>
+                <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight">
                     Interactive Fishing Map
                 </h1>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                    Explore fishing spots, see real-time data, and track your location.
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+                    Explore fishing spots, see real-time data, and track your location with precision.
                 </p>
+                
+                {/* Feature badges */}
+                <div className="flex flex-wrap justify-center gap-3 mb-8">
+                  {features.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-50 border border-gray-200 text-sm">
+                      <Image src="/favicon.ico" alt="Feature" width={16} height={16} />
+                      <span className="text-foreground">{feature.text}</span>
+                    </div>
+                  ))}
+                </div>
             </div>
-            <div className="flex-1 h-[65vh] md:h-[70vh] modern-card p-2 md:p-4">
+            <div className="flex-1 h-[65vh] md:h-[70vh] modern-card p-2 md:p-4 hover-lift">
                 <GoogleMapCard />
             </div>
         </main>
