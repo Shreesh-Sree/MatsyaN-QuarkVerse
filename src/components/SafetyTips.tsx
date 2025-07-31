@@ -13,8 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { indianLanguages } from "@/utils/data";
-import { handleSafetyTips } from "@/app/actions";
-import type { TranslateSafetyPracticesOutput } from "@/types/types";
+import { geminiService, SafetyQuery } from "@/services/gemini";
 import { useLanguage } from "@/context/LanguageContext";
 
 const safetyTipsSchema = z.object({
@@ -24,7 +23,7 @@ const safetyTipsSchema = z.object({
 
 export function SafetyTips() {
   const { t } = useLanguage();
-  const [result, setResult] = useState<TranslateSafetyPracticesOutput | null>(null);
+  const [result, setResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -32,6 +31,7 @@ export function SafetyTips() {
     resolver: zodResolver(safetyTipsSchema),
     defaultValues: {
       query: "Safety measures for deep sea fishing during monsoon.",
+      targetLanguage: "en",
     },
   });
 
@@ -39,8 +39,23 @@ export function SafetyTips() {
     setIsLoading(true);
     setResult(null);
     try {
-      const response = await handleSafetyTips(values);
+      const safetyQuery: SafetyQuery = {
+        query: values.query,
+        weatherConditions: values.query.includes('monsoon') ? 'monsoon' : 
+                          values.query.includes('storm') ? 'stormy' : 
+                          values.query.includes('calm') ? 'calm' : undefined,
+        fishingType: values.query.includes('deep sea') ? 'deep sea' : 
+                    values.query.includes('coastal') ? 'coastal' : 
+                    values.query.includes('river') ? 'river' : undefined,
+      };
+      
+      const response = await geminiService.getSafetyGuidelines(safetyQuery);
       setResult(response);
+      
+      toast({
+        title: "Success",
+        description: "Safety guidelines retrieved successfully!",
+      });
     } catch (error) {
       console.error("Error fetching safety tips:", error);
       toast({
@@ -132,23 +147,15 @@ export function SafetyTips() {
           <div className="space-y-4 pt-4 border-t border-border/50">
             <div className="flex items-center gap-2 mb-4">
               <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
-              <h3 className="font-semibold text-foreground">{t('safety_guidelines_title')}</h3>
+              <h3 className="font-semibold text-foreground font-claude">Safety Guidelines</h3>
             </div>
             
             <div className="glass-card-sm p-4 space-y-4">
-              <div>
-                <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
-                  <Languages className="w-4 h-4" />
-                  {t('translated_query_title')}
-                </h4>
-                <p className="text-muted-foreground italic text-sm mb-4">"{result.translatedQuery}"</p>
-              </div>
-              
               <div className="border-t border-border/30 pt-4">
-                <h4 className="font-medium text-foreground mb-2">{t('safety_guidelines_title')}</h4>
+                <h4 className="font-medium text-foreground mb-2 font-claude">AI-Generated Safety Guidelines</h4>
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <div className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                    {result.safetyGuidelines}
+                  <div className="text-muted-foreground leading-relaxed whitespace-pre-wrap font-claude">
+                    {result}
                   </div>
                 </div>
               </div>

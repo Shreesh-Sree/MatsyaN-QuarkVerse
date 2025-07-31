@@ -109,7 +109,7 @@ export function Footer() {
             © 2025 FisherMate.AI. All rights reserved.
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            Made with <Heart className="w-4 h-4 text-custom-primary" /> for fishing enthusiasts
+            Made by Team QuarkVerse - AlgoQX.
           </div>
         </div>
       </div>

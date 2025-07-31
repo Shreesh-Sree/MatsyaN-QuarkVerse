@@ -14,6 +14,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import WeatherCard from '@/components/WeatherCard';
 import FishingAnalyticsCard from '@/components/FishingAnalyticsCard';
 import { FishingJournal } from '@/components/fishing-journal/FishingJournal';
+import { FishingDataInfographics } from '@/components/FishingDataInfographics';
 import GoogleVoiceAssistant from '@/components/GoogleVoiceAssistant';
 import Link from 'next/link';
 
@@ -108,6 +109,19 @@ export default function Dashboard() {
             
             {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-6">
+              
+              {/* Fishing Data Infographics */}
+              <div>
+                <ErrorBoundary fallback={
+                  <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
+                    <CardContent className="p-4">
+                      <p className="text-custom-primary font-claude">Could not load Fishing Data Analytics.</p>
+                    </CardContent>
+                  </Card>
+                }>
+                  <FishingDataInfographics />
+                </ErrorBoundary>
+              </div>
               
               {/* Voice Assistant */}
               <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">

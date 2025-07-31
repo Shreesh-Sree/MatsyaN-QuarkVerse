@@ -16,8 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { indianStates } from "@/utils/data";
-import { handleFishingLaws } from "@/app/actions";
-import type { SummarizeFishingLawsOutput } from "@/types/types";
+import { geminiService, FishingLawQuery } from "@/services/gemini";
 import { useLanguage } from "@/context/LanguageContext";
 
 const prebuiltQuestions = {
@@ -195,40 +194,31 @@ export function FishingLawsChat() {
     try {
       console.log("Submitting fishing laws query:", { state, query });
       
-      const response = await handleFishingLaws({
-        state: state,
+      const queryData: FishingLawQuery = {
         query: query,
-      });
+        state: state,
+        country: 'India'
+      };
+      
+      const response = await geminiService.getFishingLaws(queryData);
       
       console.log("Received response:", response);
       
-      if (response?.summary) {
-        setResult(response);
+      // Convert response to match existing interface
+      const formattedResult = {
+        summary: response,
+        state: state,
+        query: query,
+        timestamp: new Date().toISOString(),
+        audio: null // No audio generation with Gemini for now
+      };
+      
+      setResult(formattedResult);
         
-        // Handle audio setup with better error handling
-        if (response.audio) {
-          try {
-            const audio = new Audio(response.audio);
-            audio.setAttribute('playsinline', 'true');
-            audio.addEventListener('ended', () => setIsPlaying(false));
-            audio.addEventListener('error', (e) => {
-              console.warn("Audio failed to load:", e);
-              // Don't show error toast for audio issues, just continue without audio
-            });
-            audioRef.current = audio;
-          } catch (audioError) {
-            console.warn("Audio setup failed:", audioError);
-            // Continue without audio
-          }
-        }
-        
-        toast({
-          title: "Success",
-          description: "Fishing laws information retrieved successfully.",
-        });
-      } else {
-        throw new Error("No summary received from the server");
-      }
+      toast({
+        title: "Success",
+        description: "Fishing laws information retrieved successfully.",
+      });
     } catch (error) {
       console.error("Error fetching fishing laws:", error);
       toast({
