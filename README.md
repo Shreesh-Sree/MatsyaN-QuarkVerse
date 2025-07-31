@@ -1,7 +1,7 @@
 
 # FisherMate.AI - Your Intelligent Fishing Companion
 
-A comprehensive fishing application built with Next.js, featuring AI-powered assistance, real-time weather data, safety guidelines, and multi-language translation support.
+A comprehensive fishing application built with Next.js, featuring AI-powered assistance, real-time weather data, safety guidelines, and multi-language support for regional fisherfolk communities.
 
 ## 🌟 Features
 
@@ -14,25 +14,32 @@ A comprehensive fishing application built with Next.js, featuring AI-powered ass
 - **Voice Assistant** - Hands-free navigation and commands
 - **Emergency SOS** - Quick emergency alerts with location sharing
 
-### 🗣️ Multi-Language Translation
-- **Universal Translator** - Translate any text into 50+ languages
-- **Global Communication** - Connect with fishing communities worldwide
-- **Real-time Translation** - Powered by Google Translate API
-- **Copy to Clipboard** - Easy sharing of translated content
-- **Sample Fishing Texts** - Pre-loaded common fishing phrases
+### 🗣️ Multi-Language Support
+- **Regional Language Support** - Complete website translation in 12+ Indian languages
+- **Automatic Translation** - All content automatically translated based on user's language preference
+- **Cultural Adaptation** - Content adapted for local fishing communities
+- **Easy Language Switching** - Seamless language toggle in the header
+- **Comprehensive Coverage** - Every page, component, and feature translated
 
 ### Supported Languages
-- **Indian Languages**: Tamil, Hindi, Bengali, Telugu, Malayalam, Kannada, Gujarati, Punjabi, Marathi, Odia, Assamese, Urdu
-- **Asian Languages**: Nepali, Sinhala, Burmese, Thai, Vietnamese, Indonesian, Malay, Chinese, Japanese, Korean
-- **Middle Eastern**: Arabic, Persian, Turkish
-- **European**: Russian, German, French, Spanish, Portuguese, Italian, Dutch, Polish, Swedish, Danish, Norwegian, Finnish, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovak, Slovenian, Estonian, Latvian, Lithuanian, Maltese, Greek, Hebrew
+- **தமிழ் (Tamil)** - Complete translation for Tamil Nadu fisherfolk
+- **हिंदी (Hindi)** - Full Hindi support for North Indian communities
+- **বাংলা (Bengali)** - Bengali translation for West Bengal
+- **తెలుగు (Telugu)** - Telugu support for Andhra Pradesh & Telangana
+- **മലയാളം (Malayalam)** - Malayalam for Kerala fisherfolk
+- **ಕನ್ನಡ (Kannada)** - Kannada for Karnataka communities
+- **ગુજરાતી (Gujarati)** - Gujarati for Gujarat fisherfolk
+- **ਪੰਜਾਬੀ (Punjabi)** - Punjabi for Punjab communities
+- **मराठी (Marathi)** - Marathi for Maharashtra fisherfolk
+- **ଓଡ଼ିଆ (Odia)** - Odia for Odisha communities
+- **অসমীয়া (Assamese)** - Assamese for Assam fisherfolk
+- **اردو (Urdu)** - Urdu for Muslim fishing communities
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
-- Google Cloud account (optional, for translation API)
 
 ### Installation
 
@@ -56,9 +63,6 @@ A comprehensive fishing application built with Next.js, featuring AI-powered ass
    ```env
    # Required
    NEXT_PUBLIC_APP_URL=http://localhost:3000
-   
-   # Optional - Google Translate API (for enhanced translation)
-   GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key_here
    ```
 
 5. **Run the development server**
@@ -69,25 +73,21 @@ A comprehensive fishing application built with Next.js, featuring AI-powered ass
 6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 🔧 Translation Setup
+## 🌐 Language Features
 
-### Option 1: Free Translation (No API Key Required)
-The application includes a fallback translation system that works without any API keys. Users can translate text using the built-in Google Translate widget.
+### Automatic Translation
+- **Complete Website Translation** - Every page, component, and feature is translated
+- **Dynamic Language Switching** - Change language instantly from the header dropdown
+- **Regional Adaptation** - Content culturally adapted for local fishing communities
+- **No API Keys Required** - Built-in translation system works immediately
+- **Offline Support** - Translations work without internet connection
 
-### Option 2: Enhanced Translation (API Key Required)
-For better translation quality and reliability:
-
-1. **Get a Google Cloud API Key**:
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select existing one
-   - Enable the "Cloud Translation API"
-   - Create credentials (API Key)
-   - Add the API key to your `.env.local` file
-
-2. **Environment Variable**:
-   ```env
-   GOOGLE_TRANSLATE_API_KEY=your_api_key_here
-   ```
+### Language Selection
+Users can select their preferred language from the header dropdown menu:
+- Click the language icon in the top-right corner
+- Choose from 12+ regional languages
+- All content instantly translates to the selected language
+- Language preference is saved for future visits
 
 ## 🎨 Design System
 
@@ -109,18 +109,17 @@ The application uses a Firebase/Google-inspired color scheme:
 
 ## 📱 Features in Detail
 
-### Translation System
-- **50+ Languages**: Support for major world languages
-- **Real-time Translation**: Instant translation with Google Translate
-- **Copy to Clipboard**: Easy sharing of translated content
-- **Sample Texts**: Pre-loaded fishing-related phrases
-- **Language Detection**: Automatic source language detection
-- **Fallback System**: Works without API key using Google Translate widget
+### Multi-Language System
+- **12+ Regional Languages**: Complete support for major Indian languages
+- **Automatic Translation**: All website content translated instantly
+- **Cultural Adaptation**: Content adapted for local fishing practices
+- **Easy Switching**: One-click language change from header
+- **Persistent Settings**: Language preference saved locally
 
 ### Navigation
 - **Responsive Design**: Works on desktop, tablet, and mobile
 - **Dark/Light Mode**: Toggle between themes
-- **Language Switching**: English and Tamil support
+- **Language Switching**: 12+ regional languages supported
 - **PWA Support**: Installable as a progressive web app
 
 ## 🛠️ Technology Stack
@@ -128,7 +127,7 @@ The application uses a Firebase/Google-inspired color scheme:
 - **Framework**: Next.js 14 with App Router
 - **Styling**: Tailwind CSS with custom design system
 - **Icons**: Lucide React
-- **Translation**: Google Translate API + Widget
+- **Translation**: Built-in multi-language system
 - **State Management**: React Context API
 - **Authentication**: Firebase Auth
 - **Database**: Local storage with offline support
@@ -154,10 +153,10 @@ For support, email support@fishermate.ai or join our Discord community.
 ## 🔄 Updates
 
 - **v1.0.0**: Initial release with core fishing features
-- **v1.1.0**: Added multi-language translation support
+- **v1.1.0**: Added multi-language support for regional communities
 - **v1.2.0**: Enhanced UI with Firebase/Google color scheme
-- **v1.3.0**: Improved translation system with 50+ languages
+- **v1.3.0**: Complete website translation in 12+ Indian languages
 
 ---
 
-**FisherMate.AI** - Making fishing smarter, safer, and more accessible worldwide! 🎣
+**FisherMate.AI** - Making fishing smarter, safer, and more accessible for regional fisherfolk communities! 🎣

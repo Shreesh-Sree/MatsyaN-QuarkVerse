@@ -1,85 +1,67 @@
-'use client';
+"use client";
 
-import { Fish, Map, Shield, Scale, Bot, Sun, Wind, Droplets, BarChart3, TrendingUp, Calendar, Clock, Target, Zap, Users, Activity, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { WeatherCard } from '@/components/WeatherCard';
-import FishingAnalyticsCard from '@/components/FishingAnalyticsCard';
-import { FishingJournal } from '@/components/fishing-journal/FishingJournal';
-import { GoogleVoiceAssistant } from '@/components/GoogleVoiceAssistant';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { Fish, Map, Shield, Scale, Bot, Sun, Wind, Droplets, BarChart3, TrendingUp, Calendar, Clock, Target, Zap, Users, Activity, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useLanguage } from '@/context/LanguageContext';
-import { useNetworkStatus } from '@/hooks/use-offline';
-import { useFishingLogs } from '@/hooks/use-fishing-logs';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useFishingLogs } from '@/hooks/useFishingLogs';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import WeatherCard from '@/components/WeatherCard';
+import FishingAnalyticsCard from '@/components/FishingAnalyticsCard';
+import FishingJournal from '@/components/FishingJournal';
+import GoogleVoiceAssistant from '@/components/GoogleVoiceAssistant';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { t } = useLanguage();
-  const networkStatus = useNetworkStatus();
-  const { logs, addLog, syncOfflineLogs, isOnline, syncStatus, stats } = useFishingLogs();
-
-  if (!user) {
-    return null; // ProtectedRoute will handle the redirect
-  }
+  const { isOnline } = useNetworkStatus();
+  const { syncStatus } = useFishingLogs();
+  const [networkStatus] = useState({ online: isOnline });
 
   const handleVoiceCommand = (transcript: string) => {
-    if (!transcript || typeof transcript !== 'string') {
-      console.warn('Invalid transcript received:', transcript);
-      return;
-    }
-    const lowerTranscript = transcript.toLowerCase();
-    const scrollTo = (selector: string) => document.querySelector(selector)?.scrollIntoView({ behavior: 'smooth' });
-
-    if (lowerTranscript.includes('weather')) scrollTo('[data-section="weather"]');
-    else if (lowerTranscript.includes('journal') || lowerTranscript.includes('log')) scrollTo('[data-section="journal"]');
-    else if (lowerTranscript.includes('analytics')) scrollTo('[data-section="analytics"]');
-    else if (lowerTranscript.includes('map')) window.location.href = '/map';
-    else if (lowerTranscript.includes('safety')) window.location.href = '/safety';
+    console.log('Voice command received:', transcript);
+    // Handle voice commands here
   };
 
   const quickActions = [
-    { title: "Find Fishing Spots", href: "/map", icon: Map, color: "text-google-blue", bgColor: "bg-google-blue/10" },
-    { title: "Safety Guidelines", href: "/safety", icon: Shield, color: "text-android-green", bgColor: "bg-android-green/10" },
-    { title: "Fishing Regulations", href: "/laws", icon: Scale, color: "text-firebase-orange", bgColor: "bg-firebase-orange/10" },
-    { title: "AI Assistant", href: "/chat", icon: Bot, color: "text-gemini-pink", bgColor: "bg-gemini-pink/10" },
+    { title: "Find Fishing Spots", href: "/map", icon: Map, color: "text-custom-primary", bgColor: "bg-custom-primary/10" },
+    { title: "Safety Guidelines", href: "/safety", icon: Shield, color: "text-custom-secondary", bgColor: "bg-custom-secondary/10" },
+    { title: "Fishing Regulations", href: "/laws", icon: Scale, color: "text-custom-primary", bgColor: "bg-custom-primary/10" },
+    { title: "AI Assistant", href: "/chat", icon: Bot, color: "text-custom-secondary", bgColor: "bg-custom-secondary/10" },
   ];
 
-  // Mock data for statistics
   const statsData = [
-    { label: "Total Catches", value: "127", icon: Fish, color: "text-google-blue", bgColor: "bg-google-blue/10", trend: "+12%" },
-    { label: "Fishing Hours", value: "89", icon: Clock, color: "text-android-green", bgColor: "bg-android-green/10", trend: "+8%" },
-    { label: "Success Rate", value: "78%", icon: Target, color: "text-firebase-orange", bgColor: "bg-firebase-orange/10", trend: "+5%" },
-    { label: "Active Streak", value: "15", icon: Zap, color: "text-gemini-pink", bgColor: "bg-gemini-pink/10", trend: "+3" },
-  ];
-
-  const recentActivity = [
-    { type: "catch", message: "Caught a 2.5kg Bass", time: "2 hours ago", status: "success" },
-    { type: "weather", message: "Weather alert: High winds", time: "4 hours ago", status: "warning" },
-    { type: "location", message: "New fishing spot added", time: "6 hours ago", status: "info" },
-    { type: "safety", message: "Safety check completed", time: "1 day ago", status: "success" },
+    { label: "Total Catches", value: "127", icon: Fish, color: "text-custom-primary", bgColor: "bg-custom-primary/10", trend: "+12%" },
+    { label: "Fishing Hours", value: "89", icon: Clock, color: "text-custom-secondary", bgColor: "bg-custom-secondary/10", trend: "+8%" },
+    { label: "Success Rate", value: "78%", icon: Target, color: "text-custom-primary", bgColor: "bg-custom-primary/10", trend: "+5%" },
+    { label: "Active Streak", value: "15", icon: Zap, color: "text-custom-secondary", bgColor: "bg-custom-secondary/10", trend: "+3" },
   ];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'success': return <CheckCircle className="w-4 h-4 text-google-green" />;
-      case 'warning': return <AlertTriangle className="w-4 h-4 text-firebase-yellow" />;
-      case 'error': return <XCircle className="w-4 h-4 text-firebase-red" />;
-      default: return <Activity className="w-4 h-4 text-google-blue" />;
+      case 'success': return <CheckCircle className="w-4 h-4 text-custom-primary" />;
+      case 'warning': return <AlertTriangle className="w-4 h-4 text-custom-secondary" />;
+      case 'error': return <XCircle className="w-4 h-4 text-custom-primary" />;
+      default: return <Activity className="w-4 h-4 text-custom-primary" />;
     }
   };
+
+  const recentActivity = [
+    { message: "Weather alert: Strong winds expected", status: "warning", time: "2 min ago" },
+    { message: "Fishing log synced successfully", status: "success", time: "5 min ago" },
+    { message: "New fishing spot discovered nearby", status: "success", time: "10 min ago" },
+    { message: "Safety check completed", status: "success", time: "15 min ago" },
+  ];
 
   return (
     <ProtectedRoute>
       <div className="min-h-screen w-full bg-background text-foreground">
         <main className="container mx-auto px-4 py-8 space-y-8">
-          
-          {/* Welcome Header */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
@@ -91,7 +73,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-4">
               <Badge variant={networkStatus.online ? "default" : "destructive"} className="gap-2 px-4 py-2 rounded-full">
-                <div className={`w-2 h-2 rounded-full ${networkStatus.online ? 'bg-google-green' : 'bg-firebase-red'}`}></div>
+                <div className={`w-2 h-2 rounded-full ${networkStatus.online ? 'bg-custom-primary' : 'bg-custom-primary'}`}></div>
                 {networkStatus.online ? "Online" : "Offline"}
               </Badge>
               <Badge variant="outline" className="gap-2 px-4 py-2 rounded-full">
@@ -100,7 +82,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Statistics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {statsData.map((stat, index) => (
               <Card key={stat.label} className="dashboard-card hover-lift">
@@ -122,25 +103,20 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
-            
-            {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-8">
-              
-              {/* Voice Assistant */}
               <Card className="modern-card hover-lift">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl text-foreground">
-                    <div className="w-10 h-10 rounded-xl bg-gemini-pink/10 flex items-center justify-center">
-                      <Bot className="w-5 h-5 text-gemini-pink" />
+                    <div className="w-10 h-10 rounded-xl bg-custom-secondary/10 flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-custom-secondary" />
                     </div>
                     Voice Assistant
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-6">
-                    Use voice commands to navigate. Try &quot;show weather&quot; or &quot;open journal&quot;.
+                    Use voice commands to navigate. Try "show weather" or "open journal".
                   </p>
                   <ErrorBoundary fallback={<p className="text-destructive">Voice assistant is currently unavailable.</p>}>
                     <GoogleVoiceAssistant onTranscript={handleVoiceCommand} />
@@ -148,19 +124,17 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              {/* Fishing Journal */}
               <div data-section="journal">
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Fishing Journal.</p></CardContent></Card>}>
                   <FishingJournal />
                 </ErrorBoundary>
               </div>
 
-              {/* Recent Activity */}
               <Card className="modern-card hover-lift">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl text-foreground">
-                    <div className="w-10 h-10 rounded-xl bg-google-green/10 flex items-center justify-center">
-                      <Activity className="w-5 h-5 text-google-green" />
+                    <div className="w-10 h-10 rounded-xl bg-custom-primary/10 flex items-center justify-center">
+                      <Activity className="w-5 h-5 text-custom-primary" />
                     </div>
                     Recent Activity
                   </CardTitle>
@@ -168,7 +142,7 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     {recentActivity.map((activity, index) => (
-                      <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                      <div key={index} className="flex items-center gap-4 p-4 bg-custom-light dark:bg-gray-800 rounded-xl">
                         {getStatusIcon(activity.status)}
                         <div className="flex-1">
                           <p className="text-sm font-medium text-foreground">{activity.message}</p>
@@ -181,24 +155,19 @@ export default function Dashboard() {
               </Card>
             </div>
 
-            {/* Right Column - Sidebar */}
             <div className="space-y-8">
-              
-              {/* Weather Card */}
               <div data-section="weather">
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Weather Card.</p></CardContent></Card>}>
                   <WeatherCard />
                 </ErrorBoundary>
               </div>
 
-              {/* Analytics Card */}
               <div data-section="analytics">
                 <ErrorBoundary fallback={<Card className="modern-card"><CardContent><p>Could not load Fishing Analytics.</p></CardContent></Card>}>
                   <FishingAnalyticsCard />
                 </ErrorBoundary>
               </div>
 
-              {/* Quick Actions */}
               <Card className="modern-card hover-lift">
                 <CardHeader>
                   <CardTitle className="text-xl text-foreground">Quick Actions</CardTitle>
@@ -217,7 +186,6 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              {/* Progress Overview */}
               <Card className="modern-card hover-lift">
                 <CardHeader>
                   <CardTitle className="text-xl text-foreground">Weekly Progress</CardTitle>
