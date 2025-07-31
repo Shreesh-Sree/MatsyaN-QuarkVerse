@@ -6,49 +6,73 @@
 /* ===== CSS CUSTOM PROPERTIES ===== */
 @layer base {
   :root {
-    /* Professional color palette inspired by Claude, Firebase, and Cursor */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221 83% 53%; /* Claude blue */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+    /* Firebase/Google Product Color Palette */
+    --background: 0 0% 100%; /* Gray 100 */
+    --foreground: 0 0% 0%; /* Gray 0 */
+    --card: 0 0% 100%; /* Gray 100 */
+    --card-foreground: 0 0% 0%; /* Gray 0 */
+    --popover: 0 0% 100%; /* Gray 100 */
+    --popover-foreground: 0 0% 0%; /* Gray 0 */
+    --primary: 217 91% 60%; /* Google Ecosystem Blue #4285F4 */
+    --primary-foreground: 0 0% 100%; /* Gray 100 */
+    --secondary: 0 0% 95%; /* Gray 95 */
+    --secondary-foreground: 0 0% 0%; /* Gray 0 */
+    --muted: 0 0% 95%; /* Gray 95 */
+    --muted-foreground: 0 0% 47%; /* Gray 30 */
+    --accent: 0 0% 95%; /* Gray 95 */
+    --accent-foreground: 0 0% 0%; /* Gray 0 */
+    --destructive: 0 84% 60%; /* Firebase Red #DD2C00 */
+    --destructive-foreground: 0 0% 100%; /* Gray 100 */
+    --border: 0 0% 90%; /* Gray 90 */
+    --input: 0 0% 90%; /* Gray 90 */
+    --ring: 217 91% 60%; /* Google Ecosystem Blue #4285F4 */
     --radius: 0.5rem;
+
+    /* Firebase/Google Brand Colors */
+    --firebase-yellow: 45 100% 50%; /* #FFC400 */
+    --firebase-orange: 32 100% 50%; /* #FF9100 */
+    --firebase-red: 12 100% 43%; /* #DD2C00 */
+    --android-green: 72 100% 50%; /* #C6FF00 */
+    --gemini-pink: 320 95% 83%; /* #FDADEE */
+    --google-blue: 217 91% 60%; /* #4285F4 */
+    --google-green: 142 76% 36%; /* #34A853 */
+    
+    /* Gray Scale */
+    --gray-0: 0 0% 0%; /* #000000 */
+    --gray-10: 0 0% 12%; /* #1F1F1F */
+    --gray-20: 0 0% 19%; /* #303030 */
+    --gray-30: 0 0% 28%; /* #474747 */
+    --gray-40: 0 0% 37%; /* #5E5E5E */
+    --gray-50: 0 0% 46%; /* #757575 */
+    --gray-60: 0 0% 56%; /* #8F8F8F */
+    --gray-70: 0 0% 67%; /* #ABABAB */
+    --gray-80: 0 0% 78%; /* #C7C7C7 */
+    --gray-90: 0 0% 89%; /* #E3E3E3 */
+    --gray-95: 0 0% 95%; /* #F2F2F2 */
+    --gray-99: 0 0% 99%; /* #FDFCFB */
+    --gray-100: 0 0% 100%; /* #FFFFFF */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 221 83% 53%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 221 83% 53%;
+    --background: 0 0% 0%; /* Gray 0 */
+    --foreground: 0 0% 100%; /* Gray 100 */
+    --card: 0 0% 12%; /* Gray 10 */
+    --card-foreground: 0 0% 100%; /* Gray 100 */
+    --popover: 0 0% 12%; /* Gray 10 */
+    --popover-foreground: 0 0% 100%; /* Gray 100 */
+    --primary: 217 91% 60%; /* Google Ecosystem Blue #4285F4 */
+    --primary-foreground: 0 0% 0%; /* Gray 0 */
+    --secondary: 0 0% 19%; /* Gray 20 */
+    --secondary-foreground: 0 0% 100%; /* Gray 100 */
+    --muted: 0 0% 19%; /* Gray 20 */
+    --muted-foreground: 0 0% 67%; /* Gray 70 */
+    --accent: 0 0% 19%; /* Gray 20 */
+    --accent-foreground: 0 0% 100%; /* Gray 100 */
+    --destructive: 12 100% 43%; /* Firebase Red #DD2C00 */
+    --destructive-foreground: 0 0% 100%; /* Gray 100 */
+    --border: 0 0% 19%; /* Gray 20 */
+    --input: 0 0% 19%; /* Gray 20 */
+    --ring: 217 91% 60%; /* Google Ecosystem Blue #4285F4 */
   }
 }
 
@@ -68,11 +92,11 @@
 @layer components {
   /* Background Effects - Clean and professional */
   .gradient-bg {
-    background: #ffffff;
+    background: hsl(var(--gray-100));
   }
 
   .dark .gradient-bg {
-    background: #0f172a;
+    background: hsl(var(--gray-0));
   }
 
   /* Glass Morphism Effects - Simplified */
@@ -84,7 +108,7 @@
   }
 
   .dark .glass-effect {
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(31, 31, 31, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
@@ -98,19 +122,19 @@
   }
 
   .dark .glass-card-sm {
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(31, 31, 31, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .glass-card-sm:hover {
     background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    border: 1px solid hsl(var(--google-blue) / 0.3);
     transform: translateY(-1px);
   }
 
   .dark .glass-card-sm:hover {
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    background: rgba(31, 31, 31, 0.95);
+    border: 1px solid hsl(var(--google-blue) / 0.3);
   }
 
   /* Button Styles - Clean and professional */
@@ -132,7 +156,7 @@
 
   /* Text Effects - Simplified */
   .text-gradient {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, hsl(var(--google-blue)) 0%, hsl(var(--google-green)) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -155,7 +179,7 @@
   .modern-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: rgba(59, 130, 246, 0.3);
+    border-color: hsl(var(--google-blue) / 0.3);
   }
 
   .dark .modern-card:hover {
@@ -186,7 +210,7 @@
 
   .glass-input:focus {
     @apply border-blue-500 bg-white dark:bg-gray-900;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px hsl(var(--google-blue) / 0.1);
   }
 
   /* Button Enhancements - Professional */
@@ -211,7 +235,7 @@
   .status-online {
     width: 8px;
     height: 8px;
-    background-color: #22c55e;
+    background-color: hsl(var(--google-green));
     border-radius: 50%;
   }
 
@@ -286,6 +310,23 @@
   .quick-action-btn {
     @apply w-full h-32 flex flex-col items-center justify-center gap-3 text-center p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-colors duration-200 rounded-xl;
   }
+
+  /* Firebase/Google Brand Colors */
+  .bg-firebase-yellow { background-color: hsl(var(--firebase-yellow)); }
+  .bg-firebase-orange { background-color: hsl(var(--firebase-orange)); }
+  .bg-firebase-red { background-color: hsl(var(--firebase-red)); }
+  .bg-android-green { background-color: hsl(var(--android-green)); }
+  .bg-gemini-pink { background-color: hsl(var(--gemini-pink)); }
+  .bg-google-blue { background-color: hsl(var(--google-blue)); }
+  .bg-google-green { background-color: hsl(var(--google-green)); }
+
+  .text-firebase-yellow { color: hsl(var(--firebase-yellow)); }
+  .text-firebase-orange { color: hsl(var(--firebase-orange)); }
+  .text-firebase-red { color: hsl(var(--firebase-red)); }
+  .text-android-green { color: hsl(var(--android-green)); }
+  .text-gemini-pink { color: hsl(var(--gemini-pink)); }
+  .text-google-blue { color: hsl(var(--google-blue)); }
+  .text-google-green { color: hsl(var(--google-green)); }
 }
 
 /* ===== KEYFRAME ANIMATIONS ===== */

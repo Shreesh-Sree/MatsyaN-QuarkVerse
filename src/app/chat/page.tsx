@@ -2,13 +2,13 @@
 
 import { Chatbot } from "@/components/Chatbot";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Image from "next/image";
+import { Bot, Shield, Scale, Zap } from "lucide-react";
 
 export default function ChatPage() {
   const features = [
-    { text: "Safety Guidelines", color: "text-green-600" },
-    { text: "Fishing Regulations", color: "text-purple-600" },
-    { text: "Weather Insights", color: "text-blue-600" },
+    { icon: Shield, text: "Safety Guidelines", color: "text-android-green" },
+    { icon: Scale, text: "Fishing Regulations", color: "text-firebase-orange" },
+    { icon: Zap, text: "Weather Insights", color: "text-google-blue" },
   ];
 
   return (
@@ -17,12 +17,12 @@ export default function ChatPage() {
         <main className="flex-1 container mx-auto py-8 px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium mb-6">
-                <Image src="/favicon.ico" alt="AI" width={16} height={16} />
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gemini-pink/10 border border-gemini-pink/20 text-gemini-pink text-sm font-medium mb-6">
+                <Bot className="w-4 h-4" />
                 AI-Powered Assistant
               </div>
-              <div className="inline-block bg-blue-50 p-4 rounded-2xl mb-6 border border-blue-200">
-                  <Image src="/favicon.ico" alt="AI Assistant" width={48} height={48} />
+              <div className="inline-block bg-gemini-pink/10 p-4 rounded-2xl mb-6 border border-gemini-pink/20">
+                  <Bot className="w-12 h-12 text-gemini-pink" />
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight">
                 AI Assistant
@@ -35,7 +35,7 @@ export default function ChatPage() {
               <div className="flex flex-wrap justify-center gap-3 mb-8">
                 {features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-50 border border-gray-200 text-sm">
-                    <Image src="/favicon.ico" alt="Feature" width={16} height={16} />
+                    <feature.icon className={`w-4 h-4 ${feature.color}`} />
                     <span className="text-foreground">{feature.text}</span>
                   </div>
                 ))}

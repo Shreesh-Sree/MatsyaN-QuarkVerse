@@ -2,13 +2,13 @@
 
 import { FishingLawsChat } from "@/components/FishingLawsChat";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Image from "next/image";
+import { Scale, Gavel, BookOpen, AlertCircle } from "lucide-react";
 
 export default function LawsPage() {
   const features = [
-    { text: "Legal Guidelines", color: "text-purple-600" },
-    { text: "Regulations", color: "text-blue-600" },
-    { text: "Compliance", color: "text-orange-600" },
+    { icon: Gavel, text: "Legal Guidelines", color: "text-firebase-orange" },
+    { icon: BookOpen, text: "Regulations", color: "text-google-blue" },
+    { icon: AlertCircle, text: "Compliance", color: "text-firebase-yellow" },
   ];
 
   return (
@@ -17,12 +17,12 @@ export default function LawsPage() {
         <main className="flex-1 container mx-auto py-8 px-4">
             <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-50 border border-purple-200 text-purple-700 text-sm font-medium mb-6">
-                      <Image src="/favicon.ico" alt="Legal" width={16} height={16} />
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-firebase-orange/10 border border-firebase-orange/20 text-firebase-orange text-sm font-medium mb-6">
+                      <Scale className="w-4 h-4" />
                       Legal Assistant
                     </div>
-                    <div className="inline-block bg-purple-50 p-4 rounded-2xl mb-6 border border-purple-200">
-                        <Image src="/favicon.ico" alt="Legal Icon" width={48} height={48} />
+                    <div className="inline-block bg-firebase-orange/10 p-4 rounded-2xl mb-6 border border-firebase-orange/20">
+                        <Scale className="w-12 h-12 text-firebase-orange" />
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight">
                         Fishing Laws & Regulations
@@ -35,7 +35,7 @@ export default function LawsPage() {
                     <div className="flex flex-wrap justify-center gap-3 mb-8">
                       {features.map((feature, index) => (
                         <div key={index} className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-50 border border-gray-200 text-sm">
-                          <Image src="/favicon.ico" alt="Feature" width={16} height={16} />
+                          <feature.icon className={`w-4 h-4 ${feature.color}`} />
                           <span className="text-foreground">{feature.text}</span>
                         </div>
                       ))}

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
+import { Fish, Map, Shield, Scale, Bot, Sun, Wind, Droplets, BarChart3, TrendingUp, Calendar, Clock, Target, Zap, Users, Activity, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,18 +44,18 @@ export default function Dashboard() {
   };
 
   const quickActions = [
-    { title: "Find Fishing Spots", href: "/map", color: "text-blue-600", bgColor: "bg-blue-50" },
-    { title: "Safety Guidelines", href: "/safety", color: "text-green-600", bgColor: "bg-green-50" },
-    { title: "Fishing Regulations", href: "/laws", color: "text-purple-600", bgColor: "bg-purple-50" },
-    { title: "AI Assistant", href: "/chat", color: "text-indigo-600", bgColor: "bg-indigo-50" },
+    { title: "Find Fishing Spots", href: "/map", icon: Map, color: "text-google-blue", bgColor: "bg-google-blue/10" },
+    { title: "Safety Guidelines", href: "/safety", icon: Shield, color: "text-android-green", bgColor: "bg-android-green/10" },
+    { title: "Fishing Regulations", href: "/laws", icon: Scale, color: "text-firebase-orange", bgColor: "bg-firebase-orange/10" },
+    { title: "AI Assistant", href: "/chat", icon: Bot, color: "text-gemini-pink", bgColor: "bg-gemini-pink/10" },
   ];
 
   // Mock data for statistics
   const statsData = [
-    { label: "Total Catches", value: "127", color: "text-blue-600", bgColor: "bg-blue-50", trend: "+12%" },
-    { label: "Fishing Hours", value: "89", color: "text-green-600", bgColor: "bg-green-50", trend: "+8%" },
-    { label: "Success Rate", value: "78%", color: "text-purple-600", bgColor: "bg-purple-50", trend: "+5%" },
-    { label: "Active Streak", value: "15", color: "text-orange-600", bgColor: "bg-orange-50", trend: "+3" },
+    { label: "Total Catches", value: "127", icon: Fish, color: "text-google-blue", bgColor: "bg-google-blue/10", trend: "+12%" },
+    { label: "Fishing Hours", value: "89", icon: Clock, color: "text-android-green", bgColor: "bg-android-green/10", trend: "+8%" },
+    { label: "Success Rate", value: "78%", icon: Target, color: "text-firebase-orange", bgColor: "bg-firebase-orange/10", trend: "+5%" },
+    { label: "Active Streak", value: "15", icon: Zap, color: "text-gemini-pink", bgColor: "bg-gemini-pink/10", trend: "+3" },
   ];
 
   const recentActivity = [
@@ -66,7 +66,12 @@ export default function Dashboard() {
   ];
 
   const getStatusIcon = (status: string) => {
-    return <Image src="/favicon.ico" alt="Status" width={16} height={16} className="w-4 h-4" />;
+    switch (status) {
+      case 'success': return <CheckCircle className="w-4 h-4 text-google-green" />;
+      case 'warning': return <AlertTriangle className="w-4 h-4 text-firebase-yellow" />;
+      case 'error': return <XCircle className="w-4 h-4 text-firebase-red" />;
+      default: return <Activity className="w-4 h-4 text-google-blue" />;
+    }
   };
 
   return (
@@ -86,7 +91,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-4">
               <Badge variant={networkStatus.online ? "default" : "destructive"} className="gap-2 px-4 py-2 rounded-full">
-                <div className={`w-2 h-2 rounded-full ${networkStatus.online ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                <div className={`w-2 h-2 rounded-full ${networkStatus.online ? 'bg-google-green' : 'bg-firebase-red'}`}></div>
                 {networkStatus.online ? "Online" : "Offline"}
               </Badge>
               <Badge variant="outline" className="gap-2 px-4 py-2 rounded-full">
@@ -102,7 +107,7 @@ export default function Dashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className={`w-12 h-12 rounded-xl ${stat.bgColor} flex items-center justify-center`}>
-                      <Image src="/favicon.ico" alt="Icon" width={24} height={24} />
+                      <stat.icon className={`w-6 h-6 ${stat.color}`} />
                     </div>
                     <div className="text-right">
                       <p className="text-xs text-muted-foreground font-medium">{stat.trend}</p>
@@ -127,8 +132,8 @@ export default function Dashboard() {
               <Card className="modern-card hover-lift">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl text-foreground">
-                    <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                      <Image src="/favicon.ico" alt="Voice Assistant" width={20} height={20} />
+                    <div className="w-10 h-10 rounded-xl bg-gemini-pink/10 flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-gemini-pink" />
                     </div>
                     Voice Assistant
                   </CardTitle>
@@ -154,8 +159,8 @@ export default function Dashboard() {
               <Card className="modern-card hover-lift">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl text-foreground">
-                    <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
-                      <Image src="/favicon.ico" alt="Activity" width={20} height={20} />
+                    <div className="w-10 h-10 rounded-xl bg-google-green/10 flex items-center justify-center">
+                      <Activity className="w-5 h-5 text-google-green" />
                     </div>
                     Recent Activity
                   </CardTitle>
@@ -203,7 +208,7 @@ export default function Dashboard() {
                     <Link href={action.href} key={action.title}>
                       <Button variant="outline" className="quick-action-btn">
                         <div className={`w-10 h-10 rounded-xl ${action.bgColor} flex items-center justify-center`}>
-                          <Image src="/favicon.ico" alt="Action" width={20} height={20} />
+                          <action.icon className={`w-5 h-5 ${action.color}`} />
                         </div>
                         <span className="text-xs font-medium leading-tight">{action.title}</span>
                       </Button>
