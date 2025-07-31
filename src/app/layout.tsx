@@ -49,7 +49,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased flex flex-col min-h-screen">
+      <body className="antialiased flex flex-col min-h-screen bg-custom-white dark:bg-black">
         <ClientErrorHandler />
         <ErrorBoundary>
           <AuthProvider>
@@ -63,7 +63,7 @@ export default function RootLayout({
                 <ErrorBoundary fallback={<div className="p-4 text-center">Failed to load header</div>}>
                   <Header />
                 </ErrorBoundary>
-                <main className="flex-1 pt-20">
+                <main className="flex-1">
                   <ErrorBoundary fallback={<div className="p-8 text-center">
                     <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
                     <p>Please refresh the page to try again.</p>

@@ -65,6 +65,11 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        // Custom Color Palette - Specified Colors
+        'custom-primary': 'hsl(var(--custom-primary))', // #c15f3c
+        'custom-secondary': 'hsl(var(--custom-secondary))', // #b1ada1
+        'custom-light': 'hsl(var(--custom-light))', // #f4f3ee
+        'custom-white': 'hsl(var(--custom-white))', // #ffffff
       },
       borderRadius: {
         lg: 'var(--radius)',
