@@ -24,6 +24,8 @@ import { MapPin, Fish, Anchor, Shield, AlertTriangle, Navigation, Star, Loader2 
 import { useEffect, useState, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { LoadingSpinner } from './LoadingSpinner';
+import { FishingBorderMonitor, type FishingBorderAlert } from './FishingBorderMonitor';
+import { toast } from 'sonner';
 
 interface FishingPOI {
   id: number;
@@ -54,6 +56,16 @@ const GoogleMapCard = () => {
   const [error, setError] = useState<string | null>(null);
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [borderAlerts, setBorderAlerts] = useState<FishingBorderAlert[]>([]);
+
+  // Handle border crossing alerts
+  const handleBorderCrossing = (border: FishingBorderAlert) => {
+    console.log(`Border crossing detected: ${border.name}`);
+    setBorderAlerts(prev => [...prev, border]);
+    
+    // You can add additional logic here for logging, analytics, etc.
+    // For example, save to Firebase or send to analytics service
+  };
 
   // Load Google Maps API with better error handling and async loading
   const loadGoogleMaps = () => {
@@ -683,6 +695,13 @@ const GoogleMapCard = () => {
       <div className="flex flex-col h-full">
         {/* Map container */}
         <div ref={mapRef} className="flex-grow rounded-t-2xl min-h-[400px]" />
+        
+        {/* Fishing Border Monitor */}
+        <FishingBorderMonitor 
+          map={googleMapRef.current}
+          userLocation={userLocation}
+          onBorderCrossing={handleBorderCrossing}
+        />
         
         {/* POI list */}
         <div className="p-6 glass-card-sm rounded-b-2xl h-72 overflow-y-auto">

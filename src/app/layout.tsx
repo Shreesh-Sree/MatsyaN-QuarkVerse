@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "sonner";
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { AuthProvider } from '@/context/AuthContext';
@@ -75,6 +76,13 @@ export default function RootLayout({
                   <Footer />
                 </ErrorBoundary>
                 <Toaster />
+                <SonnerToaster 
+                  position="top-right" 
+                  richColors 
+                  closeButton 
+                  expand={false}
+                  visibleToasts={3}
+                />
               </ThemeProvider>
             </LanguageProvider>
           </AuthProvider>

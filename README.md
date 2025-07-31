@@ -36,6 +36,7 @@ FisherMate.AI is a revolutionary AI-powered platform designed to empower coastal
 - **Advanced Markers** - Google Maps integration with fishing infrastructure
 - **Nearby Services** - Marinas, bait shops, safety stations, and ports
 - **Navigation Support** - Turn-by-turn directions to fishing locations
+- **🚨 Maritime Border Alerts** - Real-time warnings for fishing boundaries and restricted areas
 
 ### 📊 Comprehensive Analytics
 - **Trip Logging** - Detailed fishing expedition records
@@ -48,6 +49,7 @@ FisherMate.AI is a revolutionary AI-powered platform designed to empower coastal
 - **Safety Guidelines** - Comprehensive maritime safety protocols
 - **Legal Assistant** - Fishing regulations and licensing information
 - **Community Alerts** - Real-time safety warnings and updates
+- **🚨 Border Monitoring** - Real-time maritime boundary alerts with audio sirens and push notifications
 
 ### 🌐 Accessibility Features
 - **Multi-language Support** - 12+ regional Indian languages
@@ -181,6 +183,7 @@ For detailed architecture information, see [📖 Architecture Guide](./docs/arch
 - ✅ Safety features and emergency SOS
 - ✅ Multi-language support
 - ✅ Voice controls
+- ✅ 🚨 **Maritime Border Alert System** - Real-time boundary monitoring with audio/visual alerts
 
 ### 🚀 Upcoming Features (v2.0)
 - 🔄 **Machine Learning Models**
@@ -247,6 +250,7 @@ Found a bug? Please open an issue with:
 - [🎨 UI Components](./docs/components.md)
 - [🔧 Configuration Guide](./docs/configuration.md)
 - [🚀 Deployment Guide](./docs/deployment.md)
+- [🚨 Fishing Border Alerts](./docs/fishing-border-alerts.md)
 - [❓ FAQ](./docs/FAQ.md)
 - [🔍 Troubleshooting](./docs/troubleshooting.md)
 
