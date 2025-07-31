@@ -68,8 +68,8 @@ export function Header() {
               className={cn(
                 "flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105",
                 pathname === href 
-                  ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-lg" 
-                  : "text-muted-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30 hover:text-foreground hover:shadow-md"
+                  ? "bg-gradient-to-r from-blue-500/20 to-blue-600/10 text-blue-600 border border-blue-500/20 shadow-lg" 
+                  : "text-muted-foreground hover:bg-gradient-to-r hover:from-gray-100/50 hover:to-gray-50/30 hover:text-foreground hover:shadow-md dark:hover:from-gray-800/50 dark:hover:to-gray-700/30"
               )}
             >
               <Icon className={cn("h-4 w-4 transition-transform duration-300", pathname === href && "animate-pulse")} />
@@ -100,10 +100,10 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="glass-effect border-border/30 shadow-xl">
-              <DropdownMenuItem onClick={() => setLocale('en')} className="hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => setLocale('en')} className="hover:bg-blue-500/10 transition-colors">
                 🇺🇸 English
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLocale('ta')} className="hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem onClick={() => setLocale('ta')} className="hover:bg-blue-500/10 transition-colors">
                 🇮🇳 தமிழ்
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -126,11 +126,11 @@ export function Header() {
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => { /* Add profile navigation */ }} className="hover:bg-primary/10 transition-colors">
+                <DropdownMenuItem onClick={() => { /* Add profile navigation */ }} className="hover:bg-blue-500/10 transition-colors">
                   <Settings className="h-4 w-4 mr-2" />
                   {t("settings")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { /* Add help navigation */ }} className="hover:bg-primary/10 transition-colors">
+                <DropdownMenuItem onClick={() => { /* Add help navigation */ }} className="hover:bg-blue-500/10 transition-colors">
                   <HelpCircle className="h-4 w-4 mr-2" />
                   {t("help")}
                 </DropdownMenuItem>
@@ -184,8 +184,8 @@ export function Header() {
                     className={cn(
                       "flex items-center gap-4 px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 hover:scale-105",
                       pathname === href 
-                        ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-lg" 
-                        : "text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30 hover:shadow-md"
+                        ? "bg-gradient-to-r from-blue-500/20 to-blue-600/10 text-blue-600 border border-blue-500/20 shadow-lg" 
+                        : "text-foreground hover:bg-gradient-to-r hover:from-gray-100/50 hover:to-gray-50/30 hover:shadow-md dark:hover:from-gray-800/50 dark:hover:to-gray-700/30"
                     )}
                   >
                     <Icon className={cn("h-5 w-5 transition-transform duration-300", pathname === href && "animate-pulse")} />
@@ -207,7 +207,7 @@ export function Header() {
                         <Link 
                           href="#" 
                           onClick={handleMobileNavClick} 
-                          className="flex items-center gap-4 px-4 py-3 rounded-xl text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30 transition-all duration-300 hover:scale-105"
+                          className="flex items-center gap-4 px-4 py-3 rounded-xl text-foreground hover:bg-gradient-to-r hover:from-gray-100/50 hover:to-gray-50/30 dark:hover:from-gray-800/50 dark:hover:to-gray-700/30 transition-all duration-300 hover:scale-105"
                         >
                           <Settings className="h-5 w-5" />
                           <span>{t('settings')}</span>
@@ -215,7 +215,7 @@ export function Header() {
                         <Link 
                           href="#" 
                           onClick={handleMobileNavClick} 
-                          className="flex items-center gap-4 px-4 py-3 rounded-xl text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30 transition-all duration-300 hover:scale-105"
+                          className="flex items-center gap-4 px-4 py-3 rounded-xl text-foreground hover:bg-gradient-to-r hover:from-gray-100/50 hover:to-gray-50/30 dark:hover:from-gray-800/50 dark:hover:to-gray-700/30 transition-all duration-300 hover:scale-105"
                         >
                           <HelpCircle className="h-5 w-5" />
                           <span>{t('help')}</span>

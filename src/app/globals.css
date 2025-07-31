@@ -6,13 +6,14 @@
 /* ===== CSS CUSTOM PROPERTIES ===== */
 @layer base {
   :root {
+    /* Claude/Firebase inspired color palette */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 221 83% 53%; /* Claude blue */
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -24,8 +25,16 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --ring: 221 83% 53%;
+    --radius: 0.75rem;
+    
+    /* Claude/Firebase specific colors */
+    --claude-blue: 221 83% 53%;
+    --claude-purple: 262 83% 58%;
+    --firebase-orange: 25 95% 53%;
+    --firebase-yellow: 45 93% 47%;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
   }
 
   .dark {
@@ -35,7 +44,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
+    --primary: 221 83% 53%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -47,7 +56,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 221 83% 53%;
   }
 }
 
@@ -65,48 +74,76 @@
 
 /* ===== CUSTOM COMPONENTS ===== */
 @layer components {
-  /* Background Effects */
+  /* Background Effects - Claude/Firebase inspired */
   .gradient-bg {
-    background-color: hsl(var(--background));
-    background-image: 
-      radial-gradient(at 15% 25%, hsla(210, 80%, 40%, 0.15) 0px, transparent 60%),
-      radial-gradient(at 85% 75%, hsla(160, 70%, 50%, 0.15) 0px, transparent 60%),
-      radial-gradient(at 50% 50%, hsla(240, 60%, 60%, 0.05) 0px, transparent 80%);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     background-attachment: fixed;
   }
 
-  /* Glass Morphism Effects */
+  .dark .gradient-bg {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  }
+
+  /* Glass Morphism Effects - Enhanced */
   .glass-effect {
-    background: hsl(var(--background) / 0.8);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid hsl(var(--border) / 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .glass-effect {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
   .glass-card-sm {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(16px) saturate(180%);
-    border-radius: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 
+      0 4px 16px rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .glass-card-sm {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .glass-card-sm:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(59, 130, 246, 0.3);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 
+      0 8px 24px rgba(0, 0, 0, 0.15),
+      0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  /* Button Styles */
+  .dark .glass-card-sm:hover {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  /* Button Styles - Claude/Firebase inspired */
   .glass-button-outline {
-    @apply bg-transparent border border-white/20 text-white hover:bg-white/10 transition-all duration-300;
+    @apply bg-transparent border border-blue-500/30 text-blue-600 hover:bg-blue-50 transition-all duration-300;
     backdrop-filter: blur(8px);
   }
 
+  .dark .glass-button-outline {
+    @apply border-blue-400/30 text-blue-400 hover:bg-blue-950/30;
+  }
+
   .glass-button-primary {
-    @apply bg-blue-500/80 border border-blue-400/50 text-white hover:bg-blue-500 transition-all duration-300;
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 border border-blue-500/50 text-white hover:from-blue-700 hover:to-blue-800 transition-all duration-300;
     backdrop-filter: blur(8px);
     box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
   }
@@ -116,9 +153,12 @@
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
   }
 
-  /* Text Effects */
+  /* Text Effects - Enhanced */
   .text-gradient {
-    @apply bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     background-size: 200% 200%;
     animation: gradient-shift 3s ease-in-out infinite;
   }
@@ -127,16 +167,33 @@
     @apply text-foreground/90 leading-relaxed;
   }
 
-  /* Card Styles */
+  /* Card Styles - Enhanced */
   .modern-card {
-    @apply bg-card/60 backdrop-blur-md border border-border/30 rounded-2xl p-6 transition-all duration-500;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    @apply bg-white/80 backdrop-blur-md border border-gray-200/50 rounded-2xl p-6 transition-all duration-500;
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.08),
+      0 4px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .dark .modern-card {
+    @apply bg-gray-900/80 border-gray-700/50;
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.3),
+      0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   .modern-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    border-color: hsl(var(--border) / 0.5);
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.12),
+      0 8px 16px rgba(0, 0, 0, 0.08);
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .dark .modern-card:hover {
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 8px 16px rgba(0, 0, 0, 0.3);
   }
 
   .modern-card-tall {
@@ -153,20 +210,28 @@
 
   /* Focus Ring */
   .focus-ring {
-    @apply ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all duration-200;
+    @apply ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-all duration-200;
   }
 
-  /* Input Styles */
+  /* Input Styles - Enhanced */
   .glass-input {
-    @apply bg-background/50 backdrop-blur-sm border border-border/30 rounded-lg transition-all duration-300;
+    @apply bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-lg transition-all duration-300;
+  }
+
+  .dark .glass-input {
+    @apply bg-gray-900/70 border-gray-700/50;
   }
 
   .glass-input:focus {
-    @apply border-primary/50 bg-background/70;
+    @apply border-blue-500/50 bg-white/90;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
 
-  /* Button Enhancements */
+  .dark .glass-input:focus {
+    @apply bg-gray-900/90;
+  }
+
+  /* Button Enhancements - Claude/Firebase style */
   .btn-primary {
     @apply bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300;
     box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
@@ -181,27 +246,39 @@
     @apply bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300;
   }
 
+  .dark .glass-button {
+    @apply bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50;
+  }
+
   /* Touch Targets */
   .touch-target {
     @apply min-h-[44px] min-w-[44px];
   }
 
-  /* Status Indicators */
+  /* Status Indicators - Enhanced */
   .status-online {
     width: 10px;
     height: 10px;
-    background-color: #22c55e; /* green-500 */
+    background-color: #22c55e;
     border-radius: 50%;
-    box-shadow: 0 0 12px #22c55e, 0 0 24px #22c55e40;
+    box-shadow: 0 0 12px #22c55e, 0 0 24px rgba(34, 197, 94, 0.4);
     animation: pulse-glow 2s infinite;
   }
 
-  /* Shadow Effects */
+  /* Shadow Effects - Enhanced */
   .shadow-soft {
-    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
+    box-shadow: 
+      0 20px 40px -12px rgba(0, 0, 0, 0.12),
+      0 8px 16px -8px rgba(0, 0, 0, 0.08);
   }
 
-  /* Weather Metrics */
+  .dark .shadow-soft {
+    box-shadow: 
+      0 20px 40px -12px rgba(0, 0, 0, 0.4),
+      0 8px 16px -8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Weather Metrics - Enhanced */
   .weather-metric {
     @apply text-center p-4 glass-card-sm rounded-xl transition-all duration-300;
   }
@@ -237,6 +314,43 @@
 
   .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Dashboard specific styles */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .dashboard-card {
+    @apply modern-card p-6;
+    min-height: 200px;
+  }
+
+  .dashboard-stat {
+    @apply text-3xl font-bold text-gradient;
+  }
+
+  .dashboard-label {
+    @apply text-sm text-muted-foreground uppercase tracking-wide;
+  }
+
+  /* Quick action buttons */
+  .quick-action-btn {
+    @apply w-full h-32 flex flex-col items-center justify-center gap-3 text-center p-4 glass-button hover:scale-105 transition-all duration-300 rounded-xl;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .quick-action-btn {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.1) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .quick-action-btn:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    border-color: rgba(59, 130, 246, 0.3);
   }
 }
 
