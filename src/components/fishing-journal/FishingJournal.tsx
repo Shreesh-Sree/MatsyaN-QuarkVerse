@@ -64,7 +64,6 @@ export function FishingJournal() {
   const filterAndSortTrips = () => {
     let filtered = [...trips];
 
-    // Search filter
     if (searchTerm) {
       filtered = filtered.filter(trip =>
         trip.location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,17 +72,14 @@ export function FishingJournal() {
       );
     }
 
-    // Species filter
     if (filterSpecies !== 'all') {
       filtered = filtered.filter(trip => trip.species.includes(filterSpecies));
     }
 
-    // Location filter
     if (filterLocation !== 'all') {
       filtered = filtered.filter(trip => trip.location.name === filterLocation);
     }
 
-    // Sort
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'date':
@@ -111,7 +107,6 @@ export function FishingJournal() {
     const successfulTrips = tripsData.filter(trip => trip.success).length;
     const allSpecies = Array.from(new Set(tripsData.flatMap(trip => trip.species)));
 
-    // Calculate location stats
     const locationStats = tripsData.reduce((acc, trip) => {
       const locationKey = trip.location.name;
       if (!acc[locationKey]) {
@@ -128,7 +123,6 @@ export function FishingJournal() {
       return acc;
     }, {} as Record<string, any>);
 
-    // Calculate success rates for locations
     Object.keys(locationStats).forEach(locationKey => {
       const locationTrips = tripsData.filter(trip => trip.location.name === locationKey);
       const successfulLocationTrips = locationTrips.filter(trip => trip.success).length;
@@ -139,7 +133,6 @@ export function FishingJournal() {
       .sort((a: any, b: any) => b.successRate - a.successRate)
       .slice(0, 5);
 
-    // Species analytics
     const speciesStats = tripsData.reduce((acc, trip) => {
       trip.species.forEach(species => {
         if (!acc[species]) {
@@ -166,7 +159,7 @@ export function FishingJournal() {
           count: stats.count,
           totalWeight: stats.totalWeight,
         })),
-      monthlyTrends: [], // Calculate if needed
+      monthlyTrends: [],
       timeSpentFishing: tripsData.reduce((sum, trip) => sum + trip.duration, 0),
       totalWeight,
     };
@@ -192,6 +185,16 @@ export function FishingJournal() {
     return locations.sort();
   };
 
+  const handleVoiceInput = (transcript: string) => {
+    const lowerTranscript = transcript.toLowerCase();
+    
+    if (lowerTranscript.includes('new trip') || lowerTranscript.includes('log trip')) {
+      setShowTripForm(true);
+    } else if (lowerTranscript.includes('show stats') || lowerTranscript.includes('analytics')) {
+      console.log('Voice command: Show analytics');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -199,195 +202,232 @@ export function FishingJournal() {
       </div>
     );
   }
-      loc.visitCount++;
-      loc.totalCatches += trip.catches.reduce((sum, c) => sum + c.quantity, 0);
-      loc.totalSuccess += trip.successScore;
-    });
-
-    const favoriteLocations = Array.from(locationMap.values())
-      .map(loc => ({
-        ...loc,
-        averageSuccess: loc.totalSuccess / loc.visitCount,
-        bestSeason: 'Summer' // Simplified for now
-      }))
-      .sort((a, b) => b.visitCount - a.visitCount)
-      .slice(0, 5);
-
-    const monthlyStats = calculateMonthlyStats(tripsData);
-
-    setAnalytics({
-      totalTrips: tripsData.length,
-      totalCatches,
-      totalSpecies: allSpecies.size,
-      averageSuccessScore,
-      favoriteLocations,
-      bestTechniques: [], // Will implement detailed technique tracking
-      seasonalPatterns: [], // Will implement seasonal analysis
-      monthlyStats,
-      speciesStats: [], // Will implement species tracking
-      improvements: generateImprovements(tripsData),
-    });
-  };
-
-  const calculateMonthlyStats = (tripsData: FishingTrip[]) => {
-    const monthMap = new Map();
-    
-    tripsData.forEach(trip => {
-      const date = new Date(trip.date);
-      const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
-      const monthName = date.toLocaleDateString('en-US', { month: 'long' });
-      
-      if (!monthMap.has(monthKey)) {
-        monthMap.set(monthKey, {
-          month: monthName,
-          year: date.getFullYear(),
-          trips: 0,
-          catches: 0,
-          successScore: 0,
-          topSpecies: new Set(),
-        });
-      }
-      
-      const monthData = monthMap.get(monthKey);
-      monthData.trips++;
-      monthData.catches += trip.catches.reduce((sum, c) => sum + c.quantity, 0);
-      monthData.successScore += trip.successScore;
-      trip.catches.forEach(c => monthData.topSpecies.add(c.species));
-    });
-
-    return Array.from(monthMap.values())
-      .map(month => ({
-        ...month,
-        successScore: month.successScore / month.trips,
-        topSpecies: Array.from(month.topSpecies).slice(0, 3),
-      }))
-      .sort((a, b) => new Date(`${b.year}-${b.month}`).getTime() - new Date(`${a.year}-${a.month}`).getTime());
-  };
-
-  const generateImprovements = (tripsData: FishingTrip[]): string[] => {
-    const improvements = [];
-    
-    if (tripsData.length > 5) {
-      const recentTrips = tripsData.slice(-5);
-      const recentAvg = recentTrips.reduce((sum, trip) => sum + trip.successScore, 0) / recentTrips.length;
-      const overallAvg = tripsData.reduce((sum, trip) => sum + trip.successScore, 0) / tripsData.length;
-      
-      if (recentAvg < overallAvg) {
-        improvements.push("Recent trip success is below your average - try revisiting your most successful locations");
-      }
-    }
-
-    improvements.push("Track water temperature for better pattern analysis");
-    improvements.push("Document moon phases to identify lunar fishing patterns");
-    
-    return improvements;
-  };
-
-  const handleVoiceInput = (transcript: string) => {
-    // Process voice commands for quick trip logging
-    const lowerTranscript = transcript.toLowerCase();
-    
-    if (lowerTranscript.includes('new trip') || lowerTranscript.includes('log trip')) {
-      setShowTripForm(true);
-    } else if (lowerTranscript.includes('show stats') || lowerTranscript.includes('analytics')) {
-      // Already on analytics tab - could highlight it
-      console.log('Voice command: Show analytics');
-    }
-    
-    // Could add more voice commands here
-  };
-
-  if (isLoading) {
-    return (
-      <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
-        <CardContent className="p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-custom-primary mx-auto mb-4"></div>
-          <p className="font-claude text-gray-800 dark:text-gray-200">Loading your fishing journal...</p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="font-claude text-2xl font-semibold text-gray-800 dark:text-gray-200">
+            <CardTitle className="font-claude text-2xl font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+              <Fish className="w-6 h-6 text-custom-primary" />
               Fishing Journal
             </CardTitle>
-            <Button onClick={() => setShowTripForm(true)} className="bg-custom-primary hover:bg-red-700 text-white font-claude">
-              New Trip
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => setShowTripForm(true)} 
+                className="bg-custom-primary hover:bg-custom-primary/90 text-custom-white font-claude"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New Trip
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          {/* Voice Controls */}
           <VoiceControls onTranscript={handleVoiceInput} />
         </CardContent>
       </Card>
 
+      {showTripForm && (
+        <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="font-claude text-xl text-gray-800 dark:text-gray-200">
+                Log New Fishing Trip
+              </CardTitle>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowTripForm(false)}
+                className="font-claude"
+              >
+                Cancel
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <FishingTripEntry />
+          </CardContent>
+        </Card>
+      )}
+
       <Tabs defaultValue="trips" className="space-y-6">
         <TabsList className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
           <TabsTrigger value="trips" className="font-claude text-gray-800 dark:text-gray-200">
+            <Fish className="w-4 h-4 mr-2" />
             My Trips ({trips.length})
           </TabsTrigger>
           <TabsTrigger value="analytics" className="font-claude text-gray-800 dark:text-gray-200">
+            <TrendingUp className="w-4 h-4 mr-2" />
             Analytics
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="trips" className="space-y-4">
-          {trips.length === 0 ? (
+          <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search trips..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 font-claude"
+                  />
+                </div>
+
+                <Select value={filterSpecies} onValueChange={setFilterSpecies}>
+                  <SelectTrigger className="font-claude">
+                    <SelectValue placeholder="Filter by species" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Species</SelectItem>
+                    {getUniqueSpecies().map(species => (
+                      <SelectItem key={species} value={species}>{species}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={filterLocation} onValueChange={setFilterLocation}>
+                  <SelectTrigger className="font-claude">
+                    <SelectValue placeholder="Filter by location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Locations</SelectItem>
+                    {getUniqueLocations().map(location => (
+                      <SelectItem key={location} value={location}>{location}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+                  <SelectTrigger className="font-claude">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date">Date</SelectItem>
+                    <SelectItem value="success">Success</SelectItem>
+                    <SelectItem value="catches">Catches</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {filteredTrips.length === 0 ? (
             <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
               <CardContent className="p-8 text-center">
-                <h3 className="text-xl font-semibold mb-2 font-claude text-gray-800 dark:text-gray-200">No trips logged yet</h3>
+                <h3 className="text-xl font-semibold mb-2 font-claude text-gray-800 dark:text-gray-200">
+                  {trips.length === 0 ? 'No trips logged yet' : 'No trips match your filters'}
+                </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4 font-claude">
-                  Start building your fishing journal by logging your first trip!
+                  {trips.length === 0 
+                    ? 'Start logging your fishing adventures to track your progress and discover patterns.'
+                    : 'Try adjusting your search or filter criteria to find trips.'
+                  }
                 </p>
-                <Button onClick={() => setShowTripForm(true)} className="bg-custom-primary hover:bg-red-700 text-white font-claude">
-                  Log Your First Trip
-                </Button>
+                {trips.length === 0 && (
+                  <Button 
+                    onClick={() => setShowTripForm(true)} 
+                    className="bg-custom-primary hover:bg-custom-primary/90 text-custom-white font-claude"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Log Your First Trip
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {trips.map((trip) => (
-                <Card key={trip.id} className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900 hover:shadow-lg transition-shadow cursor-pointer"
-                      onClick={() => setSelectedTrip(trip)}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="font-claude border-custom-secondary text-gray-800 dark:text-gray-200">
-                        {new Date(trip.date).toLocaleDateString()}
-                      </Badge>
-                      <Badge variant={trip.successScore >= 7 ? "default" : trip.successScore >= 4 ? "secondary" : "destructive"} className="font-claude">
-                        {trip.successScore}/10
+            <div className="grid gap-4">
+              {filteredTrips.map((trip) => (
+                <Card key={trip.id} className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${trip.success ? 'bg-green-500' : 'bg-red-500'}`} />
+                        <div>
+                          <h3 className="text-lg font-semibold font-claude text-gray-800 dark:text-gray-200">
+                            {trip.location.name}
+                          </h3>
+                          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              {formatDate(trip.date)}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {trip.duration}h
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-4 h-4" />
+                              {trip.location.lat.toFixed(4)}, {trip.location.lng.toFixed(4)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <Badge variant={trip.success ? "default" : "secondary"} className="font-claude">
+                        {trip.success ? 'Successful' : 'Challenging'}
                       </Badge>
                     </div>
-                    <CardTitle className="text-lg font-claude text-gray-800 dark:text-gray-200">
-                      {trip.location.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="text-sm font-claude text-gray-600 dark:text-gray-400">
-                        <span>{trip.catches.reduce((sum, c) => sum + c.quantity, 0)} catches</span>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <Fish className="w-4 h-4 text-custom-primary" />
+                        <span className="text-sm font-claude">
+                          {trip.catch.count} fish ({trip.catch.totalWeight.toFixed(1)}kg)
+                        </span>
                       </div>
-                      <div className="text-sm font-claude text-gray-600 dark:text-gray-400">
-                        <span>{Math.round(trip.duration / 60)} hours</span>
+                      <div className="flex items-center gap-2">
+                        <Thermometer className="w-4 h-4 text-orange-500" />
+                        <span className="text-sm font-claude">
+                          {trip.weatherConditions.temperature}°C
+                        </span>
                       </div>
-                      {trip.photos.length > 0 && (
-                        <div className="text-sm font-claude text-gray-600 dark:text-gray-400">
-                          <span>{trip.photos.length} photos</span>
+                      <div className="flex items-center gap-2">
+                        <Wind className="w-4 h-4 text-blue-500" />
+                        <span className="text-sm font-claude">
+                          {trip.weatherConditions.windSpeed} km/h
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Waves className="w-4 h-4 text-teal-500" />
+                        <span className="text-sm font-claude">
+                          {trip.weatherConditions.waveHeight}m waves
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {trip.species.map((species, index) => (
+                          <Badge key={index} variant="outline" className="font-claude">
+                            {species}
+                          </Badge>
+                        ))}
+                      </div>
+                      {trip.equipment.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {trip.equipment.slice(0, 3).map((equipment, index) => (
+                            <Badge key={index} variant="secondary" className="font-claude text-xs">
+                              {equipment}
+                            </Badge>
+                          ))}
+                          {trip.equipment.length > 3 && (
+                            <Badge variant="secondary" className="font-claude text-xs">
+                              +{trip.equipment.length - 3} more
+                            </Badge>
+                          )}
                         </div>
                       )}
-                      {trip.notes && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 truncate font-claude">
+                    </div>
+
+                    {trip.notes && (
+                      <div className="border-t border-custom-secondary/20 pt-4">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 font-claude">
                           {trip.notes}
                         </p>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -395,52 +435,30 @@ export function FishingJournal() {
           )}
         </TabsContent>
 
-        <TabsContent value="analytics">
+        <TabsContent value="analytics" className="space-y-4">
           {analytics ? (
             <TripAnalytics analytics={analytics} />
           ) : (
             <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
               <CardContent className="p-8 text-center">
-                <h3 className="text-xl font-semibold mb-2 font-claude text-gray-800 dark:text-gray-200">No data yet</h3>
-                <p className="text-gray-600 dark:text-gray-400 font-claude">
-                  Log a few trips to see your fishing analytics and insights.
+                <h3 className="text-xl font-semibold mb-2 font-claude text-gray-800 dark:text-gray-200">
+                  No analytics available
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4 font-claude">
+                  Log some fishing trips to see your analytics and insights.
                 </p>
+                <Button 
+                  onClick={() => setShowTripForm(true)} 
+                  className="bg-custom-primary hover:bg-custom-primary/90 text-custom-white font-claude"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Log Your First Trip
+                </Button>
               </CardContent>
             </Card>
           )}
         </TabsContent>
       </Tabs>
-
-      {/* Trip Form Modal */}
-      {showTripForm && (
-        <TripForm
-          onSave={saveTrip}
-          onClose={() => setShowTripForm(false)}
-        />
-      )}
-
-      {/* Trip Detail Modal */}
-      {selectedTrip && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <CardHeader>
-              <CardTitle className="font-claude text-gray-800 dark:text-gray-200">Trip Details</CardTitle>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute top-4 right-4 font-claude text-gray-800 dark:text-gray-200"
-                onClick={() => setSelectedTrip(null)}
-              >
-                ×
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {/* Trip details would go here */}
-              <p className="font-claude text-gray-600 dark:text-gray-400">Detailed trip view coming soon...</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }
