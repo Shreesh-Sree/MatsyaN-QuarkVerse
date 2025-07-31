@@ -71,6 +71,10 @@ export class FishingDataService {
 
   async getFishingTrips(userId: string, limitCount: number = 50): Promise<FishingDataEntry[]> {
     try {
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+
       const q = query(
         collection(db, this.COLLECTION_NAME),
         where('userId', '==', userId),
@@ -92,10 +96,18 @@ export class FishingDataService {
       });
 
       return trips;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching fishing trips:', error);
+      if (error.code === 'permission-denied') {
+        throw new Error('Access denied. Please ensure you are logged in and have proper permissions.');
+      }
       throw new Error('Failed to fetch fishing trips');
     }
+  }
+
+  // Add a method to get trips with better error handling
+  async getUserFishingTrips(userId: string): Promise<FishingDataEntry[]> {
+    return this.getFishingTrips(userId);
   }
 
   async updateFishingTrip(tripId: string, updates: Partial<FishingTrip>): Promise<void> {
@@ -144,6 +156,10 @@ export class FishingDataService {
 
   async getFishingAnalytics(userId: string): Promise<FishingAnalytics> {
     try {
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+
       const trips = await this.getFishingTrips(userId);
       
       const analytics: FishingAnalytics = {
@@ -159,14 +175,21 @@ export class FishingDataService {
       };
 
       return analytics;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error calculating fishing analytics:', error);
+      if (error.code === 'permission-denied') {
+        throw new Error('Access denied. Please ensure you are logged in and have proper permissions.');
+      }
       throw new Error('Failed to calculate analytics');
     }
   }
 
   async getWeatherAnalytics(userId: string): Promise<WeatherAnalytics> {
     try {
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+
       const trips = await this.getFishingTrips(userId);
       const successfulTrips = trips.filter(trip => trip.success);
 
@@ -202,8 +225,11 @@ export class FishingDataService {
         },
         seasonalTrends: this.calculateSeasonalTrends(trips),
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error calculating weather analytics:', error);
+      if (error.code === 'permission-denied') {
+        throw new Error('Access denied. Please ensure you are logged in and have proper permissions.');
+      }
       throw new Error('Failed to calculate weather analytics');
     }
   }

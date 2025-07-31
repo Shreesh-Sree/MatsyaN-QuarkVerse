@@ -1,14 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Calendar, MapPin, Fish, TrendingUp, Camera, Mic } from 'lucide-react';
+import { Plus, Calendar, MapPin, Fish, TrendingUp, Camera, Mic, Search, Filter, Clock, Thermometer, Wind, Eye, Waves, Target, CalendarDays, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
-import { FishingTrip, FishingAnalytics } from '@/types/fishing-journal';
+import { useToast } from '@/hooks/use-toast';
+import { FishingTrip as FishingTripType, FishingAnalytics } from '@/types/fishing-journal';
+import { fishingDataService, FishingTrip } from '@/services/fishingData';
+import { FishingTripEntry } from '@/components/FishingTripEntry';
 import { TripForm } from './TripForm';
 import { TripAnalytics } from './TripAnalytics';
 import { VoiceControls } from '../VoiceControls';
@@ -16,49 +21,83 @@ import { VoiceControls } from '../VoiceControls';
 export function FishingJournal() {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [trips, setTrips] = useState<FishingTrip[]>([]);
+  const [filteredTrips, setFilteredTrips] = useState<FishingTrip[]>([]);
   const [analytics, setAnalytics] = useState<FishingAnalytics | null>(null);
   const [showTripForm, setShowTripForm] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<FishingTrip | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterSpecies, setFilterSpecies] = useState('all');
+  const [filterLocation, setFilterLocation] = useState('all');
+  const [sortBy, setSortBy] = useState<'date' | 'success' | 'catches'>('date');
 
   useEffect(() => {
     loadTrips();
   }, [user]);
 
+  useEffect(() => {
+    filterAndSortTrips();
+  }, [trips, searchTerm, filterSpecies, filterLocation, sortBy]);
+
   const loadTrips = async () => {
-    if (!user) return;
+    if (!user?.uid) return;
     
     setIsLoading(true);
     try {
-      // Load from localStorage for now (will be replaced with Firebase)
-      const savedTrips = localStorage.getItem(`fishing-trips-${user.uid}`);
-      const tripsData = savedTrips ? JSON.parse(savedTrips) : [];
-      setTrips(tripsData);
-      calculateAnalytics(tripsData);
+      const userTrips = await fishingDataService.getUserFishingTrips(user.uid);
+      setTrips(userTrips);
+      calculateAnalytics(userTrips);
     } catch (error) {
       console.error('Error loading trips:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to load fishing trips.',
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const saveTrip = (trip: Omit<FishingTrip, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
-    if (!user) return;
+  const filterAndSortTrips = () => {
+    let filtered = [...trips];
 
-    const newTrip: FishingTrip = {
-      ...trip,
-      id: Date.now().toString(),
-      userId: user.uid,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(trip =>
+        trip.location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        trip.species.some(species => species.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        trip.notes.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
-    const updatedTrips = [...trips, newTrip];
-    setTrips(updatedTrips);
-    localStorage.setItem(`fishing-trips-${user.uid}`, JSON.stringify(updatedTrips));
-    calculateAnalytics(updatedTrips);
-    setShowTripForm(false);
+    // Species filter
+    if (filterSpecies !== 'all') {
+      filtered = filtered.filter(trip => trip.species.includes(filterSpecies));
+    }
+
+    // Location filter
+    if (filterLocation !== 'all') {
+      filtered = filtered.filter(trip => trip.location.name === filterLocation);
+    }
+
+    // Sort
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'date':
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        case 'success':
+          return (b.success ? 1 : 0) - (a.success ? 1 : 0);
+        case 'catches':
+          return b.catch.count - a.catch.count;
+        default:
+          return 0;
+      }
+    });
+
+    setFilteredTrips(filtered);
   };
 
   const calculateAnalytics = (tripsData: FishingTrip[]) => {
@@ -67,32 +106,99 @@ export function FishingJournal() {
       return;
     }
 
-    const totalCatches = tripsData.reduce((sum, trip) => 
-      sum + trip.catches.reduce((catchSum, catch_) => catchSum + catch_.quantity, 0), 0
-    );
-
-    const allSpecies = new Set(
-      tripsData.flatMap(trip => trip.catches.map(c => c.species))
-    );
-
-    const averageSuccessScore = tripsData.reduce((sum, trip) => 
-      sum + trip.successScore, 0
-    ) / tripsData.length;
+    const totalCatches = tripsData.reduce((sum, trip) => sum + trip.catch.count, 0);
+    const totalWeight = tripsData.reduce((sum, trip) => sum + trip.catch.totalWeight, 0);
+    const successfulTrips = tripsData.filter(trip => trip.success).length;
+    const allSpecies = Array.from(new Set(tripsData.flatMap(trip => trip.species)));
 
     // Calculate location stats
-    const locationMap = new Map();
-    tripsData.forEach(trip => {
-      const locKey = `${trip.location.coordinates.lat},${trip.location.coordinates.lng}`;
-      if (!locationMap.has(locKey)) {
-        locationMap.set(locKey, {
+    const locationStats = tripsData.reduce((acc, trip) => {
+      const locationKey = trip.location.name;
+      if (!acc[locationKey]) {
+        acc[locationKey] = {
           name: trip.location.name,
-          coordinates: trip.location.coordinates,
+          coordinates: trip.location,
           visitCount: 0,
           totalCatches: 0,
-          totalSuccess: 0,
-        });
+          successRate: 0,
+        };
       }
-      const loc = locationMap.get(locKey);
+      acc[locationKey].visitCount++;
+      acc[locationKey].totalCatches += trip.catch.count;
+      return acc;
+    }, {} as Record<string, any>);
+
+    // Calculate success rates for locations
+    Object.keys(locationStats).forEach(locationKey => {
+      const locationTrips = tripsData.filter(trip => trip.location.name === locationKey);
+      const successfulLocationTrips = locationTrips.filter(trip => trip.success).length;
+      locationStats[locationKey].successRate = (successfulLocationTrips / locationTrips.length) * 100;
+    });
+
+    const bestLocations = Object.values(locationStats)
+      .sort((a: any, b: any) => b.successRate - a.successRate)
+      .slice(0, 5);
+
+    // Species analytics
+    const speciesStats = tripsData.reduce((acc, trip) => {
+      trip.species.forEach(species => {
+        if (!acc[species]) {
+          acc[species] = { count: 0, totalWeight: 0 };
+        }
+        acc[species].count += trip.catch.count;
+        acc[species].totalWeight += trip.catch.totalWeight;
+      });
+      return acc;
+    }, {} as Record<string, { count: number; totalWeight: number }>);
+
+    const analytics: FishingAnalytics = {
+      totalTrips: tripsData.length,
+      totalCatches,
+      totalSpecies: allSpecies.length,
+      successRate: (successfulTrips / tripsData.length) * 100,
+      averageCatchPerTrip: totalCatches / tripsData.length,
+      bestLocations,
+      topSpecies: Object.entries(speciesStats)
+        .sort(([,a], [,b]) => b.count - a.count)
+        .slice(0, 5)
+        .map(([species, stats]) => ({
+          species,
+          count: stats.count,
+          totalWeight: stats.totalWeight,
+        })),
+      monthlyTrends: [], // Calculate if needed
+      timeSpentFishing: tripsData.reduce((sum, trip) => sum + trip.duration, 0),
+      totalWeight,
+    };
+
+    setAnalytics(analytics);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const getUniqueSpecies = () => {
+    const species = Array.from(new Set(trips.flatMap(trip => trip.species)));
+    return species.sort();
+  };
+
+  const getUniqueLocations = () => {
+    const locations = Array.from(new Set(trips.map(trip => trip.location.name)));
+    return locations.sort();
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-custom-primary" />
+      </div>
+    );
+  }
       loc.visitCount++;
       loc.totalCatches += trip.catches.reduce((sum, c) => sum + c.quantity, 0);
       loc.totalSuccess += trip.successScore;

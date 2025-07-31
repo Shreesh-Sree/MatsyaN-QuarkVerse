@@ -182,7 +182,7 @@ const GoogleMapCard = () => {
       { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] }
     ];
 
-    // Initialize Google Map with theme-aware styles
+    // Initialize Google Map with theme-aware styles and Map ID
     const map = new google.maps.Map(mapRef.current, {
       center: userLocation,
       zoom: 13,
@@ -193,6 +193,7 @@ const GoogleMapCard = () => {
       streetViewControl: false,
       fullscreenControl: true,
       mapTypeControl: false,
+      mapId: process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || 'matsyan-fishing-map', // Add Map ID for Advanced Markers
     });
 
     googleMapRef.current = map;

@@ -17,18 +17,24 @@ This guide explains how to properly set up environment variables for the MatsyaN
 
 ## 🔑 Required API Keys
 
-### 1. Google AI Studio API Key
-- **Variable**: `GOOGLE_GENAI_API_KEY`
+### 1. Google AI Studio API Key (Gemini)
+- **Variable**: `GOOGLE_AI_API_KEY`
 - **Get it from**: [Google AI Studio](https://aistudio.google.com/app/apikey)
-- **Used for**: AI chat and content generation features
+- **Used for**: AI-powered fishing laws, safety guidelines, and data insights
 
 ### 2. Google Maps API Key  
 - **Variable**: `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
 - **Get it from**: [Google Cloud Console - Maps](https://console.cloud.google.com/google/maps-apis)
 - **Used for**: Interactive maps and location features
-- **APIs needed**: Maps JavaScript API, Places API
+- **APIs needed**: Maps JavaScript API, Places API (New), Geocoding API
 
-### 3. Firebase Configuration
+### 3. Google Maps Map ID
+- **Variable**: `NEXT_PUBLIC_GOOGLE_MAP_ID`
+- **Get it from**: Google Cloud Console → Maps → Map Management → Create Map ID
+- **Type**: Vector map type
+- **Used for**: Advanced marker functionality and modern map features
+
+### 4. Firebase Configuration
 - **Get from**: [Firebase Console](https://console.firebase.google.com/)
 - **Required variables**:
   ```bash
@@ -39,7 +45,84 @@ This guide explains how to properly set up environment variables for the MatsyaN
   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
   NEXT_PUBLIC_FIREBASE_APP_ID=
   ```
-- **Used for**: User authentication and data storage
+- **Used for**: User authentication, fishing trip data storage, and analytics
+
+## 🛡️ Firebase Security Setup
+
+### Firestore Security Rules
+Deploy these rules to your Firebase project:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only access their own data
+    match /fishingTrips/{tripId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Analytics data - users can only access their own
+    match /fishingAnalytics/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // User profiles
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+### Deploy Security Rules
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
+
+# Login and initialize
+firebase login
+firebase init firestore
+
+# Deploy rules
+firebase deploy --only firestore:rules
+```
+
+## 📊 Database Structure
+
+### Firestore Collections
+
+#### `fishingTrips` Collection
+```javascript
+{
+  id: "auto-generated",
+  userId: "user_uid",
+  date: "2025-07-31",
+  location: {
+    name: "Marina Bay",
+    lat: 1.2966,
+    lng: 103.8764
+  },
+  species: ["Bass", "Trout"],
+  catch: {
+    count: 5,
+    totalWeight: 2.5,
+    averageSize: 25.0
+  },
+  weatherConditions: {
+    temperature: 28,
+    windSpeed: 10,
+    visibility: 15,
+    waveHeight: 1.2
+  },
+  equipment: ["Rod & Reel", "Fishing Line", "Hooks"],
+  duration: 4.0,
+  success: true,
+  notes: "Great fishing spot with calm waters",
+  createdAt: "timestamp",
+  updatedAt: "timestamp"
+}
+```
 
 ## 🚫 Security Best Practices
 
@@ -48,6 +131,12 @@ This guide explains how to properly set up environment variables for the MatsyaN
 - Share API keys in chat, email, or documentation
 - Use production keys in development
 - Hardcode API keys in source code
+
+### ✅ Always Do This:
+- Use separate API keys for development and production
+- Restrict API keys to specific domains
+- Regularly rotate API keys
+- Monitor API usage and quotas
 
 ### ✅ Always Do This:
 - Use `.env.local` for local development
