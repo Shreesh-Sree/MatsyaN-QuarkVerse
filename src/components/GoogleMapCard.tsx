@@ -24,8 +24,19 @@ import { MapPin, Fish, Anchor, Shield, AlertTriangle, Navigation, Star, Loader2 
 import { useEffect, useState, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { LoadingSpinner } from './LoadingSpinner';
-import { FishingBorderMonitor, type FishingBorderAlert } from './FishingBorderMonitor';
+import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
+
+// Dynamically import FishingBorderMonitor to avoid SSR issues
+const FishingBorderMonitor = dynamic(
+  () => import('./FishingBorderMonitor').then(mod => ({ default: mod.FishingBorderMonitor })),
+  { 
+    ssr: false,
+    loading: () => null
+  }
+);
+
+import type { FishingBorderAlert } from './FishingBorderMonitor';
 
 interface FishingPOI {
   id: number;

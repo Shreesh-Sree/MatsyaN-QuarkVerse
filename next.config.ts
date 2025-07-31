@@ -25,6 +25,24 @@ const nextConfig: NextConfig = {
       config.resolve.alias = {
         ...config.resolve.alias,
       };
+      
+      // Ignore specific modules that cause SSR issues
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    
+    // Handle external libraries that don't work with SSR
+    config.externals = config.externals || [];
+    if (isServer) {
+      config.externals.push({
+        'google': 'google',
+        'navigator': 'navigator',
+        'window': 'window'
+      });
     }
     
     // Enable better error reporting in development

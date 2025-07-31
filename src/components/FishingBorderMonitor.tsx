@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { AlertTriangle, Shield, Volume2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { isGoogleMapsLoaded, createLatLng, isLocationInPolygon } from '@/types/google-maps';
 
 interface FishingBorderAlert {
   id: string;
@@ -24,76 +25,82 @@ interface FishingBorderMonitorProps {
   onBorderCrossing?: (border: FishingBorderAlert) => void;
 }
 
-// India's fishing borders and maritime boundaries
-const INDIA_FISHING_BORDERS: FishingBorderAlert[] = [
-  {
-    id: 'india-pakistan-border',
-    name: 'India-Pakistan Maritime Boundary',
-    coordinates: [
-      new google.maps.LatLng(23.8, 68.2),
-      new google.maps.LatLng(24.0, 68.0),
-      new google.maps.LatLng(24.2, 67.8),
-      new google.maps.LatLng(24.5, 67.5),
-    ],
-    description: 'Restricted area - India-Pakistan maritime boundary',
-    alertType: 'restricted',
-    color: '#FF0000'
-  },
-  {
-    id: 'india-sri-lanka-border',
-    name: 'India-Sri Lanka Maritime Boundary',
-    coordinates: [
-      new google.maps.LatLng(9.8, 79.5),
-      new google.maps.LatLng(9.5, 80.0),
-      new google.maps.LatLng(8.8, 81.2),
-      new google.maps.LatLng(8.0, 81.8),
-    ],
-    description: 'International waters - India-Sri Lanka boundary',
-    alertType: 'international',
-    color: '#FFA500'
-  },
-  {
-    id: 'india-eez-west',
-    name: 'India EEZ - Western Boundary',
-    coordinates: [
-      new google.maps.LatLng(23.0, 66.0),
-      new google.maps.LatLng(20.0, 65.5),
-      new google.maps.LatLng(15.0, 65.0),
-      new google.maps.LatLng(10.0, 64.5),
-      new google.maps.LatLng(8.0, 65.0),
-    ],
-    description: 'Exclusive Economic Zone boundary - Western coast',
-    alertType: 'warning',
-    color: '#FFFF00'
-  },
-  {
-    id: 'india-eez-east',
-    name: 'India EEZ - Eastern Boundary',
-    coordinates: [
-      new google.maps.LatLng(22.0, 92.0),
-      new google.maps.LatLng(18.0, 94.0),
-      new google.maps.LatLng(15.0, 95.0),
-      new google.maps.LatLng(10.0, 94.5),
-      new google.maps.LatLng(6.0, 93.0),
-    ],
-    description: 'Exclusive Economic Zone boundary - Eastern coast',
-    alertType: 'warning',
-    color: '#FFFF00'
-  },
-  {
-    id: 'andaman-sea-boundary',
-    name: 'Andaman Sea International Boundary',
-    coordinates: [
-      new google.maps.LatLng(14.0, 93.0),
-      new google.maps.LatLng(12.0, 95.0),
-      new google.maps.LatLng(10.0, 97.0),
-      new google.maps.LatLng(8.0, 98.0),
-    ],
-    description: 'International maritime boundary - Andaman Sea',
-    alertType: 'international',
-    color: '#FFA500'
+// India's fishing borders and maritime boundaries - defined as functions to avoid SSR issues
+const createBorderCoordinates = () => {
+  if (!isGoogleMapsLoaded()) {
+    return [];
   }
-];
+
+  return [
+    {
+      id: 'india-pakistan-border',
+      name: 'India-Pakistan Maritime Boundary',
+      coordinates: [
+        createLatLng(23.8, 68.2),
+        createLatLng(24.0, 68.0),
+        createLatLng(24.2, 67.8),
+        createLatLng(24.5, 67.5),
+      ].filter(Boolean) as google.maps.LatLng[],
+      description: 'Restricted area - India-Pakistan maritime boundary',
+      alertType: 'restricted' as const,
+      color: '#FF0000'
+    },
+    {
+      id: 'india-sri-lanka-border',
+      name: 'India-Sri Lanka Maritime Boundary',
+      coordinates: [
+        createLatLng(9.8, 79.5),
+        createLatLng(9.5, 80.0),
+        createLatLng(8.8, 81.2),
+        createLatLng(8.0, 81.8),
+      ].filter(Boolean) as google.maps.LatLng[],
+      description: 'International waters - India-Sri Lanka boundary',
+      alertType: 'international' as const,
+      color: '#FFA500'
+    },
+    {
+      id: 'india-eez-west',
+      name: 'India EEZ - Western Boundary',
+      coordinates: [
+        createLatLng(23.0, 66.0),
+        createLatLng(20.0, 65.5),
+        createLatLng(15.0, 65.0),
+        createLatLng(10.0, 64.5),
+        createLatLng(8.0, 65.0),
+      ].filter(Boolean) as google.maps.LatLng[],
+      description: 'Exclusive Economic Zone boundary - Western coast',
+      alertType: 'warning' as const,
+      color: '#FFFF00'
+    },
+    {
+      id: 'india-eez-east',
+      name: 'India EEZ - Eastern Boundary',
+      coordinates: [
+        createLatLng(22.0, 92.0),
+        createLatLng(18.0, 94.0),
+        createLatLng(15.0, 95.0),
+        createLatLng(10.0, 94.5),
+        createLatLng(6.0, 93.0),
+      ].filter(Boolean) as google.maps.LatLng[],
+      description: 'Exclusive Economic Zone boundary - Eastern coast',
+      alertType: 'warning' as const,
+      color: '#FFFF00'
+    },
+    {
+      id: 'andaman-sea-boundary',
+      name: 'Andaman Sea International Boundary',
+      coordinates: [
+        createLatLng(14.0, 93.0),
+        createLatLng(12.0, 95.0),
+        createLatLng(10.0, 97.0),
+        createLatLng(8.0, 98.0),
+      ].filter(Boolean) as google.maps.LatLng[],
+      description: 'International maritime boundary - Andaman Sea',
+      alertType: 'international' as const,
+      color: '#FFA500'
+    }
+  ];
+};
 
 export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   map,
@@ -103,11 +110,28 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   const [polygons, setPolygons] = useState<google.maps.Polygon[]>([]);
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [lastAlertTime, setLastAlertTime] = useState<{ [key: string]: number }>({});
+  const [borderData, setBorderData] = useState<FishingBorderAlert[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const watchIdRef = useRef<number | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure this only runs on client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Initialize border data when Google Maps is available
+  useEffect(() => {
+    if (isClient && isGoogleMapsLoaded()) {
+      const borders = createBorderCoordinates();
+      setBorderData(borders);
+    }
+  }, [isClient, map]);
 
   // Initialize audio for siren sound
   useEffect(() => {
+    if (!isClient) return;
+    
     audioRef.current = new Audio('/sounds/marine-siren.mp3');
     audioRef.current.preload = 'auto';
     
@@ -122,16 +146,16 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
         audioRef.current = null;
       }
     };
-  }, []);
+  }, [isClient]);
 
   // Draw fishing borders on map
   useEffect(() => {
-    if (!map || !window.google) return;
+    if (!map || !isClient || !isGoogleMapsLoaded() || borderData.length === 0) return;
 
     // Clear existing polygons
     polygons.forEach(polygon => polygon.setMap(null));
 
-    const newPolygons = INDIA_FISHING_BORDERS.map(border => {
+    const newPolygons = borderData.map(border => {
       const polygon = new google.maps.Polygon({
         paths: border.coordinates,
         strokeColor: border.color,
@@ -180,11 +204,11 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     return () => {
       newPolygons.forEach(polygon => polygon.setMap(null));
     };
-  }, [map]);
+  }, [map, borderData, isClient]);
 
   // Monitor user location for border crossings
   useEffect(() => {
-    if (!userLocation || !map) return;
+    if (!userLocation || !map || !isClient) return;
 
     setIsMonitoring(true);
     
@@ -216,22 +240,17 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
       }
       setIsMonitoring(false);
     };
-  }, [userLocation, map]);
+  }, [userLocation, map, isClient]);
 
   const checkBorderCrossing = (location: UserLocation) => {
-    if (!window.google) return;
+    if (!isClient || !isGoogleMapsLoaded()) return;
 
-    const userLatLng = new google.maps.LatLng(location.lat, location.lng);
-
-    INDIA_FISHING_BORDERS.forEach((border, index) => {
+    borderData.forEach((border, index) => {
       const polygon = polygons[index];
       if (!polygon) return;
 
-      // Check if user is inside the border polygon
-      const isInside = google.maps.geometry.poly.containsLocation(
-        userLatLng,
-        polygon
-      );
+      // Check if user is inside the border polygon using safe utility
+      const isInside = isLocationInPolygon(location, polygon);
 
       if (isInside) {
         const now = Date.now();
@@ -250,6 +269,8 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   };
 
   const triggerBorderAlert = async (border: FishingBorderAlert) => {
+    if (!isClient) return;
+    
     // Play siren sound
     await playAlertSound();
 
@@ -267,12 +288,12 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     });
 
     // Request notification permission and send push notification
-    if ('Notification' in window) {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
       if (Notification.permission === 'granted') {
         new Notification('🚨 Maritime Border Alert', {
           body: `ALERT: You have crossed into ${border.name}. ${border.description}`,
-          icon: '/icons/alert-icon.png',
-          badge: '/icons/alert-badge.png',
+          icon: '/icons/alert-icon.svg',
+          badge: '/icons/alert-badge.svg',
           tag: `border-alert-${border.id}`,
           requireInteraction: true,
           silent: false,
@@ -282,8 +303,8 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
         if (permission === 'granted') {
           new Notification('🚨 Maritime Border Alert', {
             body: `ALERT: You have crossed into ${border.name}. ${border.description}`,
-            icon: '/icons/alert-icon.png',
-            badge: '/icons/alert-badge.png',
+            icon: '/icons/alert-icon.svg',
+            badge: '/icons/alert-badge.svg',
             tag: `border-alert-${border.id}`,
             requireInteraction: true,
             silent: false,
@@ -293,7 +314,7 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     }
 
     // Vibrate device if supported
-    if ('vibrate' in navigator) {
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate([200, 100, 200, 100, 200]);
     }
 
@@ -322,6 +343,8 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   };
 
   const generateAlertBeep = () => {
+    if (!isClient || typeof window === 'undefined') return;
+    
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
@@ -344,15 +367,22 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   };
 
   const requestNotificationPermission = async () => {
-    if ('Notification' in window && Notification.permission === 'default') {
+    if (isClient && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
       await Notification.requestPermission();
     }
   };
 
   // Request notification permission on component mount
   useEffect(() => {
-    requestNotificationPermission();
-  }, []);
+    if (isClient) {
+      requestNotificationPermission();
+    }
+  }, [isClient]);
+
+  // Don't render anything if not on client side
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="fishing-border-monitor">
@@ -369,4 +399,3 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
 
 // Export types for use in other components
 export type { FishingBorderAlert, UserLocation };
-export { INDIA_FISHING_BORDERS };
