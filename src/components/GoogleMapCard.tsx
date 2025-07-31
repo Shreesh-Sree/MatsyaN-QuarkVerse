@@ -28,7 +28,7 @@ import { LoadingSpinner } from './LoadingSpinner';
 interface FishingPOI {
   id: number;
   name: string;
-  type: 'fishing_spot' | 'marina' | 'bait_shop' | 'safety_station' | 'restaurant';
+  type: 'fishing_spot' | 'marina' | 'bait_shop' | 'safety_station' | 'port' | 'fishing_charter' | 'boat_ramp';
   lat: number;
   lng: number;
   distance: number;
@@ -199,49 +199,76 @@ const GoogleMapCard = () => {
 
     // Add user location marker with modern AdvancedMarkerElement
     if (google.maps.marker && google.maps.marker.AdvancedMarkerElement) {
-      // Use modern AdvancedMarkerElement
+      // Use modern AdvancedMarkerElement with enhanced styling
       const userMarkerElement = document.createElement('div');
       userMarkerElement.innerHTML = `
         <div style="
-          width: 48px; 
-          height: 48px; 
-          background: #1D4ED8; 
-          border: 3px solid #FFFFFF; 
-          border-radius: 50%; 
+          position: relative;
+          width: 60px; 
+          height: 60px; 
           display: flex; 
           align-items: center; 
           justify-content: center;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         ">
           <div style="
-            width: 16px; 
-            height: 16px; 
-            background: #FFFFFF; 
-            border-radius: 50%;
+            position: absolute;
+            width: 60px; 
+            height: 60px; 
+            background: rgba(29, 78, 216, 0.3); 
+            border-radius: 50%; 
+            animation: pulse 2s infinite;
           "></div>
+          <div style="
+            width: 40px; 
+            height: 40px; 
+            background: #1D4ED8; 
+            border: 4px solid #FFFFFF; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 2;
+          ">
+            <div style="
+              width: 12px; 
+              height: 12px; 
+              background: #FFFFFF; 
+              border-radius: 50%;
+            "></div>
+          </div>
         </div>
+        <style>
+          @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            70% { transform: scale(2); opacity: 0; }
+            100% { transform: scale(2.2); opacity: 0; }
+          }
+        </style>
       `;
 
       const userMarker = new google.maps.marker.AdvancedMarkerElement({
         position: userLocation,
         map: map,
-        title: 'Your Location',
+        title: 'Your Current Location',
         content: userMarkerElement,
       });
     } else {
-      // Fallback to legacy Marker for backward compatibility
+      // Fallback to legacy Marker for backward compatibility with enhanced icon
       const userMarker = new google.maps.Marker({
         position: userLocation,
         map: map,
-        title: 'Your Location',
+        title: 'Your Current Location',
         icon: {
           url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="24" cy="24" r="16" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="3"/>
-              <circle cx="24" cy="24" r="8" fill="#FFFFFF"/>
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="30" cy="30" r="28" fill="rgba(29, 78, 216, 0.2)" stroke="rgba(29, 78, 216, 0.4)" stroke-width="2"/>
+              <circle cx="30" cy="30" r="20" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="4"/>
+              <circle cx="30" cy="30" r="8" fill="#FFFFFF"/>
             </svg>
           `),
-          scaledSize: new google.maps.Size(48, 48),
+          scaledSize: new google.maps.Size(60, 60),
         },
         animation: google.maps.Animation.DROP,
       });
@@ -266,7 +293,9 @@ const GoogleMapCard = () => {
       { keywords: ['fishing', 'pier', 'jetty'], type: 'fishing_spot' },
       { keywords: ['bait', 'tackle', 'fishing', 'shop'], type: 'bait_shop' },
       { keywords: ['coast guard', 'marine safety'], type: 'safety_station' },
-      { keywords: ['seafood', 'restaurant'], type: 'restaurant' }
+      { keywords: ['port', 'harbor', 'dock'], type: 'port' },
+      { keywords: ['fishing', 'charter', 'boat tours'], type: 'fishing_charter' },
+      { keywords: ['boat', 'ramp', 'launch'], type: 'boat_ramp' }
     ];
 
     const allPOIs: FishingPOI[] = [];
@@ -380,7 +409,9 @@ const GoogleMapCard = () => {
       fishing_spot: '#10B981',
       bait_shop: '#F59E0B',
       safety_station: '#EF4444',
-      restaurant: '#8B5CF6'
+      port: '#6366F1',
+      fishing_charter: '#14B8A6',
+      boat_ramp: '#8B5CF6'
     };
 
     const icons = {
@@ -388,7 +419,9 @@ const GoogleMapCard = () => {
       fishing_spot: '🐟',
       bait_shop: '🎣',
       safety_station: '🛡️',
-      restaurant: '🍽️'
+      port: '🚢',
+      fishing_charter: '🛥️',
+      boat_ramp: '🚤'
     };
 
     return `
@@ -415,7 +448,9 @@ const GoogleMapCard = () => {
       { keyword: 'fishing spot pier jetty', type: 'fishing_spot' },
       { keyword: 'bait tackle fishing shop', type: 'bait_shop' },
       { keyword: 'coast guard marine safety', type: 'safety_station' },
-      { keyword: 'seafood restaurant fishing', type: 'restaurant' }
+      { keyword: 'port harbor dock', type: 'port' },
+      { keyword: 'fishing charter boat tours', type: 'fishing_charter' },
+      { keyword: 'boat ramp launch', type: 'boat_ramp' }
     ];
 
     const allPOIs: FishingPOI[] = [];
@@ -490,7 +525,9 @@ const GoogleMapCard = () => {
       marina: '#8b5cf6', // Purple
       bait_shop: '#10b981', // Green
       safety_station: '#ef4444', // Red
-      restaurant: '#f59e0b' // Amber
+      port: '#6366F1', // Indigo
+      fishing_charter: '#14B8A6', // Teal
+      boat_ramp: '#8B5CF6' // Purple
     };
 
     const icons = {
@@ -498,7 +535,9 @@ const GoogleMapCard = () => {
       marina: 'M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.5L19 8l-7 3.5L5 8l7-3.5zM4 16.5V9l7 3.5v7.5L4 16.5z', // Simplified anchor
       bait_shop: 'M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zm5 14H8v-2h3v2zm0-4H8v-2h3v2zm0-4H8V8h3v2zm5 4h-3v-2h3v2zm0-4h-3v-2h3v2zm0-4h-3V8h3v2z', // Simplified shop
       safety_station: 'M12 2l-9 4.5V12c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6.5L12 2z', // Shield
-      restaurant: 'M12 2l.94 3.06L16 6l-2.94 1.94L12 11l-1.06-3.06L8 6l3.06-.94L12 2z' // Star
+      port: 'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2v-4H6v4zM12 8l6 6H6l6-6z', // Port/dock icon
+      fishing_charter: 'M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v-2h2c.96 0 1.88-.28 2.67-.77 1.55-1.01 3.11-1.01 4.66 0 .79.49 1.71.77 2.67.77s1.88-.28 2.67-.77c1.55-1.01 3.11-1.01 4.66 0 .79.49 1.71.77 2.67.77h2v2h-2z', // Boat/charter
+      boat_ramp: 'M8.1 13.34l2.83-2.83L3.91 3.5c-.78-.78-.78-2.05 0-2.83.78-.78 2.05-.78 2.83 0l7.01 7.01 2.83-2.83 5.66 5.66-11.31 11.31L8.1 13.34z' // Boat ramp
     };
 
     return {
@@ -550,8 +589,12 @@ const GoogleMapCard = () => {
         return <MapPin className="w-5 h-5 text-green-600" />;
       case 'safety_station':
         return <Shield className="w-5 h-5 text-red-600" />;
-      case 'restaurant':
-        return <Star className="w-5 h-5 text-yellow-600" />;
+      case 'port':
+        return <Navigation className="w-5 h-5 text-indigo-600" />;
+      case 'fishing_charter':
+        return <Anchor className="w-5 h-5 text-teal-600" />;
+      case 'boat_ramp':
+        return <Navigation className="w-5 h-5 text-violet-600" />;
       default:
         return <MapPin className="w-5 h-5 text-gray-600" />;
     }
@@ -567,8 +610,12 @@ const GoogleMapCard = () => {
         return 'border-green-500 bg-green-50 dark:bg-green-900/20 dark:border-green-400';
       case 'safety_station':
         return 'border-red-500 bg-red-50 dark:bg-red-900/20 dark:border-red-400';
-      case 'restaurant':
-        return 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-400';
+      case 'port':
+        return 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 dark:border-indigo-400';
+      case 'fishing_charter':
+        return 'border-teal-500 bg-teal-50 dark:bg-teal-900/20 dark:border-teal-400';
+      case 'boat_ramp':
+        return 'border-violet-500 bg-violet-50 dark:bg-violet-900/20 dark:border-violet-400';
       default:
         return 'border-gray-500 bg-gray-50 dark:bg-gray-900/20 dark:border-gray-400';
     }
@@ -638,9 +685,9 @@ const GoogleMapCard = () => {
         
         {/* POI list */}
         <div className="p-6 glass-card-sm rounded-b-2xl h-72 overflow-y-auto">
-          <h4 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+          <h4 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2 font-claude">
             <Navigation className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            Nearby Fishing Spots
+            Nearby Fishing Infrastructure
           </h4>
           {fishingPOIs.length > 0 ? (
             <ul className="space-y-3">
@@ -656,16 +703,16 @@ const GoogleMapCard = () => {
                         {getIconForPOI(poi.type)}
                       </div>
                       <div>
-                        <p className="font-semibold text-foreground">{poi.name}</p>
-                        <p className="text-xs text-muted-foreground truncate max-w-xs">{poi.description}</p>
+                        <p className="font-semibold text-foreground font-claude">{poi.name}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-xs font-claude">{poi.description}</p>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0 ml-4">
-                      <p className="text-sm font-bold text-foreground">{poi.distance.toFixed(1)} km</p>
+                      <p className="text-sm font-bold text-foreground font-claude">{poi.distance.toFixed(1)} km</p>
                       {poi.rating && (
                         <div className="flex items-center justify-end text-xs text-amber-600 dark:text-amber-400 mt-1">
                           <Star className="w-3 h-3 mr-1 fill-current" />
-                          <span className="font-semibold">{poi.rating.toFixed(1)}</span>
+                          <span className="font-semibold font-claude">{poi.rating.toFixed(1)}</span>
                         </div>
                       )}
                     </div>
@@ -676,8 +723,8 @@ const GoogleMapCard = () => {
           ) : (
             <div className="text-center py-8">
               <Fish className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-foreground font-semibold">No Fishing Spots Found Nearby</p>
-              <p className="text-sm text-muted-foreground">Try zooming out or exploring a different area.</p>
+              <p className="text-foreground font-semibold font-claude">No Fishing Infrastructure Found Nearby</p>
+              <p className="text-sm text-muted-foreground font-claude">Try zooming out or exploring a different area.</p>
             </div>
           )}
         </div>
@@ -688,13 +735,13 @@ const GoogleMapCard = () => {
   return (
     <Card className="modern-card-tall overflow-hidden">
       <CardHeader className="glass-card p-4 border-b border-border">
-        <CardTitle className="flex items-center gap-3 text-foreground">
+        <CardTitle className="flex items-center gap-3 text-foreground font-claude">
           <div className="w-10 h-10 glass-card-sm flex items-center justify-center rounded-xl">
             <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           Interactive Fishing Map
           {userLocation && (
-            <span className="text-xs glass-card-sm px-2 py-1 rounded-full text-green-600 dark:text-green-400">
+            <span className="text-xs glass-card-sm px-2 py-1 rounded-full text-green-600 dark:text-green-400 font-claude">
               Live Location
             </span>
           )}

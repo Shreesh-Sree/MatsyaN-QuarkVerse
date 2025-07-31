@@ -86,22 +86,22 @@ export default function Home() {
         <section className="relative py-20 lg:py-28 px-4 md:px-8 text-center">
           <div className="absolute inset-0 -z-10 h-full w-full bg-custom-light bg-[linear-gradient(to_right,#f4f3ee_1px,transparent_1px),linear-gradient(to_bottom,#f4f3ee_1px,transparent_1px)] bg-[size:6rem_4rem] dark:bg-black dark:bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] opacity-30"></div>
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-4xl lg:text-6xl font-medium text-foreground dark:text-custom-white mb-6 tracking-tight leading-tight font-['Inter']">
+            <h1 className="text-4xl lg:text-6xl font-medium text-foreground dark:text-custom-white mb-6 tracking-tight leading-tight font-claude text-center">
               FisherMate.AI
             </h1>
-            <p className="text-lg lg:text-xl text-muted-foreground dark:text-custom-secondary max-w-3xl mx-auto leading-relaxed mb-10 font-['Inter']">
+            <p className="text-lg lg:text-xl text-muted-foreground dark:text-custom-secondary max-w-3xl mx-auto leading-relaxed mb-10 font-claude text-center">
               Your intelligent fishing companion for safer, smarter, and more successful trips on the water.
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <Link href={user ? "/dashboard" : "/login"}>
-                    <Button size="lg" className="gap-3 px-8 py-6 text-base font-medium bg-custom-primary hover:bg-custom-primary/90 text-custom-white rounded-lg transition-colors duration-200 font-['Inter']">
+                                <Link href={user ? "/dashboard" : "/login"}>
+                    <Button size="lg" className="gap-3 px-8 py-6 text-base font-medium bg-custom-primary hover:bg-custom-primary/90 text-custom-white rounded-lg transition-colors duration-200 font-claude">
                         {user ? "Go to Dashboard" : "Get Started Free"}
                         <ArrowRight className="w-4 h-4" />
                     </Button>
                 </Link>
-                <Link href="/about">
-                    <Button size="lg" variant="outline" className="px-8 py-6 text-base font-medium border border-custom-secondary/30 text-foreground dark:text-custom-white hover:bg-custom-light dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 font-['Inter']">
+                <Link href="#features">
+                    <Button variant="outline" size="lg" className="gap-3 px-8 py-6 text-base font-medium border-custom-secondary hover:bg-custom-secondary/10 text-custom-secondary rounded-lg transition-colors duration-200 font-claude">
                         Learn More
                     </Button>
                 </Link>
@@ -111,40 +111,50 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
               {stats.map((stat, index) => (
                 <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-semibold text-foreground dark:text-custom-white font-['Inter']">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground dark:text-custom-secondary font-['Inter']">{stat.label}</div>
+                  <div className="text-2xl font-semibold text-foreground dark:text-custom-white font-claude">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Features Grid */}
-        <section className="py-16 px-4 md:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-16">
-                <h2 className="text-3xl lg:text-4xl font-medium text-foreground dark:text-custom-white mb-4 font-['Inter']">
-                Everything You Need for a Great Day on the Water
-                </h2>
-                <p className="text-muted-foreground dark:text-custom-secondary text-base max-w-2xl font-['Inter']">
-                    From real-time data to AI-powered assistance, we&apos;ve got you covered.
-                </p>
+        {/* Features Section */}
+        <section id="features" className="py-20 px-4 md:px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-5xl font-medium text-foreground dark:text-custom-white mb-4 font-claude">
+                Everything You Need for Successful Fishing
+              </h2>
+              <p className="text-lg text-muted-foreground dark:text-custom-secondary max-w-3xl mx-auto font-claude">
+                Discover comprehensive tools designed specifically for modern anglers who demand precision and reliability.
+              </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {features.map((feature) => (
-                <Link
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {features.map((feature, index) => (
+                <div
                   key={feature.title}
-                  href={feature.href}
-                  className="group bg-custom-white dark:bg-gray-900 border border-custom-secondary/20 rounded-lg p-6 hover:border-custom-primary/50 dark:hover:border-custom-primary/50 transition-colors duration-200"
+                  className="group bg-white dark:bg-gray-900 border border-custom-secondary/20 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:border-custom-primary/40"
                 >
-                  <h3 className="text-lg font-medium text-foreground dark:text-custom-white mb-3 group-hover:text-custom-primary transition-colors duration-200 font-['Inter']">
+                  <div className={`w-14 h-14 rounded-2xl ${feature.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="w-6 h-6 text-custom-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground dark:text-custom-white mb-4 font-claude">
                     {feature.title}
                   </h3>
-                  <p className="text-muted-foreground dark:text-custom-secondary leading-relaxed text-sm font-['Inter']">
+                  <p className="text-muted-foreground dark:text-custom-secondary text-base leading-relaxed mb-6 font-claude">
                     {feature.description}
                   </p>
-                </Link>
+                  <Link href={feature.href}>
+                    <Button
+                      variant="outline"
+                      className="group-hover:bg-custom-primary group-hover:text-custom-white group-hover:border-custom-primary transition-all duration-300 font-claude"
+                    >
+                      Explore <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -153,47 +163,47 @@ export default function Home() {
         {/* Benefits Section */}
         <section className="py-16 px-4 md:px-8 bg-custom-light dark:bg-gray-900">
           <div className="max-w-5xl mx-auto">
-            <div className="mb-12">
-              <h2 className="text-3xl lg:text-4xl font-medium text-foreground dark:text-custom-white mb-4 font-['Inter']">
+            <div className="mb-12 text-center">
+              <h2 className="text-3xl lg:text-4xl font-medium text-foreground dark:text-custom-white mb-4 font-claude">
                 Why Choose FisherMate.AI?
               </h2>
-              <p className="text-muted-foreground dark:text-custom-secondary text-base max-w-3xl font-['Inter']">
+              <p className="text-muted-foreground dark:text-custom-secondary text-base max-w-3xl mx-auto font-claude">
                 We combine cutting-edge technology with a passion for fishing to create an indispensable tool for anglers of all levels.
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
               <div className="space-y-6">
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8">
+                <div className="bg-white dark:bg-gray-800 border border-custom-secondary/20 rounded-2xl p-8">
                   <div className="w-14 h-14 bg-custom-primary/10 dark:bg-custom-primary/20 rounded-2xl flex items-center justify-center mb-6">
                     <Bot className="w-6 h-6 text-custom-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-3">AI-Powered Intelligence</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">Get predictive insights on the best times and locations to fish, all powered by advanced AI models.</p>
+                  <h3 className="text-lg font-semibold text-foreground mb-3 font-claude">AI-Powered Intelligence</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed font-claude">Get predictive insights on the best times and locations to fish, all powered by advanced AI models.</p>
                 </div>
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8">
+                <div className="bg-white dark:bg-gray-800 border border-custom-secondary/20 rounded-2xl p-8">
                   <div className="w-14 h-14 bg-custom-secondary/10 dark:bg-custom-secondary/20 rounded-2xl flex items-center justify-center mb-6">
                     <CloudSun className="w-6 h-6 text-custom-secondary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-3">All-in-One Data Hub</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">Access live weather, water conditions, maps, and legal information in a single, easy-to-use interface.</p>
+                  <h3 className="text-lg font-semibold text-foreground mb-3 font-claude">All-in-One Data Hub</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed font-claude">Access live weather, water conditions, maps, and legal information in a single, easy-to-use interface.</p>
                 </div>
               </div>
               
               <div className="space-y-6">
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8">
+                <div className="bg-white dark:bg-gray-800 border border-custom-secondary/20 rounded-2xl p-8">
                   <div className="w-14 h-14 bg-custom-primary/10 dark:bg-custom-primary/20 rounded-2xl flex items-center justify-center mb-6">
                     <Shield className="w-6 h-6 text-custom-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-3">Uncompromised Safety</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">With SOS features and up-to-date safety guidelines, we prioritize your well-being on every trip.</p>
+                  <h3 className="text-lg font-semibold text-foreground mb-3 font-claude">Uncompromised Safety</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed font-claude">With SOS features and up-to-date safety guidelines, we prioritize your well-being on every trip.</p>
                 </div>
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8">
+                <div className="bg-white dark:bg-gray-800 border border-custom-secondary/20 rounded-2xl p-8">
                   <div className="w-14 h-14 bg-custom-secondary/10 dark:bg-custom-secondary/20 rounded-2xl flex items-center justify-center mb-6">
                     <Zap className="w-6 h-6 text-custom-secondary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-3">Lightning Fast</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">Optimized for speed and performance, ensuring you get the information you need when you need it.</p>
+                  <h3 className="text-lg font-semibold text-foreground mb-3 font-claude">Lightning Fast</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed font-claude">Optimized for speed and performance, ensuring you get the information you need when you need it.</p>
                 </div>
               </div>
             </div>
@@ -202,9 +212,9 @@ export default function Home() {
             <div className="mt-16">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+                  <div key={index} className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 border border-custom-secondary/20 rounded-xl">
                     <CheckCircle className="w-5 h-5 text-custom-primary flex-shrink-0" />
-                    <span className="text-sm font-medium text-foreground">{benefit}</span>
+                    <span className="text-sm font-medium text-foreground font-claude">{benefit}</span>
                   </div>
                 ))}
               </div>

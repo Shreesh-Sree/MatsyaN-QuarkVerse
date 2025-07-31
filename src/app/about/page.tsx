@@ -70,21 +70,21 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-custom-white dark:bg-black">
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-12">
         
         {/* Hero Section */}
         <section className="text-center space-y-6">
           <div className="space-y-4">
-            <Badge variant="outline" className="px-4 py-2">
+            <Badge variant="outline" className="px-4 py-2 border-custom-secondary/30 text-custom-secondary">
               <Bot className="w-4 h-4 mr-2" />
-              About FisherMate.AI
+              <span className="font-claude">About FisherMate.AI</span>
             </Badge>
-            <h1 className="text-4xl lg:text-6xl font-bold">
+            <h1 className="text-4xl lg:text-6xl font-medium font-claude">
               Revolutionizing Fishing
               <span className="block text-custom-primary">with AI Technology</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-muted-foreground dark:text-custom-secondary max-w-3xl mx-auto leading-relaxed font-claude">
               FisherMate.AI is your intelligent fishing companion, combining cutting-edge AI technology 
               with comprehensive fishing expertise to ensure safer, smarter, and more successful fishing experiences.
             </p>
@@ -94,8 +94,8 @@ export default function AboutPage() {
         {/* Mission Section */}
         <section className="grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold">Our Mission</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <h2 className="text-3xl font-medium font-claude">Our Mission</h2>
+            <p className="text-lg text-muted-foreground dark:text-custom-secondary leading-relaxed font-claude">
               We believe that fishing should be accessible, safe, and enjoyable for everyone. 
               Our mission is to democratize fishing knowledge and provide advanced tools that 
               help both novice and experienced anglers make informed decisions on the water.
