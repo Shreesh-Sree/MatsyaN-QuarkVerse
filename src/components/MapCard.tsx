@@ -10,11 +10,22 @@ import { Badge } from "@/components/ui/badge";
 // Dynamically import Leaflet components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { 
   ssr: false,
-  loading: () => <div className="h-full w-full flex items-center justify-center">Loading map...</div>
+  loading: () => <div className="h-full w-full flex items-center justify-center">
+    <Loader2 className="h-8 w-8 animate-spin" />
+  </div>
 });
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { 
+  ssr: false,
+  loading: () => null
+});
+const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { 
+  ssr: false,
+  loading: () => null
+});
+const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { 
+  ssr: false,
+  loading: () => null
+});
 
 // Hook to initialize Leaflet
 const useLeaflet = () => {

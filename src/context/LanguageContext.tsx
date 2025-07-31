@@ -18,7 +18,12 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocale] = useState<Locale>('en');
 
   const t = (key: TranslationKey) => {
-    return translations[locale][key] || translations['en'][key];
+    try {
+      return translations[locale]?.[key] || translations['en']?.[key] || key;
+    } catch (error) {
+      console.error('Translation error for key:', key, error);
+      return key;
+    }
   };
 
   return (

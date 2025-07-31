@@ -7,6 +7,12 @@ import { AuthProvider } from '@/context/AuthContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { ClientErrorHandler } from '@/components/ClientErrorHandler';
+
+// Suppress Google Maps deprecation warnings in development
+if (process.env.NODE_ENV === 'development') {
+  import('@/utils/console-suppression');
+}
 
 export const metadata: Metadata = {
   title: 'FisherMate.AI - AI Fishing Companion',
@@ -44,6 +50,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased flex flex-col min-h-screen">
+        <ClientErrorHandler />
         <ErrorBoundary>
           <AuthProvider>
             <LanguageProvider>
@@ -53,11 +60,20 @@ export default function RootLayout({
                 enableSystem
                 disableTransitionOnChange
               >
-                <Header />
+                <ErrorBoundary fallback={<div className="p-4 text-center">Failed to load header</div>}>
+                  <Header />
+                </ErrorBoundary>
                 <main className="flex-1 pt-20">
-                  {children}
+                  <ErrorBoundary fallback={<div className="p-8 text-center">
+                    <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+                    <p>Please refresh the page to try again.</p>
+                  </div>}>
+                    {children}
+                  </ErrorBoundary>
                 </main>
-                <Footer />
+                <ErrorBoundary fallback={<div className="p-4 text-center">Failed to load footer</div>}>
+                  <Footer />
+                </ErrorBoundary>
                 <Toaster />
               </ThemeProvider>
             </LanguageProvider>

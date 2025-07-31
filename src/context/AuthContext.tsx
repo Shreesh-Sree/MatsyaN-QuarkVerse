@@ -39,11 +39,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         setUser(user);
         setLoading(false);
+      }, (error) => {
+        console.error('Auth state change error:', error);
+        setUser(null);
+        setLoading(false);
       });
 
       return () => unsubscribe();
     } catch (error) {
       console.error('Error initializing auth:', error);
+      setUser(null);
       setLoading(false);
     }
   }, []);

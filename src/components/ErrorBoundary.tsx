@@ -26,6 +26,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+    
+    // Additional error reporting for React Error #130
+    if (error.message.includes('Minified React error #130')) {
+      console.error('React Error #130 detected - this usually indicates undefined children or components');
+      console.error('Component stack:', errorInfo.componentStack);
+    }
   }
 
   private handleRetry = () => {
@@ -51,9 +57,14 @@ export class ErrorBoundary extends Component<Props, State> {
               We encountered an error while loading this component.
             </p>
             {this.state.error && (
-              <p className="text-sm text-muted-foreground font-mono bg-muted p-2 rounded">
-                {this.state.error.message}
-              </p>
+              <details className="text-sm">
+                <summary className="cursor-pointer text-muted-foreground font-mono bg-muted p-2 rounded">
+                  Error Details (click to expand)
+                </summary>
+                <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto">
+                  {this.state.error.message}
+                </pre>
+              </details>
             )}
             <Button 
               onClick={this.handleRetry}
@@ -68,6 +79,7 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    // Add a safety check for children
+    return this.props.children || null;
   }
 }

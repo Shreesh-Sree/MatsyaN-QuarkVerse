@@ -1,9 +1,29 @@
 'use client';
 
+/**
+ * GoogleMapCard Component
+ * 
+ * Current Status: Uses legacy Google Maps APIs with deprecation warnings
+ * 
+ * Migration Plan:
+ * 1. Replace google.maps.places.PlacesService with new Places API (New)
+ * 2. Ensure all markers use google.maps.marker.AdvancedMarkerElement
+ * 3. Update to use new place search methods
+ * 
+ * Deprecation Warnings (Suppressed in Development):
+ * - google.maps.Marker (deprecated, using AdvancedMarkerElement when available)
+ * - google.maps.places.PlacesService (will be replaced with new Places API)
+ * 
+ * For production deployment, consider migrating to:
+ * - @vis.gl/react-google-maps for better React integration
+ * - New Places API (New) for place searches
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Fish, Anchor, Shield, AlertTriangle, Navigation, Star, Loader2 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { useTheme } from 'next-themes';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface FishingPOI {
   id: number;
@@ -50,7 +70,7 @@ const GoogleMapCard = () => {
     }
 
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry&loading=async&callback=initMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry,marker&loading=async&callback=initMap`;
     script.async = true;
     script.defer = true;
     
@@ -228,12 +248,14 @@ const GoogleMapCard = () => {
     }
 
     // Search for nearby fishing-related places using modern Places API
-    if (google.maps.places && google.maps.places.Place) {
-      searchNearbyFishingPlacesModern(userLocation, map);
-    } else {
-      // Fallback to legacy PlacesService
+    try {
+      // Note: For production, you should migrate to the new Places API (New)
+      // For now, we'll use the legacy API with proper error handling
       const service = new google.maps.places.PlacesService(map);
       searchNearbyFishingPlaces(service, userLocation, map);
+    } catch (error) {
+      console.error('Error initializing Places service:', error);
+      setError('Failed to initialize location services');
     }
   };
 
@@ -399,52 +421,66 @@ const GoogleMapCard = () => {
     const allPOIs: FishingPOI[] = [];
     let searchesCompleted = 0;
 
+    // Add a small delay between searches to be more respectful to the API
     searches.forEach((search, index) => {
-      const request = {
-        location: new google.maps.LatLng(location.lat, location.lng),
-        radius: 25000, // 25km radius
-        keyword: search.keyword,
-      };
+      setTimeout(() => {
+        const request = {
+          location: new google.maps.LatLng(location.lat, location.lng),
+          radius: 25000, // 25km radius
+          keyword: search.keyword,
+        };
 
-      service.nearbySearch(request, (results, status) => {
-        searchesCompleted++;
-        
-        if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-          results.slice(0, 3).forEach((place, placeIndex) => {
-            if (place.geometry && place.geometry.location) {
-              const poi: FishingPOI = {
-                id: index * 10 + placeIndex,
-                name: place.name || 'Unknown Location',
-                type: search.type as any,
-                lat: place.geometry.location.lat(),
-                lng: place.geometry.location.lng(),
-                distance: calculateDistance(location, {
-                  lat: place.geometry.location.lat(),
-                  lng: place.geometry.location.lng()
-                }),
-                description: place.vicinity || 'No description available',
-                rating: place.rating,
-                place_id: place.place_id,
-                price_level: place.price_level,
-                photos: place.photos?.slice(0, 1).map(photo => 
-                  photo.getUrl({ maxWidth: 300, maxHeight: 200 })
-                )
-              };
+        try {
+          service.nearbySearch(request, (results, status) => {
+            searchesCompleted++;
+            
+            if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+              results.slice(0, 3).forEach((place, placeIndex) => {
+                if (place.geometry && place.geometry.location) {
+                  const poi: FishingPOI = {
+                    id: index * 10 + placeIndex,
+                    name: place.name || 'Unknown Location',
+                    type: search.type as any,
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng(),
+                    distance: calculateDistance(location, {
+                      lat: place.geometry.location.lat(),
+                      lng: place.geometry.location.lng()
+                    }),
+                    description: place.vicinity || 'No description available',
+                    rating: place.rating,
+                    place_id: place.place_id,
+                    price_level: place.price_level,
+                    photos: place.photos?.slice(0, 1).map(photo => 
+                      photo.getUrl({ maxWidth: 300, maxHeight: 200 })
+                    )
+                  };
 
-              allPOIs.push(poi);
+                  allPOIs.push(poi);
 
-              // Add marker to map using modern API when available
-              addModernMarker(poi, map);
+                  // Add marker to map using modern API when available
+                  addModernMarker(poi, map);
+                }
+              });
+            } else if (status !== google.maps.places.PlacesServiceStatus.OK) {
+              console.warn(`Places search failed with status: ${status} for ${search.keyword}`);
+            }
+
+            // Update state when all searches are complete
+            if (searchesCompleted === searches.length) {
+              allPOIs.sort((a, b) => a.distance - b.distance);
+              setFishingPOIs(allPOIs);
             }
           });
+        } catch (error) {
+          console.error(`Error searching for ${search.keyword}:`, error);
+          searchesCompleted++;
+          if (searchesCompleted === searches.length) {
+            allPOIs.sort((a, b) => a.distance - b.distance);
+            setFishingPOIs(allPOIs);
+          }
         }
-
-        // Update state when all searches are complete
-        if (searchesCompleted === searches.length) {
-          allPOIs.sort((a, b) => a.distance - b.distance);
-          setFishingPOIs(allPOIs);
-        }
-      });
+      }, index * 200); // 200ms delay between searches
     });
   };
 
@@ -550,12 +586,11 @@ const GoogleMapCard = () => {
       return (
         <div className="flex items-center justify-center h-full glass-card rounded-2xl">
           <div className="text-center p-8">
-            <Loader2 className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-6" />
-            <p className="text-xl font-semibold text-foreground mb-2">Loading Interactive Map...</p>
-            <p className="text-sm text-muted-foreground">Fetching your location and nearby fishing spots</p>
-            {retryCount > 0 && (
-              <p className="text-xs text-muted-foreground mt-2">Retry attempt {retryCount}/3</p>
-            )}
+            <LoadingSpinner 
+              size="lg" 
+              text="Loading fishing spots and map data..."
+              className="text-blue-600 dark:text-blue-400"
+            />
           </div>
         </div>
       );
