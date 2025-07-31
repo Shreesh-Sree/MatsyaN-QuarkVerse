@@ -321,3 +321,5 @@ export function GoogleVoiceAssistant({ onTranscript, isProcessing = false }: Goo
     </div>
   );
 }
+
+export default GoogleVoiceAssistant;

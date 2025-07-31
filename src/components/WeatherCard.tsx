@@ -426,3 +426,5 @@ const getFishingRecommendation = (weatherData: OpenMeteoWeatherData['current'], 
     color: 'success'
   };
 };
+
+export default WeatherCard;

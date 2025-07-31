@@ -28,9 +28,17 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
     
     // Additional error reporting for React Error #130
-    if (error.message.includes('Minified React error #130')) {
+    if (error.message.includes('Minified React error #130') || error.message.includes('React error #130')) {
       console.error('React Error #130 detected - this usually indicates undefined children or components');
       console.error('Component stack:', errorInfo.componentStack);
+      console.error('Error stack:', error.stack);
+      
+      // Log more details about the error
+      console.group('🔍 React Error #130 Debug Information');
+      console.log('Error message:', error.message);
+      console.log('Error name:', error.name);
+      console.log('Component that threw error:', errorInfo.componentStack?.split('\n')[1]?.trim());
+      console.groupEnd();
     }
   }
 
@@ -83,3 +91,5 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children || null;
   }
 }
+
+export default ErrorBoundary;

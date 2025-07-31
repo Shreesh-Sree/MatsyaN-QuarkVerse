@@ -2,6 +2,7 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -18,13 +19,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     // Suppress Google Maps deprecation warnings in development
     if (!isServer) {
       config.resolve.alias = {
         ...config.resolve.alias,
       };
     }
+    
+    // Enable better error reporting in development
+    if (dev) {
+      config.optimization = {
+        ...config.optimization,
+        minimize: false,
+      };
+    }
+    
     return config;
   },
 };
