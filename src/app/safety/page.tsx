@@ -6,42 +6,34 @@ import { Shield, AlertTriangle, CheckCircle, LifeBuoy } from "lucide-react";
 
 export default function SafetyPage() {
   const features = [
-    { icon: AlertTriangle, text: "Emergency Procedures", color: "text-firebase-red" },
-    { icon: CheckCircle, text: "Best Practices", color: "text-android-green" },
-    { icon: LifeBuoy, text: "SOS System", color: "text-google-blue" },
+    { text: "Emergency Procedures" },
+    { text: "Best Practices" },
+    { text: "SOS System" },
   ];
 
   return (
     <ProtectedRoute>
-      <div className="flex flex-col min-h-screen bg-background text-foreground">
-        <main className="flex-1 container mx-auto py-8 px-4">
+      <div className="flex flex-col min-h-screen bg-custom-white dark:bg-black">
+        <main className="flex-1 container mx-auto py-6 px-4">
             <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-firebase-red/10 border border-firebase-red/20 text-firebase-red text-sm font-medium mb-6">
-                      <Shield className="w-4 h-4" />
-                      Safety First
-                    </div>
-                    <div className="inline-block bg-firebase-red/10 p-4 rounded-2xl mb-6 border border-firebase-red/20">
-                        <Shield className="w-12 h-12 text-firebase-red" />
-                    </div>
-                    <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight">
+                <div className="mb-8">
+                    <h1 className="text-3xl font-medium text-foreground dark:text-custom-white mb-2 font-['Inter']">
                         Safety Tips & Guidelines
                     </h1>
-                    <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+                    <p className="text-muted-foreground dark:text-custom-secondary text-base font-['Inter'] mb-6">
                         Your comprehensive guide to staying safe on the water. Essential information for every angler.
                     </p>
                     
                     {/* Feature badges */}
-                    <div className="flex flex-wrap justify-center gap-3 mb-8">
+                    <div className="flex flex-wrap gap-3 mb-8">
                       {features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-50 border border-gray-200 text-sm">
-                          <feature.icon className={`w-4 h-4 ${feature.color}`} />
-                          <span className="text-foreground">{feature.text}</span>
+                        <div key={index} className="px-4 py-2 rounded-lg bg-custom-light dark:bg-gray-800 border border-custom-secondary/20 text-sm">
+                          <span className="text-foreground dark:text-custom-white font-medium">{feature.text}</span>
                         </div>
                       ))}
                     </div>
                 </div>
-                <div className="modern-card hover-lift">
+                <div className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900 rounded-lg">
                     <SafetyTips />
                 </div>
             </div>

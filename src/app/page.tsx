@@ -80,46 +80,39 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen w-full bg-custom-white dark:bg-black overflow-x-hidden">
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-24 lg:py-32 px-4 md:px-8 text-center">
-          <div className="absolute inset-0 -z-10 h-full w-full bg-custom-light bg-[linear-gradient(to_right,#f4f3ee_1px,transparent_1px),linear-gradient(to_bottom,#f4f3ee_1px,transparent_1px)] bg-[size:6rem_4rem] dark:bg-background dark:bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] opacity-30"></div>
+        <section className="relative py-20 lg:py-28 px-4 md:px-8 text-center">
+          <div className="absolute inset-0 -z-10 h-full w-full bg-custom-light bg-[linear-gradient(to_right,#f4f3ee_1px,transparent_1px),linear-gradient(to_bottom,#f4f3ee_1px,transparent_1px)] bg-[size:6rem_4rem] dark:bg-black dark:bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] opacity-30"></div>
           <div className="max-w-5xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-custom-primary/10 border border-custom-primary/20 text-custom-primary text-sm font-medium mb-8">
-              <Bot className="w-4 h-4" />
-              AI-Powered Fishing Companion
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-bold text-foreground mb-8 tracking-tight leading-tight">
+            <h1 className="text-4xl lg:text-6xl font-medium text-foreground dark:text-custom-white mb-6 tracking-tight leading-tight font-['Inter']">
               FisherMate.AI
             </h1>
-            <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-12">
+            <p className="text-lg lg:text-xl text-muted-foreground dark:text-custom-secondary max-w-3xl mx-auto leading-relaxed mb-10 font-['Inter']">
               Your intelligent fishing companion for safer, smarter, and more successful trips on the water.
             </p>
             
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                 <Link href={user ? "/dashboard" : "/login"}>
-                    <Button size="lg" className="gap-3 px-10 py-7 text-lg font-semibold bg-custom-primary hover:bg-custom-primary/90 text-white rounded-xl transition-colors duration-200">
+                    <Button size="lg" className="gap-3 px-8 py-6 text-base font-medium bg-custom-primary hover:bg-custom-primary/90 text-custom-white rounded-lg transition-colors duration-200 font-['Inter']">
                         {user ? "Go to Dashboard" : "Get Started Free"}
-                        <ArrowRight className="w-5 h-5" />
+                        <ArrowRight className="w-4 h-4" />
                     </Button>
                 </Link>
                 <Link href="/about">
-                    <Button size="lg" variant="outline" className="px-10 py-7 text-lg font-semibold border-2 rounded-xl transition-colors duration-200">
+                    <Button size="lg" variant="outline" className="px-8 py-6 text-base font-medium border border-custom-secondary/30 text-foreground dark:text-custom-white hover:bg-custom-light dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 font-['Inter']">
                         Learn More
                     </Button>
                 </Link>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
               {stats.map((stat, index) => (
                 <div key={stat.label} className="text-center">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-custom-primary/10 mx-auto mb-3">
-                    <stat.icon className="w-6 h-6 text-custom-primary" />
-                  </div>
-                  <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  <div className="text-2xl font-semibold text-foreground dark:text-custom-white font-['Inter']">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground dark:text-custom-secondary font-['Inter']">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -127,32 +120,28 @@ export default function Home() {
         </section>
 
         {/* Features Grid */}
-        <section className="py-24 px-4 md:px-8">
+        <section className="py-16 px-4 md:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-                <span className="text-custom-primary font-semibold text-sm uppercase tracking-wider">Our Features</span>
-                <h2 className="text-3xl lg:text-4xl font-bold text-foreground mt-4 mb-6">
+            <div className="mb-16">
+                <h2 className="text-3xl lg:text-4xl font-medium text-foreground dark:text-custom-white mb-4 font-['Inter']">
                 Everything You Need for a Great Day on the Water
                 </h2>
-                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                <p className="text-muted-foreground dark:text-custom-secondary text-base max-w-2xl font-['Inter']">
                     From real-time data to AI-powered assistance, we&apos;ve got you covered.
                 </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {features.map((feature) => (
                 <Link
                   key={feature.title}
                   href={feature.href}
-                  className="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:border-custom-primary/30 dark:hover:border-custom-primary/60 transition-colors duration-200"
+                  className="group bg-custom-white dark:bg-gray-900 border border-custom-secondary/20 rounded-lg p-6 hover:border-custom-primary/50 dark:hover:border-custom-primary/50 transition-colors duration-200"
                 >
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6`}>
-                    <feature.icon className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-4 group-hover:text-custom-primary transition-colors duration-200">
+                  <h3 className="text-lg font-medium text-foreground dark:text-custom-white mb-3 group-hover:text-custom-primary transition-colors duration-200 font-['Inter']">
                     {feature.title}
                   </h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground dark:text-custom-secondary leading-relaxed text-sm font-['Inter']">
                     {feature.description}
                   </p>
                 </Link>
@@ -162,13 +151,13 @@ export default function Home() {
         </section>
 
         {/* Benefits Section */}
-        <section className="py-24 px-4 md:px-8 bg-custom-light dark:bg-gray-900">
+        <section className="py-16 px-4 md:px-8 bg-custom-light dark:bg-gray-900">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-6">
+            <div className="mb-12">
+              <h2 className="text-3xl lg:text-4xl font-medium text-foreground dark:text-custom-white mb-4 font-['Inter']">
                 Why Choose FisherMate.AI?
               </h2>
-              <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+              <p className="text-muted-foreground dark:text-custom-secondary text-base max-w-3xl font-['Inter']">
                 We combine cutting-edge technology with a passion for fishing to create an indispensable tool for anglers of all levels.
               </p>
             </div>
