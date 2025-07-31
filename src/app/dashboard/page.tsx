@@ -7,13 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Fish, Map, Shield, Scale, Bot, Sun, Wind, Droplets, BarChart3, TrendingUp, Calendar, Clock, Target, Zap, Users, Activity, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-import { useFishingLogs } from '@/hooks/useFishingLogs';
+import { useNetworkStatus } from '@/hooks/use-offline';
+import { useFishingLogs } from '@/hooks/use-fishing-logs';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import WeatherCard from '@/components/WeatherCard';
 import FishingAnalyticsCard from '@/components/FishingAnalyticsCard';
-import FishingJournal from '@/components/FishingJournal';
+import { FishingJournal } from '@/components/fishing-journal/FishingJournal';
 import GoogleVoiceAssistant from '@/components/GoogleVoiceAssistant';
 import Link from 'next/link';
 
