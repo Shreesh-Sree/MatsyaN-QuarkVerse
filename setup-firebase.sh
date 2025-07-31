@@ -5,15 +5,28 @@ echo "🔥 Setting up Firebase for MatsyaN-QuarkVerse..."
 
 # Check if logged in
 echo "📋 Checking Firebase authentication..."
-firebase projects:list
+if ! firebase projects:list > /dev/null 2>&1; then
+    echo "❌ Not logged in to Firebase. Please run: firebase login"
+    exit 1
+fi
 
 # Set project
 echo "🎯 Setting Firebase project to studio-1uekq..."
 firebase use studio-1uekq
 
+# Check if Firestore database exists
+echo "🔍 Checking Firestore database status..."
+firebase firestore:databases:list
+
 # Deploy Firestore rules
 echo "🛡️ Deploying Firestore security rules..."
-firebase deploy --only firestore:rules
+if firebase deploy --only firestore:rules; then
+    echo "✅ Firestore rules deployed successfully"
+else
+    echo "❌ Failed to deploy Firestore rules"
+    echo "💡 Make sure Firestore database is created in Firebase Console"
+    exit 1
+fi
 
 # Deploy storage rules
 echo "📦 Deploying Storage rules..."
