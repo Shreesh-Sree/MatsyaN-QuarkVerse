@@ -78,7 +78,6 @@ export class FishingDataService {
       const q = query(
         collection(db, this.COLLECTION_NAME),
         where('userId', '==', userId),
-        orderBy('createdAt', 'desc'),
         limit(limitCount)
       );
 
@@ -94,6 +93,9 @@ export class FishingDataService {
           updatedAt: data.updatedAt?.toDate().toISOString() || new Date().toISOString(),
         });
       });
+
+      // Sort by creation date on client side to avoid needing composite index
+      trips.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
       return trips;
     } catch (error: any) {

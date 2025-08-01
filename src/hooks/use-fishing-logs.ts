@@ -99,10 +99,10 @@ export function useFishingLogs() {
         console.log('Loading logs from Firebase for user:', user.uid);
         
         // Use the correct collection name that matches Firestore rules
+        // Simplified query to avoid composite index requirement
         const q = query(
           collection(db, 'fishingTrips'), // Changed from 'fishingLogs' to match rules
-          where('userId', '==', user.uid),
-          orderBy('createdAt', 'desc')
+          where('userId', '==', user.uid)
         );
 
         const unsubscribe = onSnapshot(q, 
