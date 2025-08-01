@@ -112,11 +112,24 @@ export function useFishingLogs() {
             snapshot.forEach((doc) => {
               const data = doc.data();
               console.log('Processing doc:', doc.id, data);
-              firebaseLogs.push({
+              
+              // Validate and sanitize the data
+              const sanitizedData = {
                 id: doc.id,
-                ...data,
-                syncStatus: 'synced'
-              } as FishingLog);
+                userId: data.userId || '',
+                date: data.date || '',
+                location: data.location || { name: '' },
+                weather: data.weather || { temperature: 0, conditions: '' },
+                catches: Array.isArray(data.catches) ? data.catches : [],
+                notes: data.notes || '',
+                duration: data.duration || 0,
+                bait: Array.isArray(data.bait) ? data.bait : [],
+                techniques: Array.isArray(data.techniques) ? data.techniques : [],
+                createdAt: data.createdAt || Date.now(),
+                syncStatus: 'synced' as const
+              };
+              
+              firebaseLogs.push(sanitizedData);
             });
 
             // Merge with offline logs
@@ -262,11 +275,17 @@ export function useFishingLogs() {
 
   const getStats = () => {
     const totalLogs = logs.length;
-    const totalCatches = logs.reduce((sum, log) => 
-      sum + log.catches.reduce((catchSum, catchItem) => catchSum + catchItem.quantity, 0), 0
-    );
+    const totalCatches = logs.reduce((sum, log) => {
+      if (!log.catches || !Array.isArray(log.catches)) return sum;
+      return sum + log.catches.reduce((catchSum, catchItem) => {
+        return catchSum + (catchItem?.quantity || 0);
+      }, 0);
+    }, 0);
     const uniqueSpecies = new Set(
-      logs.flatMap(log => log.catches.map(c => c.species))
+      logs.flatMap(log => {
+        if (!log.catches || !Array.isArray(log.catches)) return [];
+        return log.catches.map(c => c?.species).filter(Boolean);
+      })
     ).size;
     const offlineLogs = logs.filter(log => log.syncStatus === 'offline' || log.syncStatus === 'pending').length;
 
