@@ -26,7 +26,7 @@ import { useFishingLogs } from '@/hooks/use-fishing-logs';
 import { TripForm } from './TripForm';
 import { FishingAnalytics } from '@/components/FishingAnalytics';
 import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export function EnhancedFishingJournal() {
@@ -37,6 +37,25 @@ export function EnhancedFishingJournal() {
   const [viewingTrip, setViewingTrip] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSpecies, setFilterSpecies] = useState('all');
+
+  // Safe date formatting function
+  const formatSafeDate = (dateValue: any, formatString: string = 'MMM d, yyyy') => {
+    if (!dateValue) return 'No date';
+    
+    let date: Date;
+    if (dateValue?.toDate && typeof dateValue.toDate === 'function') {
+      // Firestore Timestamp
+      date = dateValue.toDate();
+    } else if (dateValue?.seconds) {
+      // Firestore Timestamp object
+      date = new Date(dateValue.seconds * 1000);
+    } else {
+      // Regular date string or Date object
+      date = new Date(dateValue);
+    }
+    
+    return isValid(date) ? format(date, formatString) : 'Invalid date';
+  };
 
   const handleAdd = async (tripData: any) => {
     try {
@@ -95,18 +114,18 @@ export function EnhancedFishingJournal() {
   // Filter logs based on search and filter criteria
   const filteredLogs = logs.filter(trip => {
     const matchesSearch = searchTerm === '' || 
-      trip.location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      trip.catches.some(c => c.species.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      trip.notes.toLowerCase().includes(searchTerm.toLowerCase());
+      (trip.location?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (trip.catches || []).some(c => (c.species || '').toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (trip.notes || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesSpecies = filterSpecies === 'all' || 
-      trip.catches.some(c => c.species === filterSpecies);
+      (trip.catches || []).some(c => (c.species || '') === filterSpecies);
     
     return matchesSearch && matchesSpecies;
   });
 
   // Get unique species for filter dropdown
-  const allSpecies = Array.from(new Set(logs.flatMap(trip => trip.catches.map(c => c.species))));
+  const allSpecies = Array.from(new Set(logs.flatMap(trip => (trip.catches || []).map(c => c.species || 'Unknown')).filter(Boolean)));
 
   if (loading) {
     return (
@@ -237,19 +256,19 @@ export function EnhancedFishingJournal() {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
-                                {format(new Date(trip.createdAt), 'MMM d, yyyy')}
+                                {formatSafeDate(trip.createdAt)}
                               </div>
                               <div className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
-                                {Math.floor(trip.duration / 60)}h {trip.duration % 60}m
+                                {Math.floor((trip.duration || 0) / 60)}h {(trip.duration || 0) % 60}m
                               </div>
                               <div className="flex items-center gap-1">
                                 <Thermometer className="w-3 h-3" />
-                                {trip.weather.temperature}°C
+                                {trip.weather?.temperature || 'N/A'}°C
                               </div>
                               <div className="flex items-center gap-1">
                                 <Fish className="w-3 h-3" />
-                                {trip.catches.reduce((sum, c) => sum + c.quantity, 0)} catches
+                                {(trip.catches || []).reduce((sum, c) => sum + (c.quantity || 0), 0)} catches
                               </div>
                             </div>
                           </div>
@@ -317,13 +336,13 @@ export function EnhancedFishingJournal() {
                         </div>
 
                         {/* Catches Summary */}
-                        {trip.catches.length > 0 && (
+                        {(trip.catches || []).length > 0 && (
                           <div className="mb-3">
                             <h4 className="text-sm font-medium mb-2">Catches:</h4>
                             <div className="flex flex-wrap gap-2">
-                              {trip.catches.map((catch_, index) => (
+                              {(trip.catches || []).map((catch_, index) => (
                                 <Badge key={index} variant="secondary" className="text-xs">
-                                  {catch_.quantity}x {catch_.species}
+                                  {catch_.quantity || 0}x {catch_.species || 'Unknown'}
                                   {catch_.weight && ` (${catch_.weight}kg)`}
                                 </Badge>
                               ))}
@@ -333,22 +352,22 @@ export function EnhancedFishingJournal() {
 
                         {/* Bait & Techniques */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                          {trip.bait.length > 0 && (
+                          {(trip.bait || []).length > 0 && (
                             <div>
                               <h4 className="text-sm font-medium mb-1">Bait:</h4>
                               <div className="flex flex-wrap gap-1">
-                                {trip.bait.map((bait, index) => (
+                                {(trip.bait || []).map((bait, index) => (
                                   <Badge key={index} variant="outline" className="text-xs">{bait}</Badge>
                                 ))}
                               </div>
                             </div>
                           )}
-                          {trip.techniques.length > 0 && (
+                          {(trip.techniques || []).length > 0 && (
                             <div>
                               <h4 className="text-sm font-medium mb-1">Techniques:</h4>
                               <div className="flex flex-wrap gap-1">
-                                {trip.techniques.map((technique, index) => (
-                                  <Badge key={index} variant="outline" className="text-xs">{technique}</Badge>
+                                {(trip.techniques || []).map((technique, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs">{typeof technique === 'string' ? technique : technique.name || 'Unknown'}</Badge>
                                 ))}
                               </div>
                             </div>
@@ -397,7 +416,7 @@ function TripDetails({ trip }: { trip: any }) {
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-custom-primary" />
               <span className="font-medium">Date:</span>
-              <span>{format(new Date(trip.createdAt), 'MMMM d, yyyy')}</span>
+              <span>{formatSafeDate(trip.createdAt, 'MMMM d, yyyy')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-custom-primary" />
@@ -435,20 +454,20 @@ function TripDetails({ trip }: { trip: any }) {
       </div>
 
       {/* Catches */}
-      {trip.catches.length > 0 && (
+      {(trip.catches || []).length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Catches</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-3">
-              {trip.catches.map((catch_, index) => (
+              {(trip.catches || []).map((catch_, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
                     <Fish className="w-5 h-5 text-custom-primary" />
                     <div>
-                      <div className="font-medium">{catch_.species}</div>
-                      <div className="text-sm text-muted-foreground">Quantity: {catch_.quantity}</div>
+                      <div className="font-medium">{catch_.species || 'Unknown'}</div>
+                      <div className="text-sm text-muted-foreground">Quantity: {catch_.quantity || 0}</div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -464,14 +483,14 @@ function TripDetails({ trip }: { trip: any }) {
 
       {/* Bait & Techniques */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {trip.bait.length > 0 && (
+        {(trip.bait || []).length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Bait Used</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {trip.bait.map((bait, index) => (
+                {(trip.bait || []).map((bait, index) => (
                   <Badge key={index} variant="outline">{bait}</Badge>
                 ))}
               </div>
@@ -479,15 +498,15 @@ function TripDetails({ trip }: { trip: any }) {
           </Card>
         )}
 
-        {trip.techniques.length > 0 && (
+        {(trip.techniques || []).length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Techniques Used</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {trip.techniques.map((technique, index) => (
-                  <Badge key={index} variant="outline">{technique}</Badge>
+                {(trip.techniques || []).map((technique, index) => (
+                  <Badge key={index} variant="outline">{typeof technique === 'string' ? technique : technique.name || 'Unknown'}</Badge>
                 ))}
               </div>
             </CardContent>

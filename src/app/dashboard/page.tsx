@@ -13,7 +13,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import WeatherCard from '@/components/WeatherCard';
 import FishingAnalyticsCard from '@/components/FishingAnalyticsCard';
-import { EnhancedFishingJournal } from '@/components/fishing-journal/EnhancedFishingJournal';
+import { FishingJournal } from '@/components/fishing-journal/FishingJournalClean';
 import { FishingDataInfographics } from '@/components/FishingDataInfographics';
 import GoogleVoiceAssistant from '@/components/GoogleVoiceAssistant';
 import Link from 'next/link';
@@ -156,7 +156,7 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
                 }>
-                  <EnhancedFishingJournal />
+                  <FishingJournal />
                 </ErrorBoundary>
               </div>
 
