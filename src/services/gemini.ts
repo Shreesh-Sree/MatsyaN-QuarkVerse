@@ -2,8 +2,22 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || '');
+// Initialize Gemini AI with better error handling
+const getApiKey = () => {
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  if (!apiKey || apiKey === '') {
+    console.error('NEXT_PUBLIC_GEMINI_API_KEY is not configured');
+    throw new Error('Gemini API key is not configured. Please add NEXT_PUBLIC_GEMINI_API_KEY to your environment variables.');
+  }
+  return apiKey;
+};
+
+let genAI: GoogleGenerativeAI;
+try {
+  genAI = new GoogleGenerativeAI(getApiKey());
+} catch (error) {
+  console.error('Failed to initialize Gemini AI:', error);
+}
 
 export interface FishingLawQuery {
   query: string;
@@ -52,11 +66,25 @@ export class GeminiService {
   private model;
 
   constructor() {
-    this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    if (!genAI) {
+      throw new Error('Gemini AI is not properly initialized. Please check your API key configuration.');
+    }
+    try {
+      this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    } catch (error) {
+      console.error('Failed to get Gemini model:', error);
+      throw new Error('Failed to initialize Gemini model. Please check your API key and try again.');
+    }
   }
 
   async getFishingLaws(query: FishingLawQuery): Promise<string> {
+    if (!this.model) {
+      throw new Error('Gemini model is not initialized. Please check your API configuration.');
+    }
+
     try {
+      console.log('Requesting fishing laws for:', query);
+      
       const prompt = `
         You are a fishing law expert specializing in regulations for ${query.state}, ${query.country || 'India'}. 
         
@@ -81,10 +109,29 @@ export class GeminiService {
 
       const result = await this.model.generateContent(prompt);
       const response = await result.response;
-      return response.text();
+      const text = response.text();
+      
+      if (!text || text.trim() === '') {
+        throw new Error('Empty response from Gemini API');
+      }
+      
+      console.log('Successfully received fishing laws response');
+      return text;
     } catch (error) {
       console.error('Error getting fishing laws:', error);
-      throw new Error('Failed to retrieve fishing law information');
+      
+      if (error instanceof Error) {
+        if (error.message.includes('API_KEY')) {
+          throw new Error('Invalid API key. Please check your Gemini API key configuration.');
+        } else if (error.message.includes('quota')) {
+          throw new Error('API quota exceeded. Please try again later or check your API usage.');
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          throw new Error('Network error. Please check your internet connection and try again.');
+        }
+        throw new Error(`Failed to retrieve fishing law information: ${error.message}`);
+      }
+      
+      throw new Error('Failed to retrieve fishing law information. Please try again.');
     }
   }
 

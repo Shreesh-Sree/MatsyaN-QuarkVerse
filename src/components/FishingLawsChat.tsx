@@ -194,6 +194,12 @@ export function FishingLawsChat() {
     try {
       console.log("Submitting fishing laws query:", { state, query });
       
+      // Check if Gemini API key is configured
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      if (!apiKey || apiKey === '') {
+        throw new Error('Gemini API key is not configured. Please contact the administrator.');
+      }
+      
       const queryData: FishingLawQuery = {
         query: query,
         state: state,
@@ -203,6 +209,10 @@ export function FishingLawsChat() {
       const response = await geminiService.getFishingLaws(queryData);
       
       console.log("Received response:", response);
+      
+      if (!response || response.trim() === '') {
+        throw new Error('No response received from the AI service.');
+      }
       
       // Convert response to match existing interface
       const formattedResult = {

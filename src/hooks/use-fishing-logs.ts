@@ -49,8 +49,10 @@ export interface FishingLog {
 export function useFishingLogs() {
   const { user } = useAuth();
   const [logs, setLogs] = useState<FishingLog[]>([]);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'error'>('idle');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Monitor online status
   useEffect(() => {
@@ -82,41 +84,66 @@ export function useFishingLogs() {
   const loadLogs = async () => {
     if (!user) return;
 
+    setLoading(true);
+    setError(null);
+
     try {
       // Load from localStorage first (for offline access)
       const offlineLogs = getOfflineLogs();
-      setLogs(offlineLogs);
+      if (offlineLogs.length > 0) {
+        setLogs(offlineLogs);
+      }
 
       // If online, fetch from Firebase
       if (isOnline) {
+        console.log('Loading logs from Firebase for user:', user.uid);
+        
+        // Use the correct collection name that matches Firestore rules
         const q = query(
-          collection(db, 'fishingLogs'),
+          collection(db, 'fishingTrips'), // Changed from 'fishingLogs' to match rules
           where('userId', '==', user.uid),
           orderBy('createdAt', 'desc')
         );
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-          const firebaseLogs: FishingLog[] = [];
-          snapshot.forEach((doc) => {
-            firebaseLogs.push({
-              id: doc.id,
-              ...doc.data(),
-              syncStatus: 'synced'
-            } as FishingLog);
-          });
+        const unsubscribe = onSnapshot(q, 
+          (snapshot) => {
+            console.log('Firebase snapshot received, docs:', snapshot.size);
+            const firebaseLogs: FishingLog[] = [];
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              console.log('Processing doc:', doc.id, data);
+              firebaseLogs.push({
+                id: doc.id,
+                ...data,
+                syncStatus: 'synced'
+              } as FishingLog);
+            });
 
-          // Merge with offline logs
-          const mergedLogs = mergeLogsWithOffline(firebaseLogs, offlineLogs);
-          setLogs(mergedLogs);
-          
-          // Update localStorage
-          saveLogsToStorage(mergedLogs);
-        });
+            // Merge with offline logs
+            const mergedLogs = mergeLogsWithOffline(firebaseLogs, offlineLogs);
+            setLogs(mergedLogs);
+            
+            // Update localStorage
+            saveLogsToStorage(mergedLogs);
+            setLoading(false);
+          },
+          (error) => {
+            console.error('Firebase snapshot error:', error);
+            setError(`Failed to load data: ${error.message}`);
+            setLoading(false);
+            setSyncStatus('error');
+          }
+        );
 
         return unsubscribe;
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error loading logs:', error);
+      setError(`Failed to load fishing logs: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setLoading(false);
+      setSyncStatus('error');
     }
   };
 
@@ -133,8 +160,8 @@ export function useFishingLogs() {
 
     try {
       if (isOnline) {
-        // Save to Firebase
-        const docRef = await addDoc(collection(db, 'fishingLogs'), {
+        // Save to Firebase using correct collection name
+        const docRef = await addDoc(collection(db, 'fishingTrips'), {
           ...newLog,
           id: undefined // Remove the temporary ID for Firebase
         });
@@ -175,7 +202,7 @@ export function useFishingLogs() {
         const logToSync = { ...log };
         delete logToSync.id; // Remove temporary ID
 
-        const docRef = await addDoc(collection(db, 'fishingLogs'), logToSync);
+        const docRef = await addDoc(collection(db, 'fishingTrips'), logToSync);
         
         // Update the log with Firebase ID
         const updatedLog = { ...log, id: docRef.id, syncStatus: 'synced' as const };
@@ -258,6 +285,8 @@ export function useFishingLogs() {
     syncOfflineLogs,
     isOnline,
     syncStatus,
+    loading,
+    error,
     stats: getStats()
   };
 }
