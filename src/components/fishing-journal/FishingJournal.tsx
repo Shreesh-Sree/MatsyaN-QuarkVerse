@@ -1,53 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Plus, Calendar, MapPin, Fish, TrendingUp, Camera, Mic, Search, Filter, Clock, Thermometer, Wind, Eye, Waves, Target, CalendarDays, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useLanguage } from '@/context/LanguageContext';
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { FishingTrip as FishingTripType, FishingAnalytics } from '@/types/fishing-journal';
-import { fishingDataService, FishingTrip } from '@/services/fishingData';
-import { FishingTripEntry } from '@/components/FishingTripEntry';
-import { TripForm } from './TripForm';
-import { TripAnalytics } from './TripAnalytics';
-import { VoiceControls } from '../VoiceControls';
+// Import the enhanced fishing journal component
+import { EnhancedFishingJournal } from './EnhancedFishingJournal';
 
 export function FishingJournal() {
-  const { t } = useLanguage();
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const [trips, setTrips] = useState<FishingTrip[]>([]);
-  const [filteredTrips, setFilteredTrips] = useState<FishingTrip[]>([]);
-  const [analytics, setAnalytics] = useState<FishingAnalytics | null>(null);
-  const [showTripForm, setShowTripForm] = useState(false);
-  const [selectedTrip, setSelectedTrip] = useState<FishingTrip | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterSpecies, setFilterSpecies] = useState('all');
-  const [filterLocation, setFilterLocation] = useState('all');
-  const [sortBy, setSortBy] = useState<'date' | 'success' | 'catches'>('date');
-
-  useEffect(() => {
-    loadTrips();
-  }, [user]);
-
-  useEffect(() => {
-    filterAndSortTrips();
-  }, [trips, searchTerm, filterSpecies, filterLocation, sortBy]);
-
-  const loadTrips = async () => {
-    if (!user?.uid) return;
-    
-    setIsLoading(true);
-    try {
-      const userTrips = await fishingDataService.getUserFishingTrips(user.uid);
-      setTrips(userTrips);
+  return <EnhancedFishingJournal />;
+}
       calculateAnalytics(userTrips);
     } catch (error) {
       console.error('Error loading trips:', error);

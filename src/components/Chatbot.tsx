@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Send, Loader2, User, Bot, CornerDownLeft } from "lucide-react";
-import ReactMarkdown from 'react-markdown';
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Markdown } from "@/components/ui/markdown";
 import { handleChat } from "@/app/actions";
 import { cn } from "@/utils/utils";
 import { useLanguage } from "@/context/LanguageContext";
@@ -98,27 +98,11 @@ export function Chatbot() {
                 {message.role === "user" ? (
                   <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
                 ) : (
-                  <ReactMarkdown 
+                  <Markdown 
+                    content={message.content}
+                    variant="chat"
                     className="text-sm leading-relaxed"
-                    components={{
-                      h1: ({children}) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
-                      h2: ({children}) => <h2 className="text-md font-semibold mb-2">{children}</h2>,
-                      h3: ({children}) => <h3 className="text-sm font-medium mb-1">{children}</h3>,
-                      p: ({children}) => <p className="mb-2">{children}</p>,
-                      ul: ({children}) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                      ol: ({children}) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                      li: ({children}) => <li>{children}</li>,
-                      strong: ({children}) => <strong className="font-semibold">{children}</strong>,
-                      em: ({children}) => <em className="italic">{children}</em>,
-                      code: ({children}) => (
-                        <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-xs">
-                          {children}
-                        </code>
-                      ),
-                    }}
-                  >
-                    {message.content}
-                  </ReactMarkdown>
+                  />
                 )}
               </div>
             </div>

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Markdown } from "@/components/ui/markdown";
 import { useToast } from "@/hooks/use-toast";
 import { indianLanguages } from "@/utils/data";
 import { geminiService, SafetyQuery } from "@/services/gemini";
@@ -150,16 +151,12 @@ export function SafetyTips() {
               <h3 className="font-semibold text-foreground font-claude">Safety Guidelines</h3>
             </div>
             
-            <div className="glass-card-sm p-4 space-y-4">
-              <div className="border-t border-border/30 pt-4">
-                <h4 className="font-medium text-foreground mb-2 font-claude">AI-Generated Safety Guidelines</h4>
-                <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <div className="text-muted-foreground leading-relaxed whitespace-pre-wrap font-claude">
-                    {result}
-                  </div>
-                </div>
+                          <div className="glass-card-sm p-4 md:p-6">
+                <Markdown 
+                  content={result}
+                  className="text-muted-foreground leading-relaxed font-claude"
+                />
               </div>
-            </div>
           </div>
         )}
       </CardContent>

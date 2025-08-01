@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { Markdown } from '@/components/ui/markdown';
 import { 
   Fish, 
   MapPin, 
@@ -362,6 +363,14 @@ export function FishingDataInfographics() {
               </div>
             ) : (
               <div className="space-y-4">
+                <div className="p-3 bg-custom-light dark:bg-gray-800 rounded-lg">
+                  <h4 className="font-medium text-foreground mb-2 font-claude">AI Insights</h4>
+                  <Markdown 
+                    content={insights.insights}
+                    variant="compact"
+                    className="text-sm text-muted-foreground font-claude"
+                  />
+                </div>
                 <div className="p-3 bg-custom-light dark:bg-gray-800 rounded-lg">
                   <h4 className="font-medium text-foreground mb-2 font-claude">Key Recommendations</h4>
                   <ul className="space-y-1">

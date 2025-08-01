@@ -10,7 +10,10 @@ import {
   where, 
   onSnapshot,
   enableNetwork,
-  disableNetwork 
+  disableNetwork,
+  doc,
+  updateDoc,
+  deleteDoc 
 } from 'firebase/firestore';
 import { db } from '@/utils/firebase';
 import { useAuth } from '@/context/AuthContext';
@@ -204,6 +207,67 @@ export function useFishingLogs() {
     }
   };
 
+  const editLog = async (logId: string, logData: Omit<FishingLog, 'id' | 'userId' | 'createdAt' | 'syncStatus'>) => {
+    if (!user) return;
+
+    try {
+      const existingLog = logs.find(log => log.id === logId);
+      if (!existingLog) throw new Error('Log not found');
+
+      const updatedLog: FishingLog = {
+        ...existingLog,
+        ...logData,
+        syncStatus: isOnline ? 'synced' : 'pending'
+      };
+
+      if (isOnline && !logId.startsWith('offline_')) {
+        // Update in Firebase
+        const docRef = doc(db, 'fishingTrips', logId);
+        await updateDoc(docRef, {
+          ...logData,
+          userId: user.uid,
+          createdAt: existingLog.createdAt
+        });
+        updatedLog.syncStatus = 'synced';
+      } else {
+        // Mark for sync when online
+        updatedLog.syncStatus = 'pending';
+      }
+
+      // Update local state and storage
+      const updatedLogs = logs.map(log => log.id === logId ? updatedLog : log);
+      setLogs(updatedLogs);
+      saveLogsToStorage(updatedLogs);
+
+      return updatedLog;
+    } catch (error) {
+      console.error('Error editing log:', error);
+      throw error;
+    }
+  };
+
+  const deleteLog = async (logId: string) => {
+    if (!user) return;
+
+    try {
+      if (isOnline && !logId.startsWith('offline_')) {
+        // Delete from Firebase
+        const docRef = doc(db, 'fishingTrips', logId);
+        await deleteDoc(docRef);
+      }
+
+      // Update local state and storage
+      const updatedLogs = logs.filter(log => log.id !== logId);
+      setLogs(updatedLogs);
+      saveLogsToStorage(updatedLogs);
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting log:', error);
+      throw error;
+    }
+  };
+
   const syncOfflineLogs = async () => {
     if (!user || !isOnline) return;
 
@@ -301,6 +365,8 @@ export function useFishingLogs() {
   return {
     logs,
     addLog,
+    editLog,
+    deleteLog,
     syncOfflineLogs,
     isOnline,
     syncStatus,

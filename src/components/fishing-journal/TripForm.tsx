@@ -14,44 +14,86 @@ import { FishingTrip, Catch, FishingTechnique } from '@/types/fishing-journal';
 import { VoiceControls } from '../VoiceControls';
 
 interface TripFormProps {
-  onSave: (trip: Omit<FishingTrip, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => void;
+  onSave?: (trip: Omit<FishingTrip, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => void;
+  onSubmit?: (trip: any) => void;
   onClose: () => void;
+  initialData?: any;
+  isEditing?: boolean;
 }
 
-export function TripForm({ onSave, onClose }: TripFormProps) {
-  const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0],
-    startTime: '06:00',
-    endTime: '12:00',
-    location: {
-      name: '',
-      address: '',
-      coordinates: { lat: 0, lng: 0 },
-      waterBody: 'lake' as const,
-      access: 'public' as const,
-    },
-    weather: {
-      temperature: 20,
-      conditions: 'sunny',
-      windSpeed: 5,
-      windDirection: 'north',
-      humidity: 60,
-      pressure: 1013,
-    },
-    waterConditions: {
-      temperature: 18,
-      clarity: 'clear' as const,
-      currentStrength: 'moderate' as const,
-      tideStatus: 'rising' as const,
-    },
-    catches: [] as Catch[],
-    techniques: [] as string[],
-    baits: [] as string[],
-    equipment: [] as string[],
-    companions: [] as string[],
-    successScore: 5,
-    notes: '',
-    photos: [] as string[],
+export function TripForm({ onSave, onSubmit, onClose, initialData, isEditing = false }: TripFormProps) {
+  const [formData, setFormData] = useState(() => {
+    if (initialData && isEditing) {
+      return {
+        date: initialData.createdAt ? new Date(initialData.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        startTime: '06:00',
+        endTime: new Date(Date.now() + (initialData.duration || 360) * 60 * 1000).toISOString().split('T')[1].slice(0, 5),
+        location: {
+          name: initialData.location?.name || '',
+          address: initialData.location?.address || '',
+          coordinates: initialData.location?.coordinates || { lat: 0, lng: 0 },
+          waterBody: initialData.location?.waterBody || 'lake' as const,
+          access: initialData.location?.access || 'public' as const,
+        },
+        weather: {
+          temperature: initialData.weather?.temperature || 20,
+          conditions: initialData.weather?.conditions || 'sunny',
+          windSpeed: initialData.weather?.windSpeed || 5,
+          windDirection: initialData.weather?.windDirection || 'north',
+          humidity: initialData.weather?.humidity || 60,
+          pressure: initialData.weather?.pressure || 1013,
+        },
+        waterConditions: {
+          temperature: initialData.waterConditions?.temperature || 18,
+          clarity: initialData.waterConditions?.clarity || 'clear' as const,
+          currentStrength: initialData.waterConditions?.currentStrength || 'moderate' as const,
+          tideStatus: initialData.waterConditions?.tideStatus || 'rising' as const,
+        },
+        catches: initialData.catches || [],
+        techniques: initialData.techniques?.map((t: any) => typeof t === 'string' ? t : t.name) || [],
+        baits: initialData.bait || initialData.baits || initialData.baitUsed || [],
+        equipment: initialData.equipment || [],
+        companions: initialData.companions || [],
+        successScore: initialData.successScore || 5,
+        notes: initialData.notes || '',
+        photos: initialData.photos || [],
+      };
+    }
+    
+    return {
+      date: new Date().toISOString().split('T')[0],
+      startTime: '06:00',
+      endTime: '12:00',
+      location: {
+        name: '',
+        address: '',
+        coordinates: { lat: 0, lng: 0 },
+        waterBody: 'lake' as const,
+        access: 'public' as const,
+      },
+      weather: {
+        temperature: 20,
+        conditions: 'sunny',
+        windSpeed: 5,
+        windDirection: 'north',
+        humidity: 60,
+        pressure: 1013,
+      },
+      waterConditions: {
+        temperature: 18,
+        clarity: 'clear' as const,
+        currentStrength: 'moderate' as const,
+        tideStatus: 'rising' as const,
+      },
+      catches: [] as Catch[],
+      techniques: [] as string[],
+      baits: [] as string[],
+      equipment: [] as string[],
+      companions: [] as string[],
+      successScore: 5,
+      notes: '',
+      photos: [] as string[],
+    };
   });
 
   const [newCatch, setNewCatch] = useState({
@@ -184,14 +226,16 @@ export function TripForm({ onSave, onClose }: TripFormProps) {
       alert('Please enter a location name');
       return;
     }
+    
     const trip = {
       ...formData,
       date: new Date(formData.date),
       duration: calculateDuration(),
-      baitUsed: formData.baits, // or set to [] if you want to default to empty
+      baitUsed: formData.baits,
+      bait: formData.baits, // for compatibility
       location: {
         ...formData.location,
-        address: formData.location.address || '', // ensure address is present
+        address: formData.location.address || '',
       },
       techniques: formData.techniques.map(name => ({
         name,
@@ -201,7 +245,12 @@ export function TripForm({ onSave, onClose }: TripFormProps) {
       })),
     };
 
-    onSave(trip);
+    if (isEditing && onSubmit) {
+      onSubmit(trip);
+    } else if (onSave) {
+      onSave(trip);
+    }
+    onClose();
   };
 
   return (
@@ -209,7 +258,9 @@ export function TripForm({ onSave, onClose }: TripFormProps) {
       <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="font-claude text-gray-800 dark:text-gray-200">Log Fishing Trip</CardTitle>
+            <CardTitle className="font-claude text-gray-800 dark:text-gray-200">
+              {isEditing ? 'Edit Fishing Trip' : 'Log Fishing Trip'}
+            </CardTitle>
             <Button variant="ghost" size="sm" onClick={onClose} className="font-claude text-gray-800 dark:text-gray-200">
               <X className="w-4 h-4" />
             </Button>
@@ -652,7 +703,7 @@ export function TripForm({ onSave, onClose }: TripFormProps) {
             </Button>
             <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">
               <Save className="w-4 h-4 mr-2" />
-              Save Trip
+              {isEditing ? 'Update Trip' : 'Save Trip'}
             </Button>
           </div>
         </CardContent>
