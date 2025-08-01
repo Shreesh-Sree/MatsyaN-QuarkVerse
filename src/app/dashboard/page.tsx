@@ -30,17 +30,17 @@ export default function Dashboard() {
   };
 
   const quickActions = [
-    { title: "Find Fishing Spots", href: "/map", color: "bg-custom-primary text-custom-white hover:bg-custom-primary/90" },
-    { title: "Safety Guidelines", href: "/safety", color: "bg-custom-secondary text-custom-white hover:bg-custom-secondary/90" },
-    { title: "Fishing Regulations", href: "/laws", color: "bg-custom-primary text-custom-white hover:bg-custom-primary/90" },
-    { title: "AI Assistant", href: "/chat", color: "bg-custom-secondary text-custom-white hover:bg-custom-secondary/90" },
+    { title: "Find Fishing Spots", href: "/map", color: "bg-custom-primary text-custom-white hover:bg-custom-primary/90", icon: Map },
+    { title: "Safety Guidelines", href: "/safety", color: "bg-custom-secondary text-custom-white hover:bg-custom-secondary/90", icon: Shield },
+    { title: "Fishing Regulations", href: "/laws", color: "bg-custom-primary text-custom-white hover:bg-custom-primary/90", icon: Scale },
+    { title: "AI Assistant", href: "/chat", color: "bg-custom-secondary text-custom-white hover:bg-custom-secondary/90", icon: Bot },
   ];
 
   const statsData = [
-    { label: "Total Catches", value: "127", trend: "+12%" },
-    { label: "Fishing Hours", value: "89", trend: "+8%" },
-    { label: "Success Rate", value: "78%", trend: "+5%" },
-    { label: "Active Streak", value: "15", trend: "+3" },
+    { label: "Total Catches", value: "127", trend: "+12%", icon: Fish },
+    { label: "Fishing Hours", value: "89", trend: "+8%", icon: Clock },
+    { label: "Success Rate", value: "78%", trend: "+5%", icon: Target },
+    { label: "Active Streak", value: "15", trend: "+3", icon: Zap },
   ];
 
   const getStatusIcon = (status: string) => {
@@ -85,23 +85,29 @@ export default function Dashboard() {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {statsData.map((stat, index) => (
-              <Card key={stat.label} className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900 hover:shadow-lg transition-all duration-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium text-custom-secondary dark:text-custom-secondary font-claude">
-                      {stat.label}
+            {statsData.map((stat, index) => {
+              const IconComponent = stat.icon;
+              return (
+                <Card key={stat.label} className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900 hover:shadow-lg transition-all duration-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <IconComponent className="w-4 h-4 text-custom-primary" />
+                        <p className="text-sm font-medium text-custom-secondary dark:text-custom-secondary font-claude">
+                          {stat.label}
+                        </p>
+                      </div>
+                      <span className="text-xs text-custom-primary font-medium font-claude">
+                        {stat.trend}
+                      </span>
+                    </div>
+                    <p className="text-2xl font-semibold text-foreground dark:text-custom-white font-claude">
+                      {stat.value}
                     </p>
-                    <span className="text-xs text-custom-primary font-medium font-claude">
-                      {stat.trend}
-                    </span>
-                  </div>
-                  <p className="text-2xl font-semibold text-foreground dark:text-custom-white font-claude">
-                    {stat.value}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Main Content Grid */}
@@ -126,7 +132,8 @@ export default function Dashboard() {
               {/* Voice Assistant */}
               <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-medium text-foreground dark:text-custom-white font-claude">
+                  <CardTitle className="text-lg font-medium text-foreground dark:text-custom-white font-claude flex items-center gap-2">
+                    <Bot className="w-5 h-5 text-custom-primary" />
                     Voice Assistant
                   </CardTitle>
                 </CardHeader>
@@ -217,44 +224,58 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {quickActions.map((action) => (
-                    <Link href={action.href} key={action.title} className="block">
-                      <Button 
-                        className={`w-full ${action.color} border-0 rounded-lg font-medium text-sm py-3 font-claude`}
-                        variant="default"
-                      >
-                        {action.title}
-                      </Button>
-                    </Link>
-                  ))}
+                  {quickActions.map((action) => {
+                    const IconComponent = action.icon;
+                    return (
+                      <Link href={action.href} key={action.title} className="block">
+                        <Button 
+                          className={`w-full ${action.color} border-0 rounded-lg font-medium text-sm py-3 font-claude`}
+                          variant="default"
+                        >
+                          <IconComponent className="w-4 h-4 mr-2" />
+                          {action.title}
+                        </Button>
+                      </Link>
+                    );
+                  })}
                 </CardContent>
               </Card>
 
               {/* Weekly Progress */}
               <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-medium text-foreground dark:text-custom-white font-claude">
+                  <CardTitle className="text-lg font-medium text-foreground dark:text-custom-white font-claude flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-custom-primary" />
                     Weekly Progress
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude">Fishing Goals</span>
+                      <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude flex items-center gap-2">
+                        <Target className="w-4 h-4 text-custom-primary" />
+                        Fishing Goals
+                      </span>
                       <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">75%</span>
                     </div>
                     <Progress value={75} className="h-2 bg-custom-light dark:bg-gray-700" />
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude">Safety Checks</span>
+                      <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-custom-primary" />
+                        Safety Checks
+                      </span>
                       <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">100%</span>
                     </div>
                     <Progress value={100} className="h-2 bg-custom-light dark:bg-gray-700" />
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude">Journal Entries</span>
+                      <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-custom-primary" />
+                        Journal Entries
+                      </span>
                       <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">60%</span>
                     </div>
                     <Progress value={60} className="h-2 bg-custom-light dark:bg-gray-700" />

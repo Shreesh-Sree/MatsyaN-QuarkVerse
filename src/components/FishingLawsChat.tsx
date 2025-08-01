@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { BookText, Search, Loader2, Volume2, Pause, Lightbulb, Languages, VolumeX, Speaker } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -466,9 +467,32 @@ export function FishingLawsChat() {
               
               <div className="glass-card-sm p-4 md:p-6">
                 <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
-                  <div className="text-gray-300 leading-relaxed whitespace-pre-wrap text-sm md:text-base">
+                  <ReactMarkdown 
+                    className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base"
+                    components={{
+                      h1: ({children}) => <h1 className="text-xl font-bold text-custom-primary mb-4">{children}</h1>,
+                      h2: ({children}) => <h2 className="text-lg font-semibold text-custom-primary mb-3 mt-6">{children}</h2>,
+                      h3: ({children}) => <h3 className="text-md font-medium text-custom-secondary mb-2 mt-4">{children}</h3>,
+                      p: ({children}) => <p className="mb-3 text-gray-700 dark:text-gray-300">{children}</p>,
+                      ul: ({children}) => <ul className="list-disc list-inside mb-4 space-y-1">{children}</ul>,
+                      ol: ({children}) => <ol className="list-decimal list-inside mb-4 space-y-1">{children}</ol>,
+                      li: ({children}) => <li className="text-gray-700 dark:text-gray-300">{children}</li>,
+                      strong: ({children}) => <strong className="font-semibold text-custom-primary">{children}</strong>,
+                      em: ({children}) => <em className="italic text-custom-secondary">{children}</em>,
+                      blockquote: ({children}) => (
+                        <blockquote className="border-l-4 border-custom-primary pl-4 my-4 bg-custom-light dark:bg-gray-800 p-3 rounded-r">
+                          {children}
+                        </blockquote>
+                      ),
+                      code: ({children}) => (
+                        <code className="bg-custom-light dark:bg-gray-800 px-2 py-1 rounded text-sm">
+                          {children}
+                        </code>
+                      ),
+                    }}
+                  >
                     {result.summary}
-                  </div>
+                  </ReactMarkdown>
                 </div>
               </div>
             </div>
