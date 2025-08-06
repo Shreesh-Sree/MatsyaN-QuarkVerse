@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { AlertTriangle, Shield, Volume2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ScreenFlashOverlay } from './ScreenFlashOverlay';
 
 interface FishingBorderAlert {
   id: string;
@@ -212,7 +213,9 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [lastAlertTime, setLastAlertTime] = useState<{ [key: string]: number }>({});
   const [borderData, setBorderData] = useState<FishingBorderAlert[]>([]);
+  const [isFlashing, setIsFlashing] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const policeSirenRef = useRef<HTMLAudioElement | null>(null);
   const watchIdRef = useRef<number | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [isInsideEEZ, setIsInsideEEZ] = useState<boolean | null>(null);
@@ -299,22 +302,35 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     return borders;
   };
 
-  // Initialize audio for siren sound
+  // Initialize audio for siren sounds
   useEffect(() => {
     if (!isClient) return;
     
+    // Initialize marine siren (existing)
     audioRef.current = new Audio('/sounds/marine-siren.mp3');
     audioRef.current.preload = 'auto';
     
-    // Fallback to browser-generated beep if audio file not available
+    // Initialize police siren (new for boundary violations)
+    policeSirenRef.current = new Audio('/sounds/police-siren.mp3');
+    policeSirenRef.current.preload = 'auto';
+    
+    // Fallback to browser-generated beep if audio files not available
     if (!audioRef.current.canPlayType('audio/mpeg')) {
       console.warn('Marine siren audio not supported, using fallback alert');
+    }
+    
+    if (!policeSirenRef.current.canPlayType('audio/mpeg')) {
+      console.warn('Police siren audio not supported, using fallback alert');
     }
 
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
+      }
+      if (policeSirenRef.current) {
+        policeSirenRef.current.pause();
+        policeSirenRef.current = null;
       }
     };
   }, [isClient]);
@@ -560,8 +576,13 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   const triggerBorderAlert = async (border: FishingBorderAlert) => {
     if (!isClient) return;
     
-    // Play siren sound
-    await playAlertSound();
+    // Play police siren sound with screen flash for critical alerts
+    if (border.alertType === 'restricted' || border.alertType === 'international') {
+      await playPoliceSirenWithFlash();
+    } else {
+      // Use regular marine siren for warnings
+      await playAlertSound();
+    }
 
     // Show toast notification
     const alertIcon = border.alertType === 'restricted' ? '🚫' : 
@@ -619,12 +640,12 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   const triggerEEZExitAlert = async (location: UserLocation) => {
     if (!isClient) return;
     
-    // Play urgent siren sound multiple times
-    await playAlertSound();
+    // Play urgent police siren sound with screen flash
+    await playPoliceSirenWithFlash();
     
-    // Additional urgent beeps
-    setTimeout(() => playAlertSound(), 1000);
-    setTimeout(() => playAlertSound(), 2000);
+    // Additional urgent beeps after delay
+    setTimeout(() => playPoliceSirenWithFlash(), 2000);
+    setTimeout(() => playAlertSound(), 4000);
 
     // Show critical toast notification for leaving EEZ
     toast.error('🚨 CRITICAL: INDIAN TERRITORY BOUNDARY CROSSED!', {
@@ -713,6 +734,29 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     }
   };
 
+  const playPoliceSirenWithFlash = async (): Promise<void> => {
+    try {
+      // Start screen flashing
+      setIsFlashing(true);
+      
+      // Play police siren sound
+      if (policeSirenRef.current) {
+        policeSirenRef.current.currentTime = 0;
+        await policeSirenRef.current.play();
+      } else if (audioRef.current) {
+        // Fallback to marine siren
+        audioRef.current.currentTime = 0;
+        await audioRef.current.play();
+      } else {
+        // Fallback to generated beep
+        generateUrgentAlertBeep();
+      }
+    } catch (error) {
+      console.warn('Could not play police siren:', error);
+      generateUrgentAlertBeep();
+    }
+  };
+
   const playWelcomeSound = async (): Promise<void> => {
     try {
       // Generate a pleasant welcome tone instead of siren
@@ -746,6 +790,41 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     }
   };
 
+  const generateUrgentAlertBeep = () => {
+    if (!isClient || typeof window === 'undefined') return;
+    
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      // Create urgent siren-like sound with alternating frequencies
+      const createUrgentTone = (frequency: number, startTime: number, duration: number) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + startTime);
+        oscillator.type = 'sawtooth'; // More aggressive sound
+
+        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + duration);
+
+        oscillator.start(audioContext.currentTime + startTime);
+        oscillator.stop(audioContext.currentTime + startTime + duration);
+      };
+
+      // Create urgent alternating siren pattern
+      createUrgentTone(1000, 0, 0.3);    // High tone
+      createUrgentTone(600, 0.3, 0.3);   // Low tone
+      createUrgentTone(1000, 0.6, 0.3);  // High tone
+      createUrgentTone(600, 0.9, 0.3);   // Low tone
+      createUrgentTone(1000, 1.2, 0.3);  // High tone
+    } catch (error) {
+      console.warn('Could not generate urgent alert beep:', error);
+    }
+  };
+
   const generateWelcomeBeep = () => {
     if (!isClient || typeof window === 'undefined') return;
     
@@ -776,6 +855,10 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     } catch (error) {
       console.warn('Could not generate welcome beep:', error);
     }
+  };
+
+  const handleFlashComplete = () => {
+    setIsFlashing(false);
   };
 
   const requestNotificationPermission = async () => {
@@ -836,55 +919,66 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   }
 
   return (
-    <div className="fishing-border-monitor">
-      {isMonitoring && (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-            <Shield className="w-4 h-4 animate-pulse" />
-            <span>🔴 Live location monitoring active</span>
-            <Volume2 className="w-4 h-4" />
+    <>
+      {/* Screen Flash Overlay for Boundary Violations */}
+      <ScreenFlashOverlay 
+        isFlashing={isFlashing}
+        flashColor="#FF0000"
+        duration={3000}
+        intensity={0.7}
+        onFlashComplete={handleFlashComplete}
+      />
+      
+      <div className="fishing-border-monitor">
+        {isMonitoring && (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+              <Shield className="w-4 h-4 animate-pulse" />
+              <span>🔴 Live location monitoring active</span>
+              <Volume2 className="w-4 h-4" />
+            </div>
+            {isInsideEEZ !== null && (
+              <div className={`flex items-center gap-2 text-sm px-3 py-2 rounded-lg border-2 ${
+                isInsideEEZ 
+                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-300 dark:border-green-700' 
+                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 border-red-300 dark:border-red-700 animate-pulse'
+              }`}>
+                {isInsideEEZ ? (
+                  <>
+                    <Shield className="w-4 h-4" />
+                    <span>✅ Inside Indian Safe Zone (Land/EEZ)</span>
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="w-4 h-4 animate-bounce" />
+                    <span className="font-bold">🚨 OUTSIDE INDIA - INTERNATIONAL TERRITORY!</span>
+                  </>
+                )}
+              </div>
+            )}
+            {lastKnownPosition && (
+              <div className="text-xs text-gray-600 dark:text-gray-400">
+                📍 Live GPS: {lastKnownPosition.lat.toFixed(6)}, {lastKnownPosition.lng.toFixed(6)}
+                <br />
+                🛡️ Monitoring {borderData.length} EEZ boundary polygon(s)
+                {indianLandBoundary && <span> + Indian land territory</span>}
+              </div>
+            )}
+            {!isMonitoring && (
+              <div className="text-xs text-yellow-600 dark:text-yellow-400">
+                ⚠️ Location monitoring disabled - Enable GPS for live border alerts
+              </div>
+            )}
           </div>
-          {isInsideEEZ !== null && (
-            <div className={`flex items-center gap-2 text-sm px-3 py-2 rounded-lg border-2 ${
-              isInsideEEZ 
-                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-300 dark:border-green-700' 
-                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 border-red-300 dark:border-red-700 animate-pulse'
-            }`}>
-              {isInsideEEZ ? (
-                <>
-                  <Shield className="w-4 h-4" />
-                  <span>✅ Inside Indian Safe Zone (Land/EEZ)</span>
-                </>
-              ) : (
-                <>
-                  <AlertTriangle className="w-4 h-4 animate-bounce" />
-                  <span className="font-bold">🚨 OUTSIDE INDIA - INTERNATIONAL TERRITORY!</span>
-                </>
-              )}
-            </div>
-          )}
-          {lastKnownPosition && (
-            <div className="text-xs text-gray-600 dark:text-gray-400">
-              📍 Live GPS: {lastKnownPosition.lat.toFixed(6)}, {lastKnownPosition.lng.toFixed(6)}
-              <br />
-              🛡️ Monitoring {borderData.length} EEZ boundary polygon(s)
-              {indianLandBoundary && <span> + Indian land territory</span>}
-            </div>
-          )}
-          {!isMonitoring && (
-            <div className="text-xs text-yellow-600 dark:text-yellow-400">
-              ⚠️ Location monitoring disabled - Enable GPS for live border alerts
-            </div>
-          )}
-        </div>
-      )}
-      {!isMonitoring && (
-        <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
-          <AlertTriangle className="w-4 h-4" />
-          <span>Border monitoring inactive - Enable location services</span>
-        </div>
-      )}
-    </div>
+        )}
+        {!isMonitoring && (
+          <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+            <AlertTriangle className="w-4 h-4" />
+            <span>Border monitoring inactive - Enable location services</span>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
