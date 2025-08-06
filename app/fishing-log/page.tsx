@@ -18,6 +18,7 @@ import { FishingJournal } from '@/components/fishing-journal/FishingJournalClean
 import { FishingDataInfographics } from '@/components/FishingDataInfographics';
 import GoogleVoiceAssistant from '@/components/GoogleVoiceAssistant';
 import { geminiService } from '@/services/gemini';
+import { SimpleFishingLog } from '@/components/SimpleFishingLog';
 import Link from 'next/link';
 
 export default function FishingInfoCenter() {
@@ -42,6 +43,8 @@ export default function FishingInfoCenter() {
       setActiveTab('analytics');
     } else if (transcript.toLowerCase().includes('journal')) {
       setActiveTab('journal');
+    } else if (transcript.toLowerCase().includes('log')) {
+      setActiveTab('log');
     }
   };
 
@@ -137,10 +140,14 @@ export default function FishingInfoCenter() {
 
           {/* Main Tabs Interface */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5 mb-8 bg-custom-light dark:bg-gray-800 border border-custom-secondary/20">
+            <TabsList className="grid w-full grid-cols-6 mb-8 bg-custom-light dark:bg-gray-800 border border-custom-secondary/20">
               <TabsTrigger value="overview" className="flex items-center gap-2 font-claude">
                 <Activity className="w-4 h-4" />
                 Overview
+              </TabsTrigger>
+              <TabsTrigger value="log" className="flex items-center gap-2 font-claude">
+                <Fish className="w-4 h-4" />
+                Simple Log
               </TabsTrigger>
               <TabsTrigger value="analytics" className="flex items-center gap-2 font-claude">
                 <BarChart3 className="w-4 h-4" />
@@ -200,7 +207,7 @@ export default function FishingInfoCenter() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground dark:text-custom-secondary mb-4 text-sm font-claude">
-                      Use voice commands to navigate. Try "show laws", "safety info", "analytics", or "journal".
+                      Use voice commands to navigate. Try "show laws", "safety info", "analytics", "journal", or "simple log".
                     </p>
                     <ErrorBoundary fallback={<p className="text-custom-primary font-claude">Voice assistant is currently unavailable.</p>}>
                       <GoogleVoiceAssistant onTranscript={handleVoiceCommand} />
@@ -301,6 +308,11 @@ export default function FishingInfoCenter() {
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Simple Log Tab */}
+            <TabsContent value="log" className="space-y-6">
+              <SimpleFishingLog />
             </TabsContent>
 
             {/* Analytics Tab */}
