@@ -5,7 +5,7 @@ export async function GET() {
     return NextResponse.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      service: 'FisherMate.AI',
+      service: 'Aquora.AI',
       version: '1.0.0'
     });
   } catch (error) {

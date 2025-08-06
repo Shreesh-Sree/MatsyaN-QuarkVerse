@@ -87,7 +87,7 @@ export default function Home() {
           <div className="absolute inset-0 -z-10 h-full w-full bg-custom-light bg-[linear-gradient(to_right,#f4f3ee_1px,transparent_1px),linear-gradient(to_bottom,#f4f3ee_1px,transparent_1px)] bg-[size:6rem_4rem] dark:bg-black dark:bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] opacity-30"></div>
           <div className="max-w-5xl mx-auto">
             <h1 className="text-4xl lg:text-6xl font-medium text-foreground dark:text-custom-white mb-6 tracking-tight leading-tight font-claude text-center">
-              FisherMate.AI
+              Aquora.AI
             </h1>
             <p className="text-lg lg:text-xl text-muted-foreground dark:text-custom-secondary max-w-3xl mx-auto leading-relaxed mb-10 font-claude text-center">
               Your intelligent fishing companion for safer, smarter, and more successful trips on the water.
@@ -165,7 +165,7 @@ export default function Home() {
           <div className="max-w-5xl mx-auto">
             <div className="mb-12 text-center">
               <h2 className="text-3xl lg:text-4xl font-medium text-foreground dark:text-custom-white mb-4 font-claude">
-                Why Choose FisherMate.AI?
+                Why Choose Aquora.AI?
               </h2>
               <p className="text-muted-foreground dark:text-custom-secondary text-base max-w-3xl mx-auto font-claude">
                 We combine cutting-edge technology with a passion for fishing to create an indispensable tool for anglers of all levels.

@@ -33,7 +33,7 @@ export function Footer() {
                 <Anchor className="w-6 h-6 text-custom-primary" />
               </div>
               <span className="text-xl font-bold text-custom-primary">
-                FisherMate.AI
+                Aquora.AI
               </span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
@@ -106,7 +106,7 @@ export function Footer() {
         {/* Bottom Section */}
         <div className="border-t border-border/40 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm text-muted-foreground">
-            © 2025 FisherMate.AI. All rights reserved.
+            © 2025 Aquora.AI. All rights reserved.
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             Made by Team QuarkVerse - AlgoQX.

@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'FisherMate.Ai - Fishing Companion',
-    short_name: 'FisherMate.Ai',
+    name: 'Aquora.AI - Fishing Companion',
+    short_name: 'Aquora.AI',
     description: 'Your comprehensive fishing companion with AI assistance, weather updates, safety tips, and fishing laws.',
     start_url: '/',
     display: 'standalone',
@@ -39,14 +39,14 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: '1280x720',
         type: 'image/png',
         form_factor: 'wide',
-        label: 'FisherMate.AI Desktop Experience'
+        label: 'Aquora.AI Desktop Experience'
       },
       {
         src: '/screenshots/mobile.png',
         sizes: '375x667',
         type: 'image/png',
         form_factor: 'narrow',
-        label: 'FisherMate.AI Mobile Experience'
+        label: 'Aquora.AI Mobile Experience'
       }
     ],
     shortcuts: [

@@ -71,7 +71,7 @@ export default function LoginPage() {
             <div className="bg-custom-primary text-custom-white p-3 rounded-xl">
               <Anchor className="w-8 h-8" />
             </div>
-            <h1 className="text-3xl font-bold font-claude">FisherMate.AI</h1>
+            <h1 className="text-3xl font-bold font-claude">Aquora.AI</h1>
           </Link>
           <p className="text-muted-foreground dark:text-custom-secondary mt-2 font-claude">Your intelligent fishing companion</p>
         </div>

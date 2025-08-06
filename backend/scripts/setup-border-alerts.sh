@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# FisherMate.AI - Maritime Border Alert Setup Script
+# Aquora.AI - Maritime Border Alert Setup Script
 echo "🚨 Setting up Maritime Border Alert System..."
 
 # Create required directories

@@ -1,6 +1,6 @@
-const CACHE_NAME = 'fishermate-v1.0.0';
-const STATIC_CACHE = 'fishermate-static-v1.0.0';
-const DYNAMIC_CACHE = 'fishermate-dynamic-v1.0.0';
+const CACHE_NAME = 'aquora-v1.0.0';
+const STATIC_CACHE = 'aquora-static-v1.0.0';
+const DYNAMIC_CACHE = 'aquora-dynamic-v1.0.0';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -194,7 +194,7 @@ function createOfflineResponse(request) {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Offline - FisherMate.AI</title>
+          <title>Offline - Aquora.AI</title>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <style>
@@ -309,7 +309,7 @@ self.addEventListener('push', (event) => {
       body: data.body,
       icon: '/favicon.svg',
       badge: '/favicon.svg',
-      tag: data.tag || 'fishermate-notification',
+      tag: data.tag || 'aquora-notification',
       requireInteraction: false,
       actions: data.actions || []
     };

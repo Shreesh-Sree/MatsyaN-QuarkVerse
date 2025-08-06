@@ -1,4 +1,4 @@
-# **App Name**: FisherMate.AI
+# **App Name**: Aquora.AI
 
 ## Core Features:
 

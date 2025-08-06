@@ -78,14 +78,14 @@ export default function AboutPage() {
           <div className="space-y-4">
             <Badge variant="outline" className="px-4 py-2 border-custom-secondary/30 text-custom-secondary">
               <Bot className="w-4 h-4 mr-2" />
-              <span className="font-claude">About FisherMate.AI</span>
+              <span className="font-claude">About Aquora.AI</span>
             </Badge>
             <h1 className="text-4xl lg:text-6xl font-medium font-claude">
               Revolutionizing Fishing
               <span className="block text-custom-primary">with AI Technology</span>
             </h1>
             <p className="text-xl text-muted-foreground dark:text-custom-secondary max-w-3xl mx-auto leading-relaxed font-claude">
-              FisherMate.AI is your intelligent fishing companion, combining cutting-edge AI technology 
+              Aquora.AI is your intelligent fishing companion, combining cutting-edge AI technology 
               with comprehensive fishing expertise to ensure safer, smarter, and more successful fishing experiences.
             </p>
           </div>

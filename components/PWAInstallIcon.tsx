@@ -76,7 +76,7 @@ export function PWAInstallIcon() {
         <TooltipContent>
           <div className="flex items-center gap-2">
             <Smartphone className="w-4 h-4" />
-            <span>Install FisherMate.AI</span>
+            <span>Install Aquora.AI</span>
           </div>
         </TooltipContent>
       </Tooltip>

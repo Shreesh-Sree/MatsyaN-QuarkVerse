@@ -48,7 +48,7 @@ export function PWAInstallPrompt() {
                 App Installed Successfully!
               </p>
               <p className="text-sm text-green-600 dark:text-green-400">
-                You can now use FisherMate.AI offline and access it from your home screen.
+                You can now use Aquora.AI offline and access it from your home screen.
               </p>
             </div>
           </div>
@@ -112,12 +112,12 @@ export function PWAInstallPrompt() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Download className="w-5 h-5 text-blue-600" />
-              Install FisherMate.AI App
+              Install Aquora.AI App
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-gray-600">
-              Get the full FisherMate.AI experience! Install our app for:
+              Get the full Aquora.AI experience! Install our app for:
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">

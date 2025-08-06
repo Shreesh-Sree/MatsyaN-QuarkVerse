@@ -1,4 +1,4 @@
-# 🗺️ FisherMate.AI Roadmap
+# 🗺️ Aquora.AI Roadmap
 
 ## 🎯 Vision Statement
 To become the world's leading AI-powered platform for sustainable fishing, empowering coastal communities with technology while preserving marine ecosystems.

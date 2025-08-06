@@ -51,10 +51,10 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group transition-transform duration-200" aria-label={t("home")}>
           <div className="p-2 rounded-xl bg-custom-primary/10 border border-custom-primary/30 shadow-lg">
-            <Image src="/favicon.ico" alt="FisherMate Logo" width={28} height={28} />
+            <Image src="/favicon.ico" alt="Aquora Logo" width={28} height={28} />
           </div>
           <span className="text-xl font-bold text-custom-primary">
-            FisherMate.AI
+            Aquora.AI
           </span>
         </Link>
 
@@ -201,9 +201,9 @@ export function Header() {
                 <SheetTitle>
                   <Link href="/" className="flex items-center gap-3 transition-transform duration-200" onClick={handleMobileNavClick}>
                     <div className="p-2 rounded-xl bg-custom-primary/10 border border-custom-primary/30">
-                      <Image src="/favicon.ico" alt="FisherMate Logo" width={24} height={24} />
+                      <Image src="/favicon.ico" alt="Aquora Logo" width={24} height={24} />
                     </div>
-                    <span className="text-xl font-bold text-custom-primary">FisherMate.AI</span>
+                    <span className="text-xl font-bold text-custom-primary">Aquora.AI</span>
                   </Link>
                 </SheetTitle>
               </SheetHeader>

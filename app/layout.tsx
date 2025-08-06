@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export const metadata: Metadata = {
-  title: 'FisherMate.AI - AI Fishing Companion',
+  title: 'Aquora.AI - AI Fishing Companion',
   description: 'AI-powered fishing companion with weather updates, safety guidelines, fishing journal, and voice assistance.',
   icons: {
     icon: '/favicon.ico',

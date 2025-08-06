@@ -1,6 +1,6 @@
 const en = {
   // App Core
-  app_title: "FisherMate.AI",
+  app_title: "Aquora.AI",
   home_title: "Your AI Guide on the High Seas",
   home_subtitle: "Instant, multilingual information on fishing laws, safety practices, and real-time weather alerts, designed for fisherfolk communities.",
   
@@ -129,12 +129,12 @@ const en = {
   location_access_help: "Please allow location access for nearby fishing spots.",
   
   // About
-  about_app: "About FisherMate.AI",
+  about_app: "About Aquora.AI",
   help_support: "Help & Support",
   version: "Version",
   
   // Chatbot
-  chatbot_welcome: "Hello! I'm your FisherMate AI assistant. How can I help you with fishing today?",
+  chatbot_welcome: "Hello! I'm your Aquora AI assistant. How can I help you with fishing today?",
   ask_anything: "Ask me anything about fishing...",
   send_message: "Send message",
   
@@ -174,7 +174,7 @@ const en = {
 
 const ta = {
   // App Core
-  app_title: "FisherMate.AI",
+  app_title: "Aquora.AI",
   home_title: "கடலில் உங்கள் AI வழிகாட்டி",
   home_subtitle: "மீனவ சமூகங்களுக்காக வடிவமைக்கப்பட்ட, மீன்பிடி சட்டங்கள், பாதுகாப்பு நடைமுறைகள் மற்றும் நிகழ்நேர வானிலை எச்சரிக்கைகள் பற்றிய உடனடி, பன்மொழித் தகவல்.",
   
@@ -303,12 +303,12 @@ const ta = {
   location_access_help: "அருகிலுள்ள மீன்பிடி இடங்களுக்கு இருப்பிட அணுகலை அனுமதிக்கவும்.",
   
   // About
-  about_app: "FisherMate.AI பற்றி",
+  about_app: "Aquora.AI பற்றி",
   help_support: "உதவி & ஆதரவு",
   version: "பதிப்பு",
   
   // Chatbot
-  chatbot_welcome: "வணக்கம்! நான் உங்கள் FisherMate AI உதவியாளர். இன்று மீன்பிடியில் எவ்வாறு உதவ முடியும்?",
+  chatbot_welcome: "வணக்கம்! நான் உங்கள் Aquora AI உதவியாளர். இன்று மீன்பிடியில் எவ்வாறு உதவ முடியும்?",
   ask_anything: "மீன்பிடி பற்றி எதுவும் கேளுங்கள்...",
   send_message: "செய்தி அனுப்பு",
   
