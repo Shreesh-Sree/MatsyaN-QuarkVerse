@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, MapPin, Calendar, Clock, Fish, Camera, Mic, Save } from 'lucide-react';
+import { X, MapPin, Calendar, Clock, Fish, Camera, Mic, Save, Thermometer, Wind, Droplets } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -254,24 +254,17 @@ export function TripForm({ onSave, onSubmit, onClose, initialData, isEditing = f
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <Card className="border-custom-secondary/20 bg-custom-white dark:bg-gray-900 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="font-claude text-gray-800 dark:text-gray-200">
-              {isEditing ? 'Edit Fishing Trip' : 'Log Fishing Trip'}
-            </CardTitle>
-            <Button variant="ghost" size="sm" onClick={onClose} className="font-claude text-gray-800 dark:text-gray-200">
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-          {/* Voice Controls for quick data entry */}
-          <VoiceControls onTranscript={handleVoiceInput} />
-        </CardHeader>
+    <div className="w-full">
+      <div className="mb-4">
+        {/* Voice Controls for quick data entry */}
+        <VoiceControls onTranscript={handleVoiceInput} />
+      </div>
 
-        <CardContent className="space-y-6">
-          {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="space-y-8">
+        {/* Basic Info */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 font-claude">Basic Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <Label htmlFor="date" className="font-claude text-gray-800 dark:text-gray-200">Date</Label>
               <Input
@@ -306,10 +299,11 @@ export function TripForm({ onSave, onSubmit, onClose, initialData, isEditing = f
 
           {/* Location */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold font-claude text-gray-800 dark:text-gray-200">
-              Location
+            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 font-claude flex items-center gap-2">
+              <MapPin className="w-5 h-5" />
+              Location Details
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="locationName">Location Name *</Label>
                 <Input
@@ -360,8 +354,11 @@ export function TripForm({ onSave, onSubmit, onClose, initialData, isEditing = f
 
           {/* Weather */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Weather Conditions</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 font-claude flex items-center gap-2">
+              <Thermometer className="w-5 h-5" />
+              Weather Conditions
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <Label htmlFor="weatherConditions">Conditions</Label>
                 <Select
@@ -475,24 +472,26 @@ export function TripForm({ onSave, onSubmit, onClose, initialData, isEditing = f
 
           {/* Catches */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
+            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 font-claude flex items-center gap-2">
               <Fish className="w-5 h-5" />
-              Catches
+              Catches & Species
             </h3>
             
             {/* Add New Catch */}
-            <Card className="p-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Card className="p-6 border border-gray-200 dark:border-gray-700">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Input
-                  placeholder="Species"
+                  placeholder="Species (e.g., Bass, Trout)"
                   value={newCatch.species}
                   onChange={(e) => setNewCatch(prev => ({ ...prev, species: e.target.value }))}
+                  className="h-11"
                 />
                 <Input
                   type="number"
                   placeholder="Quantity"
                   value={newCatch.quantity}
                   onChange={(e) => setNewCatch(prev => ({ ...prev, quantity: parseInt(e.target.value) || 1 }))}
+                  className="h-11"
                 />
                 <Input
                   type="number"
@@ -500,8 +499,9 @@ export function TripForm({ onSave, onSubmit, onClose, initialData, isEditing = f
                   placeholder="Weight (lbs)"
                   value={newCatch.weight || ''}
                   onChange={(e) => setNewCatch(prev => ({ ...prev, weight: parseFloat(e.target.value) || 0 }))}
+                  className="h-11"
                 />
-                <Button onClick={handleAddCatch} size="sm">
+                <Button onClick={handleAddCatch} size="lg" className="h-11">
                   Add Catch
                 </Button>
               </div>
@@ -697,17 +697,17 @@ export function TripForm({ onSave, onSubmit, onClose, initialData, isEditing = f
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={onClose}>
+          <div className="flex justify-end gap-4 pt-6 border-t">
+            <Button variant="outline" onClick={onClose} className="px-6">
               Cancel
             </Button>
-            <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700 px-6">
               <Save className="w-4 h-4 mr-2" />
               {isEditing ? 'Update Trip' : 'Save Trip'}
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
