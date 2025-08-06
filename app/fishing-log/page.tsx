@@ -8,18 +8,17 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Fish, Map, Shield, Scale, Bot, Clock, Target, Zap, Activity, AlertTriangle, CheckCircle, XCircle, BookOpen, BarChart3, MessageSquare, Settings, Database, TrendingUp, MapPin, Calendar } from 'lucide-react';
+import { Fish, Map, Shield, Scale, Bot, Clock, Target, Zap, Activity, AlertTriangle, CheckCircle, XCircle, BarChart3, MessageSquare, Settings, Database, TrendingUp, MapPin, Calendar } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useNetworkStatus } from '@/hooks/use-offline';
 import { useFishingLogs } from '@/hooks/use-fishing-logs';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { FishingJournal } from '@/components/fishing-journal/FishingJournalClean';
-import { FishingDataInfographics } from '@/components/FishingDataInfographics';
 import GoogleVoiceAssistant from '@/components/GoogleVoiceAssistant';
 import { geminiService } from '@/services/gemini';
 import { SimpleFishingLog } from '@/components/SimpleFishingLog';
 import { RealFishingAnalytics } from '@/components/RealFishingAnalytics';
+import { AIFishingInsights } from '@/components/AIFishingInsights';
 import { useSimpleFishingLogs } from '@/hooks/use-simple-fishing-logs';
 import Link from 'next/link';
 
@@ -44,8 +43,8 @@ export default function FishingInfoCenter() {
       setActiveTab('safety');
     } else if (transcript.toLowerCase().includes('analytics')) {
       setActiveTab('analytics');
-    } else if (transcript.toLowerCase().includes('journal')) {
-      setActiveTab('journal');
+    } else if (transcript.toLowerCase().includes('insights')) {
+      setActiveTab('insights');
     } else if (transcript.toLowerCase().includes('log')) {
       setActiveTab('log');
     }
@@ -183,9 +182,9 @@ export default function FishingInfoCenter() {
                 <BarChart3 className="w-4 h-4" />
                 Analytics
               </TabsTrigger>
-              <TabsTrigger value="journal" className="flex items-center gap-2 font-claude">
-                <BookOpen className="w-4 h-4" />
-                Journal
+              <TabsTrigger value="insights" className="flex items-center gap-2 font-claude">
+                <Bot className="w-4 h-4" />
+                AI Insights
               </TabsTrigger>
               <TabsTrigger value="laws" className="flex items-center gap-2 font-claude">
                 <Scale className="w-4 h-4" />
@@ -237,7 +236,7 @@ export default function FishingInfoCenter() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground dark:text-custom-secondary mb-4 text-sm font-claude">
-                      Use voice commands to navigate. Try "show laws", "safety info", "analytics", "journal", or "simple log".
+                      Use voice commands to navigate. Try "show laws", "safety info", "analytics", "AI insights", or "simple log".
                     </p>
                     <ErrorBoundary fallback={<p className="text-custom-primary font-claude">Voice assistant is currently unavailable.</p>}>
                       <GoogleVoiceAssistant onTranscript={handleVoiceCommand} />
@@ -350,17 +349,9 @@ export default function FishingInfoCenter() {
               <RealFishingAnalytics />
             </TabsContent>
 
-            {/* Journal Tab */}
-            <TabsContent value="journal" className="space-y-6">
-              <ErrorBoundary fallback={
-                <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
-                  <CardContent className="p-4">
-                    <p className="text-custom-primary font-claude">Could not load Fishing Journal.</p>
-                  </CardContent>
-                </Card>
-              }>
-                <FishingJournal />
-              </ErrorBoundary>
+            {/* AI Insights Tab */}
+            <TabsContent value="insights" className="space-y-6">
+              <AIFishingInsights />
             </TabsContent>
 
             {/* Laws & AI Tab */}

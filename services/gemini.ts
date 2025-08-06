@@ -4,10 +4,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize Gemini AI with better error handling
 const getApiKey = () => {
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
   if (!apiKey || apiKey === '') {
-    console.error('NEXT_PUBLIC_GEMINI_API_KEY is not configured');
-    throw new Error('Gemini API key is not configured. Please add NEXT_PUBLIC_GEMINI_API_KEY to your environment variables.');
+    console.error('Gemini API key is not configured');
+    throw new Error('Gemini API key is not configured. Please add NEXT_PUBLIC_GEMINI_API_KEY or GOOGLE_GENERATIVE_AI_API_KEY to your environment variables.');
   }
   return apiKey;
 };
@@ -174,32 +174,65 @@ export class GeminiService {
   }
 
   async generateFishingInsights(fishingData: FishingDataEntry[]): Promise<string> {
+    console.log('Gemini service: generateFishingInsights called with data:', fishingData.length, 'entries');
+    
     try {
+      console.log('Analyzing fishing data...');
       const dataAnalysis = this.analyzeFishingData(fishingData);
+      console.log('Data analysis complete:', dataAnalysis);
       
       const prompt = `
-        As a fishing analytics expert, analyze the following fishing data and provide insights:
+        As an expert fishing consultant and data analyst, analyze the following fishing data and provide personalized, actionable insights:
         
+        FISHING DATA SUMMARY:
         ${JSON.stringify(dataAnalysis, null, 2)}
         
-        Provide insights including:
-        1. Most successful fishing times and conditions
-        2. Best performing locations and species
-        3. Equipment effectiveness analysis
-        4. Weather pattern correlations
-        5. Seasonal trends and recommendations
-        6. Areas for improvement
-        7. Personalized fishing tips based on historical performance
+        DETAILED TRIP DATA:
+        ${fishingData.map(trip => `
+        Date: ${trip.date}
+        Location: ${trip.location.name}
+        Species: ${trip.species.join(', ')}
+        Catches: ${trip.catch.count} fish, ${trip.catch.totalWeight} lbs
+        Duration: ${trip.duration} hours
+        Success: ${trip.success ? 'Yes' : 'No'}
+        Notes: ${trip.notes || 'No notes'}
+        `).join('\n')}
         
-        Format as a comprehensive but concise analysis with actionable recommendations.
+        Please provide a comprehensive analysis with:
+        
+        1. **SUCCESS PATTERNS**: What patterns lead to successful fishing trips?
+        2. **LOCATION ANALYSIS**: Which locations perform best and why?
+        3. **SPECIES INSIGHTS**: Best times and methods for target species
+        4. **TIMING RECOMMENDATIONS**: Optimal fishing times based on historical data
+        5. **IMPROVEMENT STRATEGIES**: Specific actions to increase success rate
+        6. **SEASONAL TRENDS**: What patterns emerge from the timing of trips?
+        7. **PERSONALIZED TIPS**: Custom recommendations based on fishing style
+        
+        Format your response with clear headings, bullet points, and actionable advice.
+        Be specific and practical - focus on what the angler can do differently.
+        If there's limited data, acknowledge it and suggest what additional information would be helpful.
+        
+        Keep the tone encouraging and educational.
       `;
 
+      console.log('Sending prompt to Gemini API...');
       const result = await this.model.generateContent(prompt);
+      console.log('Received result from Gemini API');
+      
       const response = await result.response;
-      return response.text();
+      console.log('Extracted response from result');
+      
+      const text = response.text();
+      console.log('Extracted text from response, length:', text.length);
+      
+      return text;
     } catch (error) {
-      console.error('Error generating fishing insights:', error);
-      throw new Error('Failed to generate fishing insights');
+      console.error('Error in generateFishingInsights:', error);
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      throw new Error('Failed to generate fishing insights. Please check your connection and try again.');
     }
   }
 
@@ -265,3 +298,4 @@ export class GeminiService {
 }
 
 export const geminiService = new GeminiService();
+      
