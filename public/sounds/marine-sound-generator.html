@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marine Alert Sound Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #e55a2b;
+        }
+        .welcome-button {
+            background: #2196F3;
+        }
+        .welcome-button:hover {
+            background: #1976D2;
+        }
+        .description {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #ff6b35;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Marine Alert Sound Generator</h1>
+        <div class="description">
+            <strong>This tool generates marine safety alert sounds for the MatsyaN fishing app.</strong>
+            <br><br>
+            <strong>EEZ Boundary Alert:</strong> Plays when fishers cross outside Indian territorial waters
+            <br>
+            <strong>Welcome Sound:</strong> Plays when returning to Indian EEZ waters
+        </div>
+
+        <h2>🚨 EEZ Boundary Alert Sound</h2>
+        <button class="button" onclick="playEEZAlert()">Play EEZ Exit Alert</button>
+        <button class="button" onclick="stopSound()">Stop</button>
+
+        <h2>✅ Welcome Back Sound</h2>
+        <button class="button welcome-button" onclick="playWelcomeSound()">Play Welcome Sound</button>
+        <button class="button welcome-button" onclick="stopSound()">Stop</button>
+
+        <h2>📥 Download Sounds</h2>
+        <button class="button" onclick="downloadAlert()">Download EEZ Alert (MP3)</button>
+        <button class="button welcome-button" onclick="downloadWelcome()">Download Welcome (MP3)</button>
+
+        <div class="description">
+            <strong>Usage Instructions:</strong>
+            <ol>
+                <li>Test the sounds using the play buttons above</li>
+                <li>Download the audio files you want to use</li>
+                <li>Place the files in your /public/sounds/ directory</li>
+                <li>The app will automatically use these files for border alerts</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let audioContext;
+        let currentOscillators = [];
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function stopSound() {
+            currentOscillators.forEach(osc => {
+                try {
+                    osc.stop();
+                } catch(e) {}
+            });
+            currentOscillators = [];
+        }
+
+        function playEEZAlert() {
+            initAudioContext();
+            stopSound();
+            
+            // Create urgent marine siren pattern
+            const frequencies = [800, 600, 800, 600, 1000, 700, 1000, 700];
+            const duration = 0.25;
+            
+            frequencies.forEach((freq, index) => {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + duration);
+                    
+                    currentOscillators.push(oscillator);
+                }, index * duration * 1000);
+            });
+        }
+
+        function playWelcomeSound() {
+            initAudioContext();
+            stopSound();
+            
+            // Create pleasant welcome chime
+            const notes = [440, 554, 659]; // A, C#, E (A major chord)
+            
+            notes.forEach((freq, index) => {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.8);
+                    
+                    currentOscillators.push(oscillator);
+                }, index * 200);
+            });
+        }
+
+        function downloadAlert() {
+            alert('To download actual MP3 files, you would need to use a server-side audio generation library or record these sounds manually. For now, the app uses Web Audio API to generate sounds in real-time.');
+        }
+
+        function downloadWelcome() {
+            alert('To download actual MP3 files, you would need to use a server-side audio generation library or record these sounds manually. For now, the app uses Web Audio API to generate sounds in real-time.');
+        }
+    </script>
+</body>
+</html>
