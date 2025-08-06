@@ -214,9 +214,11 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
   const [lastAlertTime, setLastAlertTime] = useState<{ [key: string]: number }>({});
   const [borderData, setBorderData] = useState<FishingBorderAlert[]>([]);
   const [isFlashing, setIsFlashing] = useState(false);
+  const [isOutsideBoundary, setIsOutsideBoundary] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const policeSirenRef = useRef<HTMLAudioElement | null>(null);
   const watchIdRef = useRef<number | null>(null);
+  const flashIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [isInsideEEZ, setIsInsideEEZ] = useState<boolean | null>(null);
   const [lastKnownPosition, setLastKnownPosition] = useState<UserLocation | null>(null);
@@ -309,10 +311,28 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     // Initialize marine siren (existing)
     audioRef.current = new Audio('/sounds/marine-siren.mp3');
     audioRef.current.preload = 'auto';
+    audioRef.current.volume = 0.8; // Set volume to 80%
+    
+    // Add event listeners to monitor audio loading
+    audioRef.current.addEventListener('canplaythrough', () => {
+      console.log('✅ Marine siren audio loaded successfully, volume:', audioRef.current?.volume);
+    });
+    audioRef.current.addEventListener('error', (e) => {
+      console.error('❌ Marine siren audio load error:', e);
+    });
     
     // Initialize police siren (new for boundary violations)
     policeSirenRef.current = new Audio('/sounds/police-siren.mp3');
     policeSirenRef.current.preload = 'auto';
+    policeSirenRef.current.volume = 0.9; // Set volume to 90% for urgent alerts
+    
+    // Add event listeners to monitor police siren loading
+    policeSirenRef.current.addEventListener('canplaythrough', () => {
+      console.log('✅ Police siren audio loaded successfully, volume:', policeSirenRef.current?.volume);
+    });
+    policeSirenRef.current.addEventListener('error', (e) => {
+      console.error('❌ Police siren audio load error:', e);
+    });
     
     // Fallback to browser-generated beep if audio files not available
     if (!audioRef.current.canPlayType('audio/mpeg')) {
@@ -332,8 +352,44 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
         policeSirenRef.current.pause();
         policeSirenRef.current = null;
       }
+      if (flashIntervalRef.current) {
+        clearInterval(flashIntervalRef.current);
+        flashIntervalRef.current = null;
+      }
     };
   }, [isClient]);
+
+  // Handle continuous screen flashing when user is outside boundary
+  useEffect(() => {
+    if (!isClient) return;
+
+    if (isOutsideBoundary) {
+      console.log('🚨 Starting continuous boundary violation flashing');
+      
+      // Start continuous flashing every 5 seconds
+      flashIntervalRef.current = setInterval(() => {
+        if (isOutsideBoundary) {
+          setIsFlashing(true);
+          console.log('⚠️ Boundary violation flash triggered');
+        }
+      }, 5000); // Flash every 5 seconds while outside boundary
+
+    } else {
+      // Stop continuous flashing when back inside
+      if (flashIntervalRef.current) {
+        clearInterval(flashIntervalRef.current);
+        flashIntervalRef.current = null;
+        console.log('✅ Stopped continuous boundary violation flashing');
+      }
+    }
+
+    return () => {
+      if (flashIntervalRef.current) {
+        clearInterval(flashIntervalRef.current);
+        flashIntervalRef.current = null;
+      }
+    };
+  }, [isClient, isOutsideBoundary]);
 
   // Draw fishing borders on map
   useEffect(() => {
@@ -512,6 +568,9 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
 
     // User is safe if they are either in EEZ waters OR on Indian land
     const currentlyInSafeZone = currentlyInsideEEZ || currentlyInIndianLand;
+
+    // Update boundary violation state for continuous flashing
+    setIsOutsideBoundary(!currentlyInSafeZone);
 
     // Track position changes and detect boundary crossings
     setLastKnownPosition(location);
@@ -723,9 +782,12 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
     try {
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
+        audioRef.current.volume = 0.8; // Ensure volume is set
+        console.log('🔊 Playing marine siren at volume:', audioRef.current.volume);
         await audioRef.current.play();
       } else {
         // Fallback to Web Audio API beep
+        console.log('🔊 Fallback: Playing generated alert beep');
         generateAlertBeep();
       }
     } catch (error) {
@@ -742,13 +804,18 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
       // Play police siren sound
       if (policeSirenRef.current) {
         policeSirenRef.current.currentTime = 0;
+        policeSirenRef.current.volume = 0.9; // Ensure high volume for urgent alerts
+        console.log('🚨 Playing police siren at volume:', policeSirenRef.current.volume);
         await policeSirenRef.current.play();
       } else if (audioRef.current) {
         // Fallback to marine siren
         audioRef.current.currentTime = 0;
+        audioRef.current.volume = 0.8; // Ensure volume is set
+        console.log('🚨 Fallback: Playing marine siren at volume:', audioRef.current.volume);
         await audioRef.current.play();
       } else {
         // Fallback to generated beep
+        console.log('🚨 Fallback: Playing generated urgent beep');
         generateUrgentAlertBeep();
       }
     } catch (error) {
@@ -780,7 +847,7 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
       oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
       oscillator.type = 'sine';
 
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime); // Increased volume from 0.3 to 0.5
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
 
       oscillator.start(audioContext.currentTime);
@@ -807,7 +874,7 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
         oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + startTime);
         oscillator.type = 'sawtooth'; // More aggressive sound
 
-        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + startTime);
+        gainNode.gain.setValueAtTime(0.7, audioContext.currentTime + startTime); // Increased volume from 0.5 to 0.7
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + duration);
 
         oscillator.start(audioContext.currentTime + startTime);
@@ -842,7 +909,7 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
         oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + startTime);
         oscillator.type = 'sine';
 
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime + startTime);
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + startTime); // Increased volume from 0.1 to 0.3
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + duration);
 
         oscillator.start(audioContext.currentTime + startTime);
@@ -952,6 +1019,11 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
                   <>
                     <AlertTriangle className="w-4 h-4 animate-bounce" />
                     <span className="font-bold">🚨 OUTSIDE INDIA - INTERNATIONAL TERRITORY!</span>
+                    {isOutsideBoundary && (
+                      <span className="ml-2 text-xs bg-red-600 text-white px-2 py-1 rounded animate-pulse">
+                        CONTINUOUS ALERT
+                      </span>
+                    )}
                   </>
                 )}
               </div>
@@ -962,6 +1034,11 @@ export const FishingBorderMonitor: React.FC<FishingBorderMonitorProps> = ({
                 <br />
                 🛡️ Monitoring {borderData.length} EEZ boundary polygon(s)
                 {indianLandBoundary && <span> + Indian land territory</span>}
+                {isOutsideBoundary && (
+                  <span className="text-red-600 dark:text-red-400 font-bold">
+                    <br />⚠️ Screen flashing active - Return to safe zone!
+                  </span>
+                )}
               </div>
             )}
             {!isMonitoring && (
