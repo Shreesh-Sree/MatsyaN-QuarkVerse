@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,26 +10,12 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Fish, Plus, Calendar, MapPin, BarChart3, TrendingUp, Award, Clock } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-
-interface FishingEntry {
-  id: string;
-  date: string;
-  location: string;
-  species: string;
-  quantity: number;
-  weight: number;
-  duration: number;
-  success: boolean;
-  notes: string;
-  createdAt: Date;
-}
+import { useSimpleFishingLogs } from '@/hooks/use-simple-fishing-logs';
 
 export function SimpleFishingLog() {
-  const { user } = useAuth();
   const { toast } = useToast();
-  const [entries, setEntries] = useState<FishingEntry[]>([]);
+  const { entries, analytics, addEntry } = useSimpleFishingLogs();
   const [isAddingEntry, setIsAddingEntry] = useState(false);
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -38,23 +24,8 @@ export function SimpleFishingLog() {
     quantity: 0,
     weight: 0,
     duration: 0,
-    success: false,
     notes: ''
   });
-
-  // Load entries from localStorage
-  useEffect(() => {
-    const savedEntries = localStorage.getItem(`fishing-entries-${user?.uid}`);
-    if (savedEntries) {
-      setEntries(JSON.parse(savedEntries));
-    }
-  }, [user]);
-
-  // Save entries to localStorage
-  const saveEntries = (newEntries: FishingEntry[]) => {
-    localStorage.setItem(`fishing-entries-${user?.uid}`, JSON.stringify(newEntries));
-    setEntries(newEntries);
-  };
 
   const handleSubmit = () => {
     if (!formData.location || !formData.species) {
@@ -66,15 +37,10 @@ export function SimpleFishingLog() {
       return;
     }
 
-    const newEntry: FishingEntry = {
-      id: Date.now().toString(),
+    addEntry({
       ...formData,
-      success: formData.quantity > 0,
-      createdAt: new Date()
-    };
-
-    const updatedEntries = [newEntry, ...entries];
-    saveEntries(updatedEntries);
+      success: formData.quantity > 0
+    });
 
     toast({
       title: 'Entry Added',
@@ -88,47 +54,10 @@ export function SimpleFishingLog() {
       quantity: 0,
       weight: 0,
       duration: 0,
-      success: false,
       notes: ''
     });
     setIsAddingEntry(false);
   };
-
-  // Analytics calculations
-  const analytics = {
-    totalTrips: entries.length,
-    successfulTrips: entries.filter(e => e.success).length,
-    totalCatch: entries.reduce((sum, e) => sum + e.quantity, 0),
-    totalWeight: entries.reduce((sum, e) => sum + e.weight, 0),
-    averageDuration: entries.length > 0 ? entries.reduce((sum, e) => sum + e.duration, 0) / entries.length : 0,
-    topSpecies: getTopSpecies(),
-    topLocations: getTopLocations(),
-    recentEntries: entries.slice(0, 5)
-  };
-
-  function getTopSpecies() {
-    const speciesCount = entries.reduce((acc, entry) => {
-      acc[entry.species] = (acc[entry.species] || 0) + entry.quantity;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    return Object.entries(speciesCount)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 5)
-      .map(([species, count]) => ({ species, count }));
-  }
-
-  function getTopLocations() {
-    const locationCount = entries.reduce((acc, entry) => {
-      acc[entry.location] = (acc[entry.location] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    return Object.entries(locationCount)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 5)
-      .map(([location, visits]) => ({ location, visits }));
-  }
 
   return (
     <div className="space-y-6">
@@ -387,7 +316,7 @@ export function SimpleFishingLog() {
                   <CardContent>
                     <div className="text-center">
                       <div className="text-4xl font-bold text-green-600 mb-2">
-                        {((analytics.successfulTrips / analytics.totalTrips) * 100).toFixed(1)}%
+                        {analytics.successRate.toFixed(1)}%
                       </div>
                       <p className="text-gray-600">
                         {analytics.successfulTrips} successful trips out of {analytics.totalTrips} total trips

@@ -19,12 +19,15 @@ import { FishingDataInfographics } from '@/components/FishingDataInfographics';
 import GoogleVoiceAssistant from '@/components/GoogleVoiceAssistant';
 import { geminiService } from '@/services/gemini';
 import { SimpleFishingLog } from '@/components/SimpleFishingLog';
+import { RealFishingAnalytics } from '@/components/RealFishingAnalytics';
+import { useSimpleFishingLogs } from '@/hooks/use-simple-fishing-logs';
 import Link from 'next/link';
 
 export default function FishingInfoCenter() {
   const { user } = useAuth();
   const { online: isOnline } = useNetworkStatus();
   const { syncStatus } = useFishingLogs();
+  const { analytics } = useSimpleFishingLogs(); // Get real analytics data
   const [networkStatus] = useState({ online: isOnline });
   const [activeTab, setActiveTab] = useState("overview");
   const [lawQuery, setLawQuery] = useState("");
@@ -92,10 +95,30 @@ export default function FishingInfoCenter() {
   ];
 
   const statsData = [
-    { label: "Total Catches", value: "127", trend: "+12%", icon: Fish },
-    { label: "Fishing Hours", value: "89", trend: "+8%", icon: Clock },
-    { label: "Success Rate", value: "78%", trend: "+5%", icon: Target },
-    { label: "Active Streak", value: "15", trend: "+3", icon: Zap },
+    { 
+      label: "Total Catches", 
+      value: analytics.totalCatch.toString(), 
+      trend: analytics.totalCatch > 0 ? `${analytics.totalTrips} trips` : "No trips yet", 
+      icon: Fish 
+    },
+    { 
+      label: "Fishing Hours", 
+      value: analytics.averageDuration > 0 ? (analytics.averageDuration * analytics.totalTrips).toFixed(0) : "0", 
+      trend: analytics.averageDuration > 0 ? `${analytics.averageDuration.toFixed(1)}h avg` : "Start logging!", 
+      icon: Clock 
+    },
+    { 
+      label: "Success Rate", 
+      value: analytics.totalTrips > 0 ? `${analytics.successRate.toFixed(0)}%` : "0%", 
+      trend: analytics.totalTrips > 0 ? `${analytics.successfulTrips}/${analytics.totalTrips}` : "No data", 
+      icon: Target 
+    },
+    { 
+      label: "Total Trips", 
+      value: analytics.totalTrips.toString(), 
+      trend: analytics.totalTrips > 0 ? "Keep fishing!" : "Add your first trip", 
+      icon: Zap 
+    },
   ];
 
   const getStatusIcon = (status: string) => {
@@ -107,10 +130,17 @@ export default function FishingInfoCenter() {
     }
   };
 
-  const recentActivity = [
+  const recentActivity = analytics.recentEntries.length > 0 ? [
+    ...analytics.recentEntries.slice(0, 3).map((entry, index) => ({
+      message: `${entry.success ? 'Successful' : 'Attempted'} fishing at ${entry.location}${entry.quantity > 0 ? ` - Caught ${entry.quantity} ${entry.species}` : ''}`,
+      status: entry.success ? "success" : "warning",
+      time: new Date(entry.date).toLocaleDateString()
+    })),
     { message: "Weather alert: Strong winds expected", status: "warning", time: "2 min ago" },
-    { message: "Fishing log synced successfully", status: "success", time: "5 min ago" },
-    { message: "New fishing spot discovered nearby", status: "success", time: "10 min ago" },
+  ] : [
+    { message: "Welcome to Aquora.AI!", status: "success", time: "Just now" },
+    { message: "Add your first fishing trip in Simple Log tab", status: "success", time: "Just now" },
+    { message: "Weather alert: Strong winds expected", status: "warning", time: "2 min ago" },
     { message: "Safety check completed", status: "success", time: "15 min ago" },
   ];
 
@@ -253,31 +283,31 @@ export default function FishingInfoCenter() {
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude flex items-center gap-2">
                           <Target className="w-4 h-4 text-custom-primary" />
-                          Fishing Goals
+                          Success Rate
                         </span>
-                        <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">75%</span>
+                        <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">{analytics.successRate.toFixed(0)}%</span>
                       </div>
-                      <Progress value={75} className="h-2 bg-custom-light dark:bg-gray-700" />
+                      <Progress value={analytics.successRate} className="h-2 bg-custom-light dark:bg-gray-700" />
                     </div>
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-custom-primary" />
-                          Safety Checks
+                          <Fish className="w-4 h-4 text-custom-primary" />
+                          Monthly Goal
                         </span>
-                        <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">100%</span>
+                        <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">{Math.min(analytics.totalTrips * 10, 100)}%</span>
                       </div>
-                      <Progress value={100} className="h-2 bg-custom-light dark:bg-gray-700" />
+                      <Progress value={Math.min(analytics.totalTrips * 10, 100)} className="h-2 bg-custom-light dark:bg-gray-700" />
                     </div>
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium text-foreground dark:text-custom-white font-claude flex items-center gap-2">
                           <Clock className="w-4 h-4 text-custom-primary" />
-                          Journal Entries
+                          Log Completion
                         </span>
-                        <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">60%</span>
+                        <span className="text-sm text-muted-foreground dark:text-custom-secondary font-claude">{analytics.totalTrips > 0 ? 100 : 0}%</span>
                       </div>
-                      <Progress value={60} className="h-2 bg-custom-light dark:bg-gray-700" />
+                      <Progress value={analytics.totalTrips > 0 ? 100 : 0} className="h-2 bg-custom-light dark:bg-gray-700" />
                     </div>
                   </CardContent>
                 </Card>
@@ -317,15 +347,7 @@ export default function FishingInfoCenter() {
 
             {/* Analytics Tab */}
             <TabsContent value="analytics" className="space-y-6">
-              <ErrorBoundary fallback={
-                <Card className="border border-custom-secondary/20 bg-custom-white dark:bg-gray-900">
-                  <CardContent className="p-4">
-                    <p className="text-custom-primary font-claude">Could not load Fishing Data Analytics.</p>
-                  </CardContent>
-                </Card>
-              }>
-                <FishingDataInfographics />
-              </ErrorBoundary>
+              <RealFishingAnalytics />
             </TabsContent>
 
             {/* Journal Tab */}
