@@ -1,6 +1,6 @@
 'use client';
 
-import { Languages, Moon, Sun, Settings, HelpCircle, LogIn, LogOut, User, Menu, LayoutDashboard, Map, Scale, ShieldCheck, MessageSquare, BookOpen } from 'lucide-react';
+import { Languages, Moon, Sun, Settings, HelpCircle, LogIn, LogOut, User, Menu, LayoutDashboard, Map, MessageSquare, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from "next-themes";
 import { useState } from "react";
@@ -38,8 +38,6 @@ export function Header() {
     { href: "/dashboard", label: t("dashboard"), icon: LayoutDashboard },
     { href: "/fishing-log", label: t("fishing_center"), icon: BookOpen },
     { href: "/map", label: t("map"), icon: Map },
-    { href: "/laws", label: t("laws"), icon: Scale },
-    { href: "/safety", label: t("safety"), icon: ShieldCheck },
     { href: "/chat", label: t("chat"), icon: MessageSquare },
   ];
 
